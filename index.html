@@ -8,104 +8,60 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',sans-serif;background:#f1f5fb;min-height:100vh}
-:root{
-  --navy:#0a1628;--amber:#f59e0b;--amberD:#d97706;
-  --green:#10b981;--red:#ef4444;--orange:#f97316;
-  --slate:#64748b;--indigo:#4f46e5;--purple:#7c3aed;--blue:#2563eb;
-}
 input,select,textarea,button{font-family:inherit}
 .inp{border:1px solid #d1d5db;border-radius:8px;padding:9px 12px;font-size:13px;width:100%;outline:none;color:#1e293b;background:white}
-.inp:focus{border-color:var(--indigo)}
+.inp:focus{border-color:#4f46e5}
 .card{background:white;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.07);padding:22px}
 .btn{border:none;border-radius:9px;padding:9px 20px;cursor:pointer;font-weight:700;font-size:13px;transition:all 0.2s}
-.btn-amber{background:linear-gradient(135deg,var(--amber),var(--amberD));color:var(--navy)}
-.btn-ghost{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.2)}
-.btn-danger{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.25)}
-.btn-green{background:linear-gradient(135deg,#10b981,#059669);color:white}
-.btn-indigo{background:#e0e7ff;color:var(--indigo)}
 .pill{border-radius:999px;padding:3px 11px;font-size:11px;font-weight:700;white-space:nowrap;display:inline-block}
 table{border-collapse:collapse;width:100%}
 th,td{padding:9px 12px;text-align:left;border-bottom:1px solid #f1f5f9;font-size:13px}
-th{font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--slate)}
+th{font-size:10px;font-weight:700;letter-spacing:0.8px;color:#64748b}
 .screen{display:none}.screen.active{display:block}
-.tab-btn{background:transparent;color:rgba(255,255,255,0.65);border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
-.tab-btn.active{background:var(--amber);color:var(--navy)}
-.topbar{background:var(--navy);box-shadow:0 2px 12px rgba(0,0,0,0.3);position:sticky;top:0;z-index:100}
+.tab-btn{background:transparent;color:rgba(255,255,255,0.65);border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s}
+.tab-btn.active{background:#f59e0b;color:#0a1628}
+.topbar{background:#0a1628;box-shadow:0 2px 12px rgba(0,0,0,0.3);position:sticky;top:0;z-index:100}
 .topbar-inner{max-width:1280px;margin:0 auto;padding:0 20px}
-.topbar-top{display:flex;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);flex-wrap:wrap}
-.topbar-tabs{display:flex;gap:2px;padding:6px 0;overflow-x:auto}
-.stat-card{background:white;border-radius:12px;padding:16px 18px;flex:1;min-width:110px;border-left:4px solid #ccc;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-.stat-label{font-size:10px;font-weight:700;color:var(--slate);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
-.stat-value{font-size:24px;font-weight:900}
-.stat-sub{font-size:11px;color:var(--slate);margin-top:3px}
-.fade-in{animation:fadeIn 0.3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stat-card{background:white;border-radius:12px;padding:16px 18px;flex:1;min-width:110px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.section-title{font-size:15px;font-weight:800;color:#0a1628;margin-bottom:14px;display:flex;align-items:center;gap:7px}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .flex-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.section-title{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.bar-wrap{display:flex;align-items:flex-end;gap:8px;height:160px;padding:10px 0}
-.bar-col{display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;height:100%}
-.bar-label{font-size:10px;font-weight:700;color:var(--navy);text-align:center}
-.bar-val{font-size:10px;font-weight:800}
-.bar-body{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height 0.3s}
-.err{background:#fee2e2;color:var(--red);border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:12px}
-.success{background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:center}
-@media(max-width:768px){.grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr}.grid-5{grid-template-columns:1fr 1fr}}
+.err{background:#fee2e2;color:#ef4444;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:12px}
+.ok{background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:center}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:white;border-radius:16px;padding:28px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.35)}
+.fade{animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════ -->
-<!--  LOGIN SCREEN                               -->
-<!-- ═══════════════════════════════════════════ -->
+<!-- LOGIN -->
 <div id="screen-login" class="screen active">
   <div style="min-height:100vh;background:linear-gradient(135deg,#0a1628 0%,#1a3a6e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px">
     <div style="margin-bottom:28px;text-align:center">
-      <svg width="48" height="48" viewBox="0 0 100 100" fill="none" style="vertical-align:middle;margin-right:10px">
-        <polygon points="50,5 90,27 90,73 50,95 10,73 10,27" fill="#1d4ed8" opacity="0.2"/>
-        <polygon points="50,12 84,32 84,68 50,88 16,68 16,32" fill="#2563eb"/>
-        <polygon points="30,42 50,30 50,54 30,66" fill="white" opacity="0.9"/>
-        <polygon points="70,42 50,30 50,54 70,66" fill="white" opacity="0.55"/>
-        <rect x="27" y="55" width="19" height="19" rx="3" fill="#dc2626" transform="rotate(-8,36,64)"/>
-      </svg>
+      <svg width="48" height="48" viewBox="0 0 100 100" fill="none" style="vertical-align:middle;margin-right:10px"><polygon points="50,12 84,32 84,68 50,88 16,68 16,32" fill="#2563eb"/><polygon points="30,42 50,30 50,54 30,66" fill="white" opacity="0.9"/><polygon points="70,42 50,30 50,54 70,66" fill="white" opacity="0.55"/><rect x="27" y="55" width="19" height="19" rx="3" fill="#dc2626" transform="rotate(-8,36,64)"/></svg>
       <span style="font-weight:900;font-size:28px;color:white;vertical-align:middle">3Gen</span>
       <span style="font-weight:700;font-size:18px;color:#93c5fd;vertical-align:middle"> Consulting</span>
       <div style="color:rgba(255,255,255,0.45);font-size:12px;margin-top:4px">Powering Healthcare Forward</div>
     </div>
     <div style="background:white;border-radius:20px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,0.35)">
       <div id="login-panel">
-        <div style="text-align:center;margin-bottom:24px">
-          <div style="font-size:20px;font-weight:900;color:#0a1628">Team Performance Portal</div>
-          <div style="font-size:12px;color:#64748b;margin-top:4px">Sign in with your Employee ID &amp; Password</div>
-        </div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">EMPLOYEE ID</div>
-          <input class="inp" id="login-id" type="text" placeholder="e.g. ADMIN" style="padding:11px 13px;font-size:14px"/>
-        </div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">PASSWORD</div>
-          <input class="inp" id="login-pass" type="password" placeholder="Enter password" style="padding:11px 13px;font-size:14px"/>
-        </div>
+        <div style="text-align:center;margin-bottom:24px"><div style="font-size:20px;font-weight:900;color:#0a1628">Team Performance Portal</div><div style="font-size:12px;color:#64748b;margin-top:4px">Sign in with your Employee ID &amp; Password</div></div>
+        <div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">EMPLOYEE ID</div><input class="inp" id="login-id" type="text" placeholder="e.g. ADMIN" style="padding:11px 13px;font-size:14px"/></div>
+        <div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">PASSWORD</div><input class="inp" id="login-pass" type="password" placeholder="Enter password" style="padding:11px 13px;font-size:14px"/></div>
         <div id="login-err" class="err" style="display:none"></div>
-        <button class="btn btn-amber" onclick="doLogin()" style="width:100%;padding:13px;font-size:15px;border-radius:10px;margin-bottom:12px;box-shadow:0 4px 20px rgba(245,158,11,0.44)">Sign In →</button>
+        <button class="btn" onclick="doLogin()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:13px;font-size:15px;border-radius:10px;margin-bottom:12px;box-shadow:0 4px 20px rgba(245,158,11,0.44)">Sign In →</button>
         <button onclick="showForgot()" style="background:none;border:none;color:#2563eb;font-size:13px;cursor:pointer;width:100%;text-align:center;font-weight:600">Forgot Password?</button>
         <div style="text-align:center;margin-top:14px;color:#64748b;font-size:11px;border-top:1px solid #f1f5f9;padding-top:12px">Default Admin: <strong>ADMIN</strong> / <strong>Admin@123</strong></div>
       </div>
       <div id="forgot-panel" style="display:none">
-        <div style="text-align:center;margin-bottom:20px">
-          <div style="font-size:18px;font-weight:800;color:#0a1628">🔐 Reset Password Request</div>
-          <div style="font-size:12px;color:#64748b;margin-top:4px">Admin will be notified and reset your password</div>
-        </div>
-        <div style="margin-bottom:12px">
-          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">YOUR EMPLOYEE ID *</div>
-          <input class="inp" id="fg-id" placeholder="e.g. EMP001"/>
-        </div>
-        <div style="margin-bottom:16px">
-          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">REASON (optional)</div>
-          <input class="inp" id="fg-reason" placeholder="e.g. Forgot password"/>
-        </div>
+        <div style="text-align:center;margin-bottom:20px"><div style="font-size:18px;font-weight:800;color:#0a1628">🔐 Reset Password Request</div><div style="font-size:12px;color:#64748b;margin-top:4px">Admin will be notified and reset your password</div></div>
+        <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">YOUR EMPLOYEE ID *</div><input class="inp" id="fg-id" placeholder="e.g. EMP001"/></div>
+        <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">REASON (optional)</div><input class="inp" id="fg-reason" placeholder="e.g. Forgot password"/></div>
         <div id="fg-err" class="err" style="display:none"></div>
         <button class="btn" onclick="sendForgot()" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;width:100%;padding:12px;border-radius:10px;margin-bottom:10px">Send Reset Request</button>
         <button onclick="showLogin()" style="background:none;border:none;color:#64748b;font-size:13px;cursor:pointer;width:100%;text-align:center">← Back to Login</button>
@@ -113,7 +69,7 @@ th{font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--slate)}
       <div id="forgot-done" style="display:none;text-align:center;padding:20px 0">
         <div style="font-size:40px;margin-bottom:12px">✅</div>
         <div style="font-size:16px;font-weight:800;color:#0a1628;margin-bottom:8px">Request Sent!</div>
-        <div style="font-size:13px;color:#64748b;margin-bottom:20px">Admin has been notified and will reset your password shortly.</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:20px">Admin has been notified.</div>
         <button class="btn" onclick="showLogin()" style="background:#0a1628;color:white;padding:10px 24px">← Back to Login</button>
       </div>
     </div>
@@ -121,398 +77,518 @@ th{font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--slate)}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!--  MAIN APP                                   -->
-<!-- ═══════════════════════════════════════════ -->
+<!-- MAIN APP -->
 <div id="screen-app" class="screen">
-  <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-inner">
-      <div class="topbar-top">
-        <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
-          <polygon points="50,12 84,32 84,68 50,88 16,68 16,32" fill="#2563eb"/>
-          <polygon points="30,42 50,30 50,54 30,66" fill="white" opacity="0.9"/>
-          <polygon points="70,42 50,30 50,54 70,66" fill="white" opacity="0.55"/>
-          <rect x="27" y="55" width="19" height="19" rx="3" fill="#dc2626" transform="rotate(-8,36,64)"/>
-        </svg>
-        <div style="display:flex;flex-direction:column;line-height:1">
-          <span style="font-weight:900;font-size:16px;color:white">3Gen Consulting</span>
-          <span style="font-size:10px;color:rgba(255,255,255,0.45)">Powering Healthcare Forward</span>
-        </div>
+      <div style="display:flex;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);flex-wrap:wrap">
+        <svg width="30" height="30" viewBox="0 0 100 100" fill="none"><polygon points="50,12 84,32 84,68 50,88 16,68 16,32" fill="#2563eb"/><polygon points="30,42 50,30 50,54 30,66" fill="white" opacity="0.9"/><polygon points="70,42 50,30 50,54 70,66" fill="white" opacity="0.55"/><rect x="27" y="55" width="19" height="19" rx="3" fill="#dc2626" transform="rotate(-8,36,64)"/></svg>
+        <div><div style="font-weight:900;font-size:15px;color:white;line-height:1">3Gen Consulting</div><div style="font-size:10px;color:rgba(255,255,255,0.4)">Powering Healthcare Forward</div></div>
         <div style="flex:1"></div>
-        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.07);border-radius:10px;padding:7px 14px">
-          <div id="user-avatar" style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;flex-shrink:0"></div>
-          <div>
-            <div id="user-name-display" style="color:white;font-weight:700;font-size:13px;line-height:1"></div>
-            <div id="user-role-display" style="color:#f59e0b;font-size:10px;font-weight:600;margin-top:2px"></div>
-          </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.07);border-radius:10px;padding:7px 14px;cursor:pointer" onclick="openProfile()">
+          <div id="user-avatar" style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;flex-shrink:0;overflow:hidden"></div>
+          <div><div id="user-name-display" style="color:white;font-weight:700;font-size:13px;line-height:1"></div><div id="user-role-display" style="color:#f59e0b;font-size:10px;font-weight:600;margin-top:2px"></div></div>
         </div>
-        <button class="btn btn-danger" onclick="doLogout()">Sign Out</button>
+        <button class="btn" onclick="doLogout()" style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.25);padding:6px 14px;font-size:12px">Sign Out</button>
       </div>
-      <div id="tab-bar" class="topbar-tabs"></div>
+      <div id="tab-bar" style="display:flex;gap:2px;padding:6px 0;overflow-x:auto"></div>
     </div>
   </div>
-
-  <!-- PAGE CONTENT -->
   <div id="page-content" style="max-width:1280px;margin:0 auto;padding:22px 18px"></div>
 </div>
 
+<!-- EDIT USER MODAL -->
+<div id="edit-modal" class="modal-bg">
+  <div class="modal">
+    <div style="font-size:18px;font-weight:800;color:#0a1628;margin-bottom:20px">✏️ Edit User</div>
+    <input type="hidden" id="edit-orig-id"/>
+    <div class="grid-3" style="margin-bottom:14px">
+      <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">FULL NAME</div><input class="inp" id="edit-name"/></div>
+      <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">PASSWORD</div><input class="inp" id="edit-pass" placeholder="Leave blank to keep"/></div>
+      <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">PROCESS</div>
+        <select class="inp" id="edit-process"><option>PMB MCO</option><option>MCD (Medicaid)</option><option>MCR (Medicare)</option><option value="All">All</option></select></div>
+      <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">ROLE</div>
+        <select class="inp" id="edit-role"><option value="employee">👤 Employee</option><option value="manager">🔷 Manager</option><option value="admin">👑 Admin</option></select></div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">ACCESS PERMISSIONS</div>
+      <div id="edit-access-pills" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    </div>
+    <div id="edit-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" onclick="saveEditUser()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;flex:1;padding:11px">Save Changes</button>
+      <button class="btn" onclick="closeModal('edit-modal')" style="background:#f1f5f9;color:#64748b;padding:11px 20px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEE DETAIL MODAL -->
+<div id="emp-modal" class="modal-bg">
+  <div class="modal" style="max-width:700px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-size:18px;font-weight:800;color:#0a1628" id="emp-modal-title">Employee Details</div>
+      <button onclick="closeModal('emp-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#64748b">×</button>
+    </div>
+    <div id="emp-modal-content"></div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profile-modal" class="modal-bg">
+  <div class="modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-size:18px;font-weight:800;color:#0a1628">👤 My Profile</div>
+      <button onclick="closeModal('profile-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#64748b">×</button>
+    </div>
+    <div id="profile-content"></div>
+  </div>
+</div>
+
 <script>
-// ╔══════════════════════════════════════════════════╗
-// ║  PASTE YOUR SUPABASE DETAILS HERE                ║
-// ╚══════════════════════════════════════════════════╝
-const SUPABASE_URL = "https://blgwwlzidffeuvtkjdwe.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsZ3d3bHppZGZmZXV2dGtqZHdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4ODUzMDksImV4cCI6MjA5MjQ2MTMwOX0.-wJ5j3YucH6mkm68MslNit8i5Wir0dqAEU--vPBl6Cs";
+// ╔════════════════════════════════════════════════════╗
+// ║  STEP 1: YOUR SUPABASE DETAILS                     ║
+// ╚════════════════════════════════════════════════════╝
+const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE";
+const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
 
-// ── Init ──────────────────────────────────────────────
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// ── Storage ───────────────────────────────────────────
-const S = {
-  get: async k => {
-    try {
-      const { data } = await sb.from("rcm_store").select("val").eq("k",k).single();
-      return data ? JSON.parse(data.val) : null;
-    } catch { return null; }
-  },
-  set: async (k,v) => {
-    try {
-      await sb.from("rcm_store").upsert({k, val:JSON.stringify(v), updated_at:new Date().toISOString()},{onConflict:"k"});
-      return true;
-    } catch { return false; }
-  }
-};
-
-// ── Constants ─────────────────────────────────────────
 const PROCS = ["PMB MCO","MCD (Medicaid)","MCR (Medicare)"];
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const ACCESSES = ["Daily Entry","View Own Progress","View Team Progress","Generate Email","Send Feedback","Manage Users","View Reports"];
 let currentUser = null;
 
-// ── Helpers ───────────────────────────────────────────
-const today = () => new Date().toISOString().split("T")[0];
-const yesterday = () => { const d=new Date(); d.setDate(d.getDate()-1); return d.toISOString().split("T")[0]; };
-const fmtD = d => new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
-const fmtSh = d => new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short"});
-const addDays = (d,n) => { const dt=new Date(d+"T00:00:00"); dt.setDate(dt.getDate()+n); return dt.toISOString().split("T")[0]; };
-const getMon = d => { const dt=new Date(d+"T00:00:00"),day=dt.getDay(); dt.setDate(dt.getDate()-(day===0?6:day-1)); return dt.toISOString().split("T")[0]; };
-const isWknd = d => { const w=new Date(d+"T00:00:00").getDay(); return w===0||w===6; };
-const wDays = s => { const o=[]; let c=s; for(let i=0;i<7;i++){if(!isWknd(c))o.push(c);c=addDays(c,1);} return o; };
-const mDays = (y,m) => { const o=[]; const last=new Date(y,m,0).getDate(); for(let d=1;d<=last;d++){const s=`${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;if(!isWknd(s))o.push(s);} return o; };
-const pCol = v => { const n=parseFloat(v); return isNaN(n)?"#64748b":n>=100?"#10b981":n>=75?"#f97316":"#ef4444"; };
-const avg = arr => arr.length ? +(arr.reduce((s,v)=>s+parseFloat(v),0)/arr.length).toFixed(1) : null;
-const esc = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-const dlCSV = (headers,rows,name) => {
-  const csv=[headers,...rows.map(r=>r.map(c=>`"${String(c??"").replace(/"/g,'""')}"`))].map(r=>r.join(",")).join("\n");
-  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download=name; a.click();
+// ── Storage ────────────────────────────────────────────
+const S = {
+  get: async k => { try { const{data}=await sb.from("rcm_store").select("val").eq("k",k).single(); return data?JSON.parse(data.val):null; } catch{return null;} },
+  set: async (k,v) => { try { await sb.from("rcm_store").upsert({k,val:JSON.stringify(v),updated_at:new Date().toISOString()},{onConflict:"k"}); return true; } catch{return false;} }
 };
 
-// ── Bar Chart HTML ─────────────────────────────────────
-function barChartHTML(data) {
-  if(!data||!data.length) return "";
-  const maxVal = 120;
-  let html = `<div style="display:flex;align-items:flex-end;gap:6px;height:160px;padding:8px 0 0;border-bottom:2px solid #e2e8f0;position:relative">`;
-  // 100% line
-  const linePos = (100/maxVal)*100;
-  html += `<div style="position:absolute;bottom:${linePos}%;left:0;right:0;border-top:2px dashed #ef4444;z-index:1"><span style="position:absolute;right:0;top:-14px;font-size:9px;color:#ef4444;font-weight:700">100% Target</span></div>`;
-  data.forEach(d => {
-    const prod = parseFloat(d.prod)||0;
-    const prodH = Math.min((prod/maxVal)*100, 100);
-    const col = pCol(prod);
-    html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end;z-index:2">
-      <span style="font-size:9px;font-weight:800;color:${col}">${prod.toFixed(0)}%</span>
-      <div style="width:80%;background:${col};height:${prodH}%;border-radius:4px 4px 0 0;min-height:4px"></div>
-      <span style="font-size:10px;font-weight:700;color:#0a1628;text-align:center;word-break:break-word">${esc(d.name)}</span>
-    </div>`;
+// ── Helpers ────────────────────────────────────────────
+const today=()=>new Date().toISOString().split("T")[0];
+const yesterday=()=>{const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().split("T")[0];};
+const fmtD=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+const fmtSh=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short"});
+const addDays=(d,n)=>{const dt=new Date(d+"T00:00:00");dt.setDate(dt.getDate()+n);return dt.toISOString().split("T")[0];};
+const getMon=d=>{const dt=new Date(d+"T00:00:00"),day=dt.getDay();dt.setDate(dt.getDate()-(day===0?6:day-1));return dt.toISOString().split("T")[0];};
+const isWknd=d=>{const w=new Date(d+"T00:00:00").getDay();return w===0||w===6;};
+const wDays=s=>{const o=[];let c=s;for(let i=0;i<7;i++){if(!isWknd(c))o.push(c);c=addDays(c,1);}return o;};
+const mDays=(y,m)=>{const o=[];const last=new Date(y,m,0).getDate();for(let d=1;d<=last;d++){const s=`${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;if(!isWknd(s))o.push(s);}return o;};
+const pCol=v=>{const n=parseFloat(v);return isNaN(n)?"#64748b":n>=100?"#10b981":n>=75?"#f97316":"#ef4444";};
+const avg=arr=>arr.length?+(arr.reduce((s,v)=>s+parseFloat(v),0)/arr.length).toFixed(1):null;
+const esc=s=>String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const dlCSV=(headers,rows,name)=>{const csv=[headers,...rows.map(r=>r.map(c=>`"${String(c??"").replace(/"/g,'""')}"`))].map(r=>r.join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download=name;a.click();};
+
+function pill(label,color){return `<span class="pill" style="background:${color}22;color:${color}">${esc(label)}</span>`;}
+function stat(label,value,color,sub="",icon=""){return `<div class="stat-card" style="border-left:4px solid ${color}"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">${icon} ${label}</div><div style="font-size:24px;font-weight:900;color:${color}">${esc(String(value??'—'))}</div>${sub?`<div style="font-size:11px;color:#64748b;margin-top:3px">${esc(sub)}</div>`:""}</div>`;}
+function barChart(data,height=160){if(!data||!data.length)return`<div style="color:#64748b;text-align:center;padding:30px;font-size:13px">No data to display</div>`;const maxVal=120;let h=`<div style="display:flex;align-items:flex-end;gap:6px;height:${height}px;padding:8px 0 0;border-bottom:2px solid #e2e8f0;position:relative;margin-bottom:8px">`;const lp=(100/maxVal)*100;h+=`<div style="position:absolute;bottom:${lp}%;left:0;right:0;border-top:2px dashed #ef4444;z-index:1"><span style="position:absolute;right:0;top:-14px;font-size:9px;color:#ef4444;font-weight:700">100%</span></div>`;data.forEach(d=>{const prod=parseFloat(d.prod)||0,prodH=Math.min((prod/maxVal)*100,100),col=pCol(prod);h+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end;z-index:2"><span style="font-size:9px;font-weight:800;color:${col}">${prod.toFixed(0)}%</span><div style="width:80%;background:${col};height:${prodH}%;border-radius:4px 4px 0 0;min-height:4px" title="${esc(d.name)}: ${prod}%"></div><span style="font-size:9px;font-weight:700;color:#0a1628;text-align:center;word-break:break-all;max-width:100%">${esc(d.name)}</span></div>`;});h+=`</div>`;return h;}
+
+function closeModal(id){document.getElementById(id).classList.remove("open");}
+function openModal(id){document.getElementById(id).classList.add("open");}
+function setPage(html){const el=document.getElementById("page-content");el.innerHTML=html;el.classList.remove("fade");void el.offsetWidth;el.classList.add("fade");}
+
+// ── AI Email helper ────────────────────────────────────
+async function callAI(prompt){
+  const settings=await S.get("rcm:settings")||{};
+  const apiKey=settings.anthropicKey||"";
+  if(!apiKey){throw new Error("NO_KEY");}
+  const r=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:"claude-opus-4-5",max_tokens:1500,messages:[{role:"user",content:prompt}]})
   });
-  html += `</div>`;
-  return html;
+  const d=await r.json();
+  if(d.error)throw new Error(d.error.message||"API error");
+  return d.content?.map(b=>b.text||"").join("")||"";
 }
 
-// ── Pill HTML ──────────────────────────────────────────
-function pillHTML(label, color) {
-  return `<span class="pill" style="background:${color}22;color:${color}">${esc(label)}</span>`;
-}
+// ── Login ──────────────────────────────────────────────
+function showLogin(){document.getElementById("login-panel").style.display="block";document.getElementById("forgot-panel").style.display="none";document.getElementById("forgot-done").style.display="none";}
+function showForgot(){document.getElementById("login-panel").style.display="none";document.getElementById("forgot-panel").style.display="block";}
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.getElementById("screen-login").classList.contains("active"))doLogin();});
 
-// ── Stat Card HTML ────────────────────────────────────
-function statHTML(label, value, color, sub="", icon="") {
-  return `<div class="stat-card" style="border-left-color:${color}">
-    <div class="stat-label">${icon} ${label}</div>
-    <div class="stat-value" style="color:${color}">${esc(String(value??'—'))}</div>
-    ${sub?`<div class="stat-sub">${esc(sub)}</div>`:""}
-  </div>`;
-}
-
-// ── LOGIN ─────────────────────────────────────────────
-function showLogin(){ document.getElementById("login-panel").style.display="block"; document.getElementById("forgot-panel").style.display="none"; document.getElementById("forgot-done").style.display="none"; }
-function showForgot(){ document.getElementById("login-panel").style.display="none"; document.getElementById("forgot-panel").style.display="block"; }
-
-async function doLogin() {
-  const empId = document.getElementById("login-id").value.trim();
-  const pass = document.getElementById("login-pass").value.trim();
-  const errEl = document.getElementById("login-err");
+async function doLogin(){
+  const empId=document.getElementById("login-id").value.trim();
+  const pass=document.getElementById("login-pass").value.trim();
+  const errEl=document.getElementById("login-err");
   errEl.style.display="none";
   if(!empId||!pass){errEl.textContent="Enter your ID and password.";errEl.style.display="block";return;}
-  let users = await S.get("rcm:users");
-  if(!users||!users.length){
-    users=[{empId:"ADMIN",name:"Team Lead Admin",password:"Admin@123",process:"All",role:"admin",access:ACCESSES,active:true}];
-    await S.set("rcm:users",users);
-  }
-  const u = users.find(x=>x.empId.toLowerCase()===empId.toLowerCase()&&x.password===pass&&x.active!==false);
-  if(u){ currentUser=u; startApp(); }
-  else { errEl.textContent="Invalid ID or password, or account is disabled."; errEl.style.display="block"; }
+  let users=await S.get("rcm:users");
+  if(!users||!users.length){users=[{empId:"ADMIN",name:"Team Lead Admin",password:"Admin@123",process:"All",role:"admin",access:ACCESSES,active:true}];await S.set("rcm:users",users);}
+  const u=users.find(x=>x.empId.toLowerCase()===empId.toLowerCase()&&x.password===pass&&x.active!==false);
+  if(u){currentUser=u;startApp();}else{errEl.textContent="Invalid ID or password, or account is disabled.";errEl.style.display="block";}
 }
 
-async function sendForgot() {
-  const id = document.getElementById("fg-id").value.trim();
-  const reason = document.getElementById("fg-reason").value.trim();
-  const errEl = document.getElementById("fg-err");
+async function sendForgot(){
+  const id=document.getElementById("fg-id").value.trim();
+  const reason=document.getElementById("fg-reason").value.trim();
+  const errEl=document.getElementById("fg-err");
   if(!id){errEl.textContent="Enter your Employee ID.";errEl.style.display="block";return;}
   errEl.style.display="none";
-  const reqs = await S.get("rcm:pwreset")||[];
+  const reqs=await S.get("rcm:pwreset")||[];
   reqs.push({empId:id.toUpperCase(),reason,requestedAt:new Date().toISOString(),status:"pending"});
   await S.set("rcm:pwreset",reqs);
   document.getElementById("forgot-panel").style.display="none";
   document.getElementById("forgot-done").style.display="block";
 }
 
-// Allow Enter key for login
-document.addEventListener("keydown", e => { if(e.key==="Enter"&&document.getElementById("screen-login").classList.contains("active")) doLogin(); });
-
-// ── APP START ─────────────────────────────────────────
-function startApp() {
+// ── App Start ──────────────────────────────────────────
+function startApp(){
   document.getElementById("screen-login").classList.remove("active");
   document.getElementById("screen-app").classList.add("active");
-  const roleColor = currentUser.role==="admin"?"#ef4444":currentUser.role==="manager"?"#2563eb":"#4f46e5";
-  const av = document.getElementById("user-avatar");
-  av.textContent = currentUser.name.charAt(0).toUpperCase();
-  av.style.background = `linear-gradient(135deg,${roleColor},${roleColor}88)`;
-  document.getElementById("user-name-display").textContent = currentUser.name;
-  document.getElementById("user-role-display").textContent = `${currentUser.empId} · ${currentUser.role==="admin"?"👑 Admin":currentUser.role==="manager"?"🔷 Manager":"👤 Employee"}`;
-  if(currentUser.role==="employee") loadEmployeeApp();
+  const rc=currentUser.role==="admin"?"#ef4444":currentUser.role==="manager"?"#2563eb":"#4f46e5";
+  const av=document.getElementById("user-avatar");
+  if(currentUser.picture){av.innerHTML=`<img src="${esc(currentUser.picture)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;} 
+  else{av.style.background=`linear-gradient(135deg,${rc},${rc}88)`;av.textContent=currentUser.name.charAt(0).toUpperCase();}
+  document.getElementById("user-name-display").textContent=currentUser.name;
+  document.getElementById("user-role-display").textContent=`${currentUser.empId} · ${currentUser.role==="admin"?"👑 Admin":currentUser.role==="manager"?"🔷 Manager":"👤 Employee"}`;
+  if(currentUser.role==="employee")loadEmpApp();
   else loadAdminApp();
 }
 
-function doLogout() {
-  currentUser=null;
-  document.getElementById("screen-app").classList.remove("active");
-  document.getElementById("screen-login").classList.add("active");
-  document.getElementById("login-id").value="";
-  document.getElementById("login-pass").value="";
-  showLogin();
+function doLogout(){currentUser=null;document.getElementById("screen-app").classList.remove("active");document.getElementById("screen-login").classList.add("active");document.getElementById("login-id").value="";document.getElementById("login-pass").value="";showLogin();}
+
+// ── Tabs ───────────────────────────────────────────────
+function setTabs(tabs,onSel){
+  const bar=document.getElementById("tab-bar");
+  bar.innerHTML=tabs.map(t=>`<button class="tab-btn" data-id="${t.id}" onclick="selTab('${t.id}')">${esc(t.label)}</button>`).join("");
+  window._onSelTab=onSel;
+}
+function selTab(id){document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.id===id));window._onSelTab(id);}
+
+// ── Profile Modal ──────────────────────────────────────
+async function openProfile(){
+  const users=await S.get("rcm:users")||[];
+  const teamSize=users.filter(u=>u.role==="employee"&&u.active!==false).length;
+  const rc=currentUser.role==="admin"?"#ef4444":currentUser.role==="manager"?"#2563eb":"#4f46e5";
+  document.getElementById("profile-content").innerHTML=`
+    <div style="text-align:center;margin-bottom:24px">
+      <div id="profile-pic" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,${rc},${rc}88);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:white;margin:0 auto 12px;overflow:hidden">
+        ${currentUser.picture?`<img src="${esc(currentUser.picture)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:`${currentUser.name.charAt(0).toUpperCase()}`}
+      </div>
+      <div style="font-size:18px;font-weight:800;color:#0a1628">${esc(currentUser.name)}</div>
+      <div style="font-size:13px;color:#64748b;margin-top:4px">${esc(currentUser.empId)} · ${pill(currentUser.role==="admin"?"👑 Admin":currentUser.role==="manager"?"🔷 Manager":"👤 Employee",rc)}</div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:20px">
+      ${stat("Process",currentUser.process||"—","#4f46e5","","🏥")}
+      ${stat("Team Size",teamSize+" Members","#10b981","Employees in team","👥")}
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">UPDATE NAME</div>
+      <input class="inp" id="profile-name" value="${esc(currentUser.name)}"/>
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">PROFILE PICTURE URL (optional)</div>
+      <input class="inp" id="profile-pic-url" value="${esc(currentUser.picture||"")}" placeholder="Paste any image URL e.g. https://..."/>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">NEW PASSWORD (leave blank to keep current)</div>
+      <input class="inp" id="profile-newpass" type="password" placeholder="Enter new password"/>
+    </div>
+    <div id="profile-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
+    <button class="btn" onclick="saveProfile()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:12px">💾 Save Profile</button>
+  `;
+  openModal("profile-modal");
 }
 
-// ── TAB SYSTEM ────────────────────────────────────────
-function setTabs(tabs, onSelect) {
-  const bar = document.getElementById("tab-bar");
-  bar.innerHTML = tabs.map(t=>`<button class="tab-btn" data-id="${t.id}" onclick="selectTab('${t.id}')">${esc(t.label)}</button>`).join("");
-  window._tabs = tabs;
-  window._onSelectTab = onSelect;
+async function saveProfile(){
+  const name=document.getElementById("profile-name").value.trim();
+  const pic=document.getElementById("profile-pic-url").value.trim();
+  const newpass=document.getElementById("profile-newpass").value.trim();
+  const msg=document.getElementById("profile-msg");
+  if(!name){msg.textContent="⚠ Name cannot be empty.";msg.style.color="#ef4444";msg.style.display="block";return;}
+  const users=await S.get("rcm:users")||[];
+  const updated=users.map(u=>{
+    if(u.empId!==currentUser.empId)return u;
+    const nu={...u,name};
+    if(pic)nu.picture=pic;
+    if(newpass)nu.password=newpass;
+    return nu;
+  });
+  await S.set("rcm:users",updated);
+  currentUser={...currentUser,name,picture:pic||currentUser.picture};
+  if(newpass)currentUser.password=newpass;
+  // Update header
+  const av=document.getElementById("user-avatar");
+  const rc=currentUser.role==="admin"?"#ef4444":currentUser.role==="manager"?"#2563eb":"#4f46e5";
+  if(pic){av.innerHTML=`<img src="${esc(pic)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;}
+  else{av.style.background=`linear-gradient(135deg,${rc},${rc}88)`;av.textContent=currentUser.name.charAt(0).toUpperCase();}
+  document.getElementById("user-name-display").textContent=name;
+  msg.textContent="✅ Profile updated!";msg.style.color="#10b981";msg.style.display="block";
+  setTimeout(()=>{closeModal("profile-modal");},1500);
 }
 
-function selectTab(id) {
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.id===id));
-  window._onSelectTab(id);
-}
-
-// ── PAGE RENDER ───────────────────────────────────────
-function setPage(html) {
-  const el = document.getElementById("page-content");
-  el.innerHTML = html;
-  el.classList.remove("fade-in");
-  void el.offsetWidth;
-  el.classList.add("fade-in");
-}
-
-// ╔══════════════════════════════════════════════════╗
-// ║  ADMIN APP                                       ║
-// ╚══════════════════════════════════════════════════╝
-function loadAdminApp() {
-  const tabs = [
+// ╔════════════════════════════════════════════════════╗
+// ║  ADMIN APP                                         ║
+// ╚════════════════════════════════════════════════════╝
+function loadAdminApp(){
+  const tabs=[
     {id:"today",label:"📋 Today"},
     {id:"weekly",label:"📅 Weekly"},
     {id:"monthly",label:"🗓 Monthly"},
     {id:"feedback",label:"💬 Feedback"},
-    ...(currentUser.role==="admin"?[{id:"team",label:"👥 Team Mgmt"}]:[])
+    ...(currentUser.role==="admin"?[{id:"team",label:"👥 Team Mgmt"},{id:"settings",label:"⚙️ Settings"}]:[])
   ];
-  setTabs(tabs, id => {
-    if(id==="today") renderToday();
-    else if(id==="weekly") renderSummary("weekly");
-    else if(id==="monthly") renderSummary("monthly");
-    else if(id==="feedback") renderFeedback();
-    else if(id==="team") renderTeam();
+  setTabs(tabs,id=>{
+    if(id==="today")renderToday();
+    else if(id==="weekly")renderSummary("weekly");
+    else if(id==="monthly")renderSummary("monthly");
+    else if(id==="feedback")renderAdminFeedback();
+    else if(id==="team")renderTeam();
+    else if(id==="settings")renderSettings();
   });
-  selectTab("today");
+  selTab("today");
 }
 
-// ── TODAY ─────────────────────────────────────────────
-async function renderToday() {
-  let date = today();
-  let ctx = "";
-  async function load() {
-    const users = await S.get("rcm:users")||[];
-    const members = users.filter(u=>u.role==="employee"&&u.active!==false);
-    const dayData = await S.get(`rcm:day:${date}`)||{};
-    const agents = Object.values(dayData).filter(a=>a&&a.name);
-    const subs = members.filter(u=>dayData[u.empId]);
-    const pending = members.filter(u=>!dayData[u.empId]);
-    const allDone = pending.length===0&&members.length>0;
-    const activeA = agents.filter(a=>!a.onLeave&&a.prodPct);
-    const qualA = agents.filter(a=>a.qualScore);
-    const avgProd = avg(activeA.map(a=>parseFloat(a.prodPct)));
-    const avgQual = avg(qualA.map(a=>parseFloat(a.qualScore)));
-    const chartData = agents.filter(a=>a.prodPct).map(a=>({name:a.name.split(" ")[0],prod:parseFloat(a.prodPct)||0}));
+// ── SETTINGS ──────────────────────────────────────────
+async function renderSettings(){
+  const settings=await S.get("rcm:settings")||{};
+  setPage(`
+    <div class="card" style="max-width:600px">
+      <div class="section-title">⚙️ Settings</div>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px;margin-bottom:20px;font-size:13px;color:#92400e">
+        <strong>📧 To enable AI email generation:</strong><br/>
+        1. Go to <a href="https://console.anthropic.com" target="_blank" style="color:#2563eb">console.anthropic.com</a><br/>
+        2. Sign up → API Keys → Create Key → Copy it<br/>
+        3. Paste it below and click Save
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">ANTHROPIC API KEY</div>
+        <input class="inp" id="api-key-input" type="password" value="${esc(settings.anthropicKey||"")}" placeholder="sk-ant-api03-..."/>
+      </div>
+      <div id="settings-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
+      <button class="btn" onclick="saveSettings()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;padding:11px 28px">💾 Save Settings</button>
+    </div>
+  `);
+  window.saveSettings=async()=>{
+    const key=document.getElementById("api-key-input").value.trim();
+    const msg=document.getElementById("settings-msg");
+    if(!key){msg.textContent="⚠ Paste your Anthropic API key.";msg.style.color="#ef4444";msg.style.display="block";return;}
+    const settings=await S.get("rcm:settings")||{};
+    await S.set("rcm:settings",{...settings,anthropicKey:key});
+    msg.textContent="✅ Settings saved! Email generation is now enabled.";msg.style.color="#10b981";msg.style.display="block";
+  };
+}
+
+// ── TODAY ──────────────────────────────────────────────
+async function renderToday(){
+  let date=today(),ctx="";
+  async function load(){
+    const users=await S.get("rcm:users")||[];
+    const members=users.filter(u=>u.role==="employee"&&u.active!==false);
+    const dayData=await S.get(`rcm:day:${date}`)||{};
+    const agents=Object.values(dayData).filter(a=>a&&a.name);
+    const subs=members.filter(u=>dayData[u.empId]);
+    const pending=members.filter(u=>!dayData[u.empId]);
+    const allDone=pending.length===0&&members.length>0;
+    const activeA=agents.filter(a=>!a.onLeave&&a.prodPct);
+    const qualA=agents.filter(a=>a.qualScore);
+    const avgProd=avg(activeA.map(a=>parseFloat(a.prodPct)));
+    const avgQual=avg(qualA.map(a=>parseFloat(a.qualScore)));
+    const chartData=agents.filter(a=>a.prodPct).map(a=>({name:a.name.split(" ")[0],prod:parseFloat(a.prodPct)||0}));
 
     setPage(`
-      <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;flex-wrap:wrap">
+      <div class="flex-row" style="margin-bottom:20px">
         <div class="card" style="padding:10px 14px;display:flex;align-items:center;gap:10px">
           <span style="font-size:11px;font-weight:700;color:#64748b">DATE</span>
-          <input type="date" id="today-date" value="${date}" onchange="changeTodayDate(this.value)" style="border:none;background:transparent;font-weight:700;color:#0a1628;font-size:14px;cursor:pointer"/>
+          <input type="date" id="today-date" value="${date}" onchange="window._tdChange(this.value)" style="border:none;background:transparent;font-weight:700;color:#0a1628;font-size:14px;cursor:pointer"/>
+          <button class="btn" onclick="load()" style="background:#eef2ff;color:#4f46e5;padding:5px 12px;font-size:11px">↺</button>
         </div>
         <input class="inp" id="today-ctx" placeholder="Team-wide context (DDE downtime, VDI issues…)" value="${esc(ctx)}" style="max-width:320px"/>
-        <button class="btn" style="background:#f0fdf4;color:#10b981" onclick="exportToday('${date}')">📥 Export CSV</button>
+        <button class="btn" onclick="window._exportDay()" style="background:#f0fdf4;color:#10b981">📥 Export CSV</button>
       </div>
       <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-        ${statHTML("Team Size", members.length, "#4f46e5", "", "👥")}
-        ${statHTML("Submitted", `${subs.length}/${members.length}`, allDone?"#10b981":"#f97316", allDone?"All done! ✅":"", "✅")}
-        ${statHTML("Pending", pending.length, pending.length>0?"#ef4444":"#10b981", "", "⏳")}
-        ${statHTML("Avg Prod", avgProd?avgProd+"%":"—", pCol(avgProd), "", "📊")}
-        ${statHTML("Avg Quality", avgQual?avgQual+"%":"—", "#7c3aed", "", "⭐")}
+        ${stat("Team Size",members.length,"#4f46e5","","👥")}
+        ${stat("Submitted",`${subs.length}/${members.length}`,allDone?"#10b981":"#f97316",allDone?"All done! ✅":"","✅")}
+        ${stat("Pending",pending.length,pending.length>0?"#ef4444":"#10b981","","⏳")}
+        ${stat("Avg Prod",avgProd?avgProd+"%":"—",pCol(avgProd),"","📊")}
+        ${stat("Avg Quality",avgQual?avgQual+"%":"—","#7c3aed","","⭐")}
       </div>
-      ${chartData.length>0?`<div class="card" style="margin-bottom:18px"><div class="section-title">📊 Team Productivity — ${fmtD(date)}</div>${barChartHTML(chartData)}</div>`:""}
+      ${chartData.length?`<div class="card" style="margin-bottom:18px"><div class="section-title">📊 Team Productivity — ${fmtD(date)}</div>${barChart(chartData)}</div>`:""}
       <div class="card" style="padding:0;overflow:hidden;margin-bottom:18px">
         <div style="background:#0a1628;padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
           <span style="color:white;font-weight:800;font-size:14px">📋 Submission Tracker — ${fmtD(date)}</span>
-          ${pillHTML(`${subs.length}/${members.length} Submitted`, allDone?"#10b981":"#f59e0b")}
+          ${pill(`${subs.length}/${members.length} Submitted`,allDone?"#10b981":"#f59e0b")}
         </div>
-        <div style="overflow-x:auto">
-          <table>
-            <thead><tr style="background:#f8fafc"><th>Employee</th><th>Process</th><th>Status</th><th>Total</th><th>Target</th><th>Prod %</th><th>Quality</th><th>DT(h)</th><th>Leave</th><th>Reason</th><th>Time</th></tr></thead>
-            <tbody>
-              ${members.map((u,i)=>{
-                const d=dayData[u.empId];const pc=d?pCol(d.prodPct):"#64748b";
-                return `<tr style="background:${i%2===0?"white":"#fafbff"}">
-                  <td><div style="font-weight:700;color:#0a1628">${esc(u.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(u.empId)}</div></td>
-                  <td style="color:#64748b;font-size:12px">${esc(u.process)}</td>
-                  <td>${d?pillHTML("✅ Done","#10b981"):pillHTML("⏳ Pending","#f97316")}</td>
-                  <td style="font-weight:600">${d?.total||"—"}</td>
-                  <td style="color:#64748b">${d?.target||"—"}</td>
-                  <td style="font-weight:900;color:${pc};font-size:15px">${d?.prodPct?d.prodPct+"%":"—"}</td>
-                  <td style="font-weight:700;color:${d?.qualScore?pCol(d.qualScore):"#64748b"}">${d?.qualScore?d.qualScore+"%":"—"}</td>
-                  <td style="color:#64748b">${d?.downtime||"—"}</td>
-                  <td>${d?.onLeave?pillHTML("Leave","#f97316"):"—"}</td>
-                  <td style="color:#64748b;font-size:11px;max-width:160px">${d?.reason?esc(d.reason.slice(0,40)+(d.reason.length>40?"…":"")):"—"}</td>
-                  <td style="color:#64748b;font-size:11px;white-space:nowrap">${d?.submittedAt?new Date(d.submittedAt).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):"—"}</td>
-                </tr>`;
-              }).join("")}
-            </tbody>
-          </table>
-        </div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr style="background:#f8fafc"><th>Employee</th><th>Process</th><th>Status</th><th>Total</th><th>Target</th><th>Prod %</th><th>Quality</th><th>DT(h)</th><th>Leave</th><th>Reason</th><th>Time</th></tr></thead>
+          <tbody>
+            ${members.map((u,i)=>{const d=dayData[u.empId];const pc=d?pCol(d.prodPct):"#64748b";return`<tr style="background:${i%2===0?"white":"#fafbff"}">
+              <td><div style="font-weight:700;color:#0a1628;cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="showEmpDetail('${esc(u.empId)}')">${esc(u.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(u.empId)}</div></td>
+              <td style="color:#64748b;font-size:12px">${esc(u.process)}</td>
+              <td>${d?pill("✅ Done","#10b981"):pill("⏳ Pending","#f97316")}</td>
+              <td style="font-weight:600">${d?.total||"—"}</td>
+              <td style="color:#64748b">${d?.target||"—"}</td>
+              <td style="font-weight:900;color:${pc};font-size:15px">${d?.prodPct?d.prodPct+"%":"—"}</td>
+              <td style="font-weight:700;color:${d?.qualScore?pCol(d.qualScore):"#64748b"}">${d?.qualScore?d.qualScore+"%":"—"}</td>
+              <td style="color:#64748b">${d?.downtime||"—"}</td>
+              <td>${d?.onLeave?pill("Leave","#f97316"):"—"}</td>
+              <td style="color:#64748b;font-size:11px;max-width:140px">${d?.reason?esc(d.reason.slice(0,38)+(d.reason.length>38?"…":"")):"—"}</td>
+              <td style="color:#64748b;font-size:11px;white-space:nowrap">${d?.submittedAt?new Date(d.submittedAt).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):"—"}</td>
+            </tr>`;}).join("")}
+          </tbody>
+        </table></div>
       </div>
-      <button class="btn btn-amber" onclick="genDailyEmail('${date}')" style="width:100%;padding:14px;font-size:15px;border-radius:12px;margin-bottom:16px">
-        ${allDone?"✨ All Submitted — Generate Professional Email":"✨ Generate Email (Partial Data)"}
+      <button class="btn" id="gen-email-btn" onclick="window._genEmail()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:14px;font-size:15px;border-radius:12px;margin-bottom:16px">
+        ${allDone?"✨ Generate Professional Email":"✨ Generate Email (Partial Data)"}
       </button>
       <div id="email-output"></div>
     `);
-  }
-  window.changeTodayDate = async v => { date=v; await load(); };
-  window.exportToday = async d => {
-    const dd = await S.get(`rcm:day:${d}`)||{};
-    const rows = Object.values(dd).filter(a=>a&&a.name).map(a=>[a.empId,a.name,a.process,d,a.total||"",a.target||"",a.prodPct||"",a.qualScore||"",a.downtime||"",a.onLeave?"Yes":"No",a.reason||"",a.notes||""]);
-    dlCSV(["EmpID","Name","Process","Date","Total","Target","Prod%","Quality%","Downtime","OnLeave","Reason","ActionPlan"],rows,`RCM_Daily_${d}.csv`);
-  };
-  window.genDailyEmail = async d => {
-    const dd = await S.get(`rcm:day:${d}`)||{};
-    const agents = Object.values(dd).filter(a=>a&&a.name);
-    if(!agents.length){alert("No data to generate email.");return;}
-    const ctx = document.getElementById("today-ctx")?.value||"";
-    document.getElementById("email-output").innerHTML = `<div class="card" style="text-align:center;padding:30px;color:#64748b">⏳ AI is writing your email…</div>`;
-    const text = agents.map(a=>`• ${a.name}(${a.empId})|${a.process}${a.onLeave?" LEAVE":""} Total:${a.total||"N/A"} Target:${a.target||"N/A"} Prod:${a.prodPct?a.prodPct+"%":"N/A"}${a.downtime?` DT:${a.downtime}h`:""}${a.qualScore?` Qual:${a.qualScore}%`:""}${a.reason?` REASON:${a.reason}`:""}${a.notes?` ACTION:${a.notes}`:""}`).join("\n");
-    const qualA=agents.filter(a=>a.qualScore); const avgQ=qualA.length?avg(qualA.map(a=>parseFloat(a.qualScore))):null;
-    const prompt=`You are Home Health RCM Team Lead at 3Gen Consulting. Write professional daily productivity summary email to manager Ketan Sir for ${fmtD(d)}.
+
+    window._tdChange=v=>{date=v;load();};
+    window._exportDay=async()=>{const dd=await S.get(`rcm:day:${date}`)||{};const rows=Object.values(dd).filter(a=>a&&a.name).map(a=>[a.empId,a.name,a.process,date,a.total||"",a.target||"",a.prodPct||"",a.qualScore||"",a.downtime||"",a.onLeave?"Yes":"No",a.reason||"",a.notes||""]);dlCSV(["EmpID","Name","Process","Date","Total","Target","Prod%","Quality%","Downtime","OnLeave","Reason","ActionPlan"],rows,`RCM_Daily_${date}.csv`);};
+    window._genEmail=async()=>{
+      const dd=await S.get(`rcm:day:${date}`)||{};
+      const agents=Object.values(dd).filter(a=>a&&a.name);
+      if(!agents.length){alert("No data to generate email.");return;}
+      const ctx=document.getElementById("today-ctx")?.value||"";
+      document.getElementById("email-output").innerHTML=`<div class="card" style="text-align:center;padding:30px;color:#64748b">⏳ AI is writing your email…</div>`;
+      const text=agents.map(a=>`• ${a.name}(${a.empId})|${a.process}${a.onLeave?" LEAVE":""} Total:${a.total||"N/A"} Target:${a.target||"N/A"} Prod:${a.prodPct?a.prodPct+"%":"N/A"}${a.downtime?` DT:${a.downtime}h`:""}${a.qualScore?` Qual:${a.qualScore}%`:""}${a.reason?` REASON:${a.reason}`:""}${a.notes?` ACTION:${a.notes}`:""}`).join("\n");
+      const qualA=agents.filter(a=>a.qualScore);const avgQ=qualA.length?avg(qualA.map(a=>parseFloat(a.qualScore))):null;
+      const prompt=`You are Home Health RCM Team Lead at 3Gen Consulting. Write professional daily productivity summary email to manager Ketan Sir for ${fmtD(date)}.
 TEAM DATA:\n${text}\n${ctx?`CONTEXT: ${ctx}`:""}${avgQ?`\nTEAM AVG QUALITY: ${avgQ}%`:""}
-Write (plain text, ═══ section dividers, ○ bullets, NO markdown):
+Write (plain text, ═══ dividers, ○ bullets):
 Hi Ketan Sir,
 [intro: date, agents, processes]
 [Per PROCESS:]
-══════════════════════════
-[PROCESS] — ${fmtD(d)}
-══════════════════════════
+══════════════════════════════
+[PROCESS] — ${fmtD(date)}
+══════════════════════════════
 🏆 Top Performer:
-• [Name] — [prod%]
+• [Name] — [prod%] Productivity
   Key Highlights: ○ [BBHT/EOBs/NOA/AR] ○ [second point]
   Team Impact: ○ [line]
 ⚠ Needs Attention:
 • [lowest Name] — [prod%] (Target:[target])
-  Root Cause: ○ [VDI/DDE/TAT/reason]
+  Root Cause: ○ [VDI/DDE/TAT/reason if given]
   Action Plan: ○ [specific plan]
-${avgQ?`📊 Quality: Team Average ${avgQ}%`:""}
+${avgQ?`\n📊 Quality Scorecard — Team Average: ${avgQ}%`:""}
 Please let me know if you need any additional details.
 Regards, ${currentUser.name}
 Home Health RCM Team Lead | 3Gen Consulting`;
-    try {
-      const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
-      const data=await r.json(); const emailText=data.content?.map(b=>b.text||"").join("")||"Failed.";
-      document.getElementById("email-output").innerHTML=`
-        <div class="card" style="padding:0;overflow:hidden">
-          <div style="background:#0a1628;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-            <div style="color:rgba(255,255,255,0.6);font-size:12px">Subject: Team Productivity Summary – ${fmtD(d)}</div>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-amber" onclick="copyEmail()" style="padding:6px 16px;font-size:12px">📋 Copy Email</button>
-              <button class="btn" onclick="openOutlook('${esc(fmtD(d))}')" style="background:rgba(99,102,241,0.2);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3);padding:6px 16px;font-size:12px">📧 Outlook</button>
+      try{
+        const emailText=await callAI(prompt);
+        window._emailText=emailText;
+        document.getElementById("email-output").innerHTML=`
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="background:#0a1628;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+              <div style="color:rgba(255,255,255,0.6);font-size:12px">Subject: Team Productivity Summary – ${fmtD(date)}</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn" onclick="navigator.clipboard.writeText(window._emailText);this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy',2000)" style="background:#f59e0b;color:#0a1628;padding:6px 16px;font-size:12px">📋 Copy Email</button>
+                <button class="btn" onclick="window.location.href='mailto:?subject='+encodeURIComponent('Team Productivity Summary – ${fmtD(date)}')+'&body='+encodeURIComponent(window._emailText)" style="background:rgba(99,102,241,0.2);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3);padding:6px 16px;font-size:12px">📧 Outlook</button>
+              </div>
             </div>
-          </div>
-          <div id="email-body" style="padding:24px 28px;white-space:pre-wrap;font-size:14px;line-height:1.9;color:#1e293b;font-family:Calibri,Segoe UI,sans-serif">${esc(emailText)}</div>
-        </div>`;
-      window._emailText = emailText;
-    } catch { document.getElementById("email-output").innerHTML=`<div class="err">Failed to generate. Please try again.</div>`; }
-  };
-  window.copyEmail = () => { navigator.clipboard.writeText(window._emailText||""); alert("Email copied! Paste it into Outlook."); };
-  window.openOutlook = subj => { window.location.href=`mailto:?subject=${encodeURIComponent("Team Productivity Summary – "+subj)}&body=${encodeURIComponent(window._emailText||"")}`; };
+            <div style="padding:24px 28px;white-space:pre-wrap;font-size:14px;line-height:1.9;color:#1e293b;font-family:Calibri,Segoe UI,sans-serif">${esc(emailText)}</div>
+          </div>`;
+      }catch(e){
+        const isNoKey=e.message==="NO_KEY";
+        document.getElementById("email-output").innerHTML=`<div class="err">${isNoKey?"⚠ No Anthropic API key found. Go to ⚙️ Settings tab and add your key first.":"❌ Failed to generate email. Check your API key in Settings."}</div>`;
+      }
+    };
+  }
   load();
 }
 
-// ── SUMMARY (Weekly/Monthly) ──────────────────────────
-async function renderSummary(type) {
-  let year=new Date().getFullYear(), month=new Date().getMonth()+1, wStart=getMon(today()), selUser="ALL";
+// ── EMPLOYEE DETAIL MODAL ──────────────────────────────
+async function showEmpDetail(empId){
+  const users=await S.get("rcm:users")||[];
+  const u=users.find(x=>x.empId===empId);
+  if(!u)return;
 
-  async function load() {
-    const dates = type==="weekly"?wDays(wStart):mDays(year,month);
+  // Load last 30 days of data
+  const dates=[];let c=today();
+  for(let i=0;i<30;i++){dates.unshift(c);c=addDays(c,-1);}
+  const recs=await Promise.all(dates.map(d=>S.get(`rcm:day:${d}`)));
+  const myData=dates.map((d,i)=>{const s=recs[i]?.[empId];return s?{date:d,...s}:null;}).filter(Boolean);
+
+  const prods=myData.filter(d=>!d.onLeave&&d.prodPct).map(d=>parseFloat(d.prodPct));
+  const quals=myData.filter(d=>d.qualScore).map(d=>parseFloat(d.qualScore));
+  const totals=myData.filter(d=>d.total).map(d=>parseInt(d.total)||0);
+  const avgProd=avg(prods),avgQual=avg(quals);
+  const totalClaims=totals.reduce((s,v)=>s+v,0);
+  const above100=prods.filter(p=>p>=100).length,below75=prods.filter(p=>p<75).length;
+  const chartData=myData.filter(d=>d.prodPct).slice(-14).map(d=>({name:fmtSh(d.date),prod:parseFloat(d.prodPct)||0}));
+  const rc=u.role==="admin"?"#ef4444":u.role==="manager"?"#2563eb":"#4f46e5";
+
+  document.getElementById("emp-modal-title").textContent=u.name;
+  document.getElementById("emp-modal-content").innerHTML=`
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #e2e8f0">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,${rc},${rc}88);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:white;flex-shrink:0;overflow:hidden">
+        ${u.picture?`<img src="${esc(u.picture)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:u.name.charAt(0).toUpperCase()}
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#0a1628">${esc(u.name)}</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px">${esc(u.empId)} · ${esc(u.process)}</div>
+        <div style="margin-top:6px">${pill(u.role==="admin"?"👑 Admin":u.role==="manager"?"🔷 Manager":"👤 Employee",rc)} ${pill(u.active!==false?"🟢 Active":"🔴 Disabled",u.active!==false?"#10b981":"#ef4444")}</div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">LAST 30 DAYS PERFORMANCE</div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      ${stat("Avg Productivity",avgProd?avgProd+"%":"—",pCol(avgProd),"","📊")}
+      ${stat("Days ≥100%",above100,"#10b981","","🏆")}
+      ${stat("Days <75%",below75,below75>0?"#ef4444":"#64748b","","⚠")}
+      ${stat("Total Claims",totalClaims,"#2563eb","","📁")}
+      ${stat("Avg Quality",avgQual?avgQual+"%":"—","#7c3aed","","⭐")}
+    </div>
+    ${chartData.length?`<div style="margin-bottom:16px"><div style="font-size:12px;font-weight:700;color:#0a1628;margin-bottom:8px">📈 Last 14 Days Productivity</div>${barChart(chartData,120)}</div>`:""}
+    <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">RECENT SUBMISSIONS (Last 7)</div>
+    <div style="overflow-x:auto"><table style="font-size:12px">
+      <thead><tr style="background:#f8fafc"><th>Date</th><th>Total</th><th>Target</th><th>Prod%</th><th>Quality%</th><th>DT</th><th>Reason</th></tr></thead>
+      <tbody>
+        ${myData.slice(-7).reverse().map(d=>`<tr>
+          <td style="font-weight:600;color:#0a1628;white-space:nowrap">${fmtD(d.date)}</td>
+          <td>${d.total||"—"}</td><td>${d.target||"—"}</td>
+          <td style="font-weight:800;color:${pCol(d.prodPct)}">${d.prodPct?d.prodPct+"%":"—"}</td>
+          <td style="font-weight:700;color:${d.qualScore?pCol(d.qualScore):"#64748b"}">${d.qualScore?d.qualScore+"%":"—"}</td>
+          <td>${d.downtime?d.downtime+"h":"—"}</td>
+          <td style="color:#64748b;max-width:150px">${d.reason?esc(d.reason.slice(0,40)):"—"}</td>
+        </tr>`).join("")}
+      </tbody>
+    </table></div>
+    ${myData.length===0?`<div style="text-align:center;padding:30px;color:#64748b;font-size:13px">No submissions found in the last 30 days</div>`:""}
+  `;
+  openModal("emp-modal");
+}
+
+// ── SUMMARY ────────────────────────────────────────────
+async function renderSummary(type){
+  let year=new Date().getFullYear(),month=new Date().getMonth()+1,wStart=getMon(today()),selUser="ALL";
+  async function load(){
+    const dates=type==="weekly"?wDays(wStart):mDays(year,month);
     const recs=(await Promise.all(dates.map(d=>S.get(`rcm:day:${d}`).then(r=>r?{date:d,...r}:null)))).filter(Boolean);
     const map={};
-    for(const rec of recs){ for(const[k,sub] of Object.entries(rec)){ if(k==="date"||!sub?.name)continue; const id=sub.empId||sub.name; if(!map[id])map[id]={name:sub.name,empId:sub.empId,process:sub.process,prods:[],quals:[],totals:[]}; if(!sub.onLeave&&sub.prodPct)map[id].prods.push(parseFloat(sub.prodPct)); if(sub.qualScore)map[id].quals.push(parseFloat(sub.qualScore)); if(sub.total)map[id].totals.push(parseInt(sub.total)||0); } }
+    for(const rec of recs){for(const[k,sub] of Object.entries(rec)){if(k==="date"||!sub?.name)continue;const id=sub.empId||sub.name;if(!map[id])map[id]={name:sub.name,empId:sub.empId,process:sub.process,prods:[],quals:[],totals:[]};if(!sub.onLeave&&sub.prodPct)map[id].prods.push(parseFloat(sub.prodPct));if(sub.qualScore)map[id].quals.push(parseFloat(sub.qualScore));if(sub.total)map[id].totals.push(parseInt(sub.total)||0);}}
     let agStats=Object.values(map).map(a=>({...a,avgProd:avg(a.prods)||0,avgQual:avg(a.quals)||0,totalClaims:a.totals.reduce((s,v)=>s+v,0),daysWorked:a.prods.length,above100:a.prods.filter(p=>p>=100).length,below75:a.prods.filter(p=>p<75).length})).sort((a,b)=>b.avgProd-a.avgProd);
     const fStats=selUser==="ALL"?agStats:agStats.filter(a=>a.empId===selUser||a.name===selUser);
-    const teamAvgProd=avg(fStats.map(a=>a.avgProd)), teamAvgQual=avg(fStats.filter(a=>a.avgQual>0).map(a=>a.avgQual)), totalClaims=fStats.reduce((s,a)=>s+a.totalClaims,0);
+    const teamAvgProd=avg(fStats.map(a=>a.avgProd)),teamAvgQual=avg(fStats.filter(a=>a.avgQual>0).map(a=>a.avgQual)),totalClaims=fStats.reduce((s,a)=>s+a.totalClaims,0);
     const periodLabel=type==="weekly"?`${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}`:`${MONTHS[month-1]} ${year}`;
     const chartData=fStats.map(a=>({name:a.name.split(" ")[0],prod:a.avgProd}));
-    const agentOptions=agStats.map(a=>`<option value="${esc(a.empId||a.name)}"${selUser===a.empId?"selected":""}>${esc(a.name)} (${esc(a.empId)})</option>`).join("");
+    const agOpts=agStats.map(a=>`<option value="${esc(a.empId||a.name)}"${selUser===a.empId?"selected":""}>${esc(a.name)} (${esc(a.empId)})</option>`).join("");
 
     setPage(`
       <div class="card flex-row" style="margin-bottom:18px">
         ${type==="weekly"?`
-          <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="wkPrev()">←</button>
+          <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wkPrev()">←</button>
           <span style="font-weight:700;color:#0a1628;font-size:13px;min-width:230px;text-align:center">${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}</span>
-          <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="wkNext()">→</button>
+          <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wkNext()">→</button>
         `:`
-          <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="moPrev()">←</button>
+          <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._moPrev()">←</button>
           <span style="font-weight:700;color:#0a1628;font-size:14px;min-width:130px;text-align:center">${MONTHS[month-1]} ${year}</span>
-          <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="moNext()">→</button>
+          <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._moNext()">→</button>
         `}
         <span style="font-size:11px;font-weight:700;color:#64748b">🔍 Agent:</span>
-        <select class="inp" style="width:auto;min-width:180px" onchange="selAgent(this.value)"><option value="ALL">All Agents</option>${agentOptions}</select>
-        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="reloadSummary()">↺ Refresh</button>
-        <button class="btn" style="background:#f0fdf4;color:#10b981" onclick="exportSummary()">📥 Export CSV</button>
+        <select class="inp" style="width:auto;min-width:180px" onchange="window._selAgent(this.value)"><option value="ALL">All Agents</option>${agOpts}</select>
+        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="load()">↺</button>
+        <button class="btn" style="background:#f0fdf4;color:#10b981" onclick="window._exportSum()">📥 Export CSV</button>
       </div>
       ${recs.length===0?`<div class="card" style="text-align:center;padding:60px;color:#64748b"><div style="font-size:44px;margin-bottom:14px">📭</div><div style="font-size:16px;font-weight:700;color:#0a1628">No data for this ${type==="weekly"?"week":"month"}</div></div>`:`
       <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-        ${statHTML("Days with Data",`${recs.length}/${dates.length}`,recs.length===dates.length?"#10b981":"#f97316","","📅")}
-        ${statHTML("Agents",fStats.length,"#4f46e5","","👥")}
-        ${statHTML("Avg Productivity",teamAvgProd?teamAvgProd+"%":"—",pCol(teamAvgProd),"","📊")}
-        ${statHTML("Avg Quality",teamAvgQual?teamAvgQual+"%":"—","#7c3aed","","⭐")}
-        ${statHTML("Total Claims",totalClaims,"#2563eb","","📁")}
+        ${stat("Days with Data",`${recs.length}/${dates.length}`,recs.length===dates.length?"#10b981":"#f97316","","📅")}
+        ${stat("Agents",fStats.length,"#4f46e5","","👥")}
+        ${stat("Avg Prod",teamAvgProd?teamAvgProd+"%":"—",pCol(teamAvgProd),"","📊")}
+        ${stat("Avg Quality",teamAvgQual?teamAvgQual+"%":"—","#7c3aed","","⭐")}
+        ${stat("Total Claims",totalClaims,"#2563eb","","📁")}
       </div>
-      ${chartData.length?`<div class="card" style="margin-bottom:18px"><div class="section-title">📊 Agent Average Productivity — ${periodLabel}</div>${barChartHTML(chartData)}</div>`:""}
+      ${chartData.length?`<div class="card" style="margin-bottom:18px"><div class="section-title">📊 Agent Average Productivity — ${periodLabel}</div>${barChart(chartData)}</div>`:""}
       <div class="card" style="padding:0;overflow:hidden;margin-bottom:18px">
         <div style="background:#0a1628;padding:12px 18px"><span style="color:white;font-weight:800;font-size:14px">👥 Performance Summary — ${periodLabel}</span></div>
         <div style="overflow-x:auto"><table>
@@ -520,204 +596,201 @@ async function renderSummary(type) {
           <tbody>
             ${fStats.map((a,i)=>`<tr style="background:${i===0?"#fffbeb":i%2===0?"white":"#fafbff"}">
               <td style="font-weight:800;color:${i===0?"#f59e0b":"#64748b"};font-size:${i===0?16:13}px">${i===0?"🏆":"#"+(i+1)}</td>
-              <td><div style="font-weight:700;color:#0a1628">${esc(a.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(a.empId)}</div></td>
+              <td><div style="font-weight:700;color:#0a1628;cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="showEmpDetail('${esc(a.empId)}')">${esc(a.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(a.empId)}</div></td>
               <td style="color:#64748b;font-size:11px">${esc(a.process)}</td>
               <td style="text-align:center;font-weight:600">${a.daysWorked}</td>
               <td style="font-weight:900;color:${pCol(a.avgProd)};font-size:16px">${a.avgProd}%</td>
-              <td style="text-align:center">${pillHTML(a.above100,"#10b981")}</td>
-              <td style="text-align:center">${pillHTML(a.below75,a.below75>0?"#ef4444":"#64748b")}</td>
+              <td style="text-align:center">${pill(a.above100,"#10b981")}</td>
+              <td style="text-align:center">${pill(a.below75,a.below75>0?"#ef4444":"#64748b")}</td>
               <td style="text-align:center;font-weight:600">${a.totalClaims}</td>
               <td style="font-weight:700;color:${a.avgQual>0?pCol(a.avgQual):"#64748b"}">${a.avgQual>0?a.avgQual+"%":"—"}</td>
             </tr>`).join("")}
           </tbody>
         </table></div>
       </div>
-      <button class="btn btn-amber" onclick="genSummaryEmail()" style="width:100%;padding:14px;font-size:15px;border-radius:12px;margin-bottom:16px">
+      <button class="btn" onclick="window._genSumEmail()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:14px;font-size:15px;border-radius:12px;margin-bottom:16px">
         ✨ Generate ${type==="weekly"?"Weekly":"Monthly"} Summary Email
       </button>
-      <div id="summary-email-output"></div>
+      <div id="sum-email-out"></div>
       `}
     `);
-
-    window._summaryData = {agStats:fStats, periodLabel, type, teamAvgProd, teamAvgQual};
-    window._summaryRecs = recs;
-    window.reloadSummary = load;
-    window.selAgent = v => { selUser=v; load(); };
-    window.wkPrev = () => { wStart=addDays(wStart,-7); load(); };
-    window.wkNext = () => { wStart=addDays(wStart,7); load(); };
-    window.moPrev = () => { if(month===1){month=12;year--;}else month--; load(); };
-    window.moNext = () => { if(month===12){month=1;year++;}else month++; load(); };
-    window.exportSummary = () => {
-      const rows=[];
-      for(const rec of window._summaryRecs) for(const[k,s] of Object.entries(rec)){
-        if(k==="date"||!s?.name)continue;
-        if(selUser!=="ALL"&&s.empId!==selUser&&s.name!==selUser)continue;
-        rows.push([s.empId,s.name,s.process,rec.date,s.total||"",s.target||"",s.prodPct||"",s.qualScore||"",s.downtime||"",s.onLeave?"Yes":"No",s.reason||"",s.notes||""]);
-      }
-      dlCSV(["EmpID","Name","Process","Date","Total","Target","Prod%","Quality%","Downtime","OnLeave","Reason","ActionPlan"],rows,`RCM_${type}_${(window._summaryData?.periodLabel||"").replace(/[^a-z0-9]/gi,"_")}.csv`);
-    };
-    window.genSummaryEmail = async () => {
-      const {agStats,periodLabel,type:t,teamAvgProd:tap,teamAvgQual:taq} = window._summaryData;
+    window._sumData={agStats:fStats,periodLabel,type,teamAvgProd,teamAvgQual};
+    window._sumRecs=recs;
+    window._wkPrev=()=>{wStart=addDays(wStart,-7);load();};
+    window._wkNext=()=>{wStart=addDays(wStart,7);load();};
+    window._moPrev=()=>{if(month===1){month=12;year--;}else month--;load();};
+    window._moNext=()=>{if(month===12){month=1;year++;}else month++;load();};
+    window._selAgent=v=>{selUser=v;load();};
+    window._exportSum=()=>{const rows=[];for(const rec of window._sumRecs)for(const[k,s] of Object.entries(rec)){if(k==="date"||!s?.name)continue;if(selUser!=="ALL"&&s.empId!==selUser&&s.name!==selUser)continue;rows.push([s.empId,s.name,s.process,rec.date,s.total||"",s.target||"",s.prodPct||"",s.qualScore||"",s.downtime||"",s.onLeave?"Yes":"No",s.reason||"",s.notes||""]);}dlCSV(["EmpID","Name","Process","Date","Total","Target","Prod%","Quality%","Downtime","OnLeave","Reason","ActionPlan"],rows,`RCM_${type}.csv`);};
+    window._genSumEmail=async()=>{
+      const{agStats,periodLabel,type:t,teamAvgProd:tap,teamAvgQual:taq}=window._sumData;
       if(!agStats.length){alert("No data.");return;}
-      document.getElementById("summary-email-output").innerHTML=`<div class="card" style="text-align:center;padding:30px;color:#64748b">⏳ Writing ${t} summary…</div>`;
+      document.getElementById("sum-email-out").innerHTML=`<div class="card" style="text-align:center;padding:30px;color:#64748b">⏳ Writing ${t} summary…</div>`;
       const txt=agStats.map(a=>`• ${a.name}(${a.empId})|${a.process}|AvgProd:${a.avgProd}%|Days:${a.daysWorked}|≥100:${a.above100}|<75:${a.below75}|Claims:${a.totalClaims}${a.avgQual?`|AvgQual:${a.avgQual}%`:""}`).join("\n");
       const prompt=`You are Home Health RCM Team Lead at 3Gen Consulting. Write professional ${t} summary for ${periodLabel} to Ketan Sir.
 DATA:\n${txt}\nTeamAvgProd:${tap}%${taq?` TeamAvgQual:${taq}%`:""}
 Format: Hi Ketan Sir, [Intro] | ══ TEAM OVERVIEW ══ | ══ TOP PERFORMERS ══ | ══ NEEDS ATTENTION ══ | ══ SYSTEM IMPACT ══ | ══ PLAN FOR ${t==="weekly"?"NEXT WEEK":"NEXT MONTH"} ══ | Regards, ${currentUser.name} | Home Health RCM Team Lead | 3Gen Consulting
-Plain text. ○ bullets. RCM terms.`;
-      try {
-        const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
-        const data=await r.json(); const emailText=data.content?.map(b=>b.text||"").join("")||"Failed.";
-        window._summaryEmailText=emailText;
-        document.getElementById("summary-email-output").innerHTML=`
+Plain text. ○ bullets. RCM terms: BBHT,TAT,DDE,VDI,NOA,denial EOBs,CCA,OASIS.`;
+      try{
+        const emailText=await callAI(prompt);
+        window._sumEmailText=emailText;
+        document.getElementById("sum-email-out").innerHTML=`
           <div class="card" style="padding:0;overflow:hidden">
             <div style="background:#0a1628;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-              <span style="color:rgba(255,255,255,0.6);font-size:12px">Subject: ${t==="weekly"?"Weekly":"Monthly"} Productivity Summary – ${periodLabel}</span>
-              <button class="btn btn-amber" onclick="navigator.clipboard.writeText(window._summaryEmailText);alert('Copied!')" style="padding:6px 16px;font-size:12px">📋 Copy Email</button>
+              <span style="color:rgba(255,255,255,0.6);font-size:12px">Subject: ${t==="weekly"?"Weekly":"Monthly"} Summary – ${periodLabel}</span>
+              <button class="btn" onclick="navigator.clipboard.writeText(window._sumEmailText);this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy',2000)" style="background:#f59e0b;color:#0a1628;padding:6px 14px;font-size:12px">📋 Copy</button>
             </div>
             <div style="padding:24px 28px;white-space:pre-wrap;font-size:14px;line-height:1.9;color:#1e293b;font-family:Calibri,Segoe UI,sans-serif">${esc(emailText)}</div>
           </div>`;
-      } catch { document.getElementById("summary-email-output").innerHTML=`<div class="err">Failed. Try again.</div>`; }
+      }catch(e){
+        const isNoKey=e.message==="NO_KEY";
+        document.getElementById("sum-email-out").innerHTML=`<div class="err">${isNoKey?"⚠ No Anthropic API key. Go to ⚙️ Settings tab and add your key first.":"❌ Failed. Check your API key in Settings."}</div>`;
+      }
     };
   }
   load();
 }
 
-// ── FEEDBACK CENTER ───────────────────────────────────
-async function renderFeedback() {
-  const users = (await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
-  const allFb = await S.get("rcm:feedback")||{};
-  let selU="", fbDate=today(), fbText="";
-  const unack = Object.values(allFb).flat().filter(f=>!f.acknowledged).length;
+// ── ADMIN FEEDBACK ─────────────────────────────────────
+async function renderAdminFeedback(){
+  const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
+  let selU="",fbDate=today(),fbText="";
 
-  function render(sel) {
-    const curFb=(allFb[sel]||[]).slice().reverse();
-    const fbHTML=!sel?`<div style="color:#64748b;text-align:center;padding:40px;font-size:13px">Select an employee to view feedback</div>`:
-      curFb.length===0?`<div style="color:#64748b;text-align:center;padding:40px;font-size:13px">No feedback sent yet</div>`:
-      curFb.map(f=>`<div style="border:1.5px solid ${f.acknowledged?"#6ee7b7":"#fde68a"};border-radius:10px;padding:14px;margin-bottom:10px;background:${f.acknowledged?"#f0fdf4":"#fffbeb"}">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <span style="font-size:12px;font-weight:700;color:#0a1628">${fmtD(f.date)}</span>
-          ${pillHTML(f.acknowledged?"✅ Acknowledged":"⏳ Awaiting",f.acknowledged?"#10b981":"#f97316")}
-        </div>
-        <div style="font-size:13px;color:#1e293b;line-height:1.6">${esc(f.text)}</div>
-      </div>`).join("");
+  async function load(){
+    const allFb=await S.get("rcm:feedback")||{};
+    const unack=Object.values(allFb).flat().filter(f=>!f.acknowledged).length;
+    const curFb=selU?(allFb[selU]||[]).slice().reverse():[];
 
     setPage(`
       ${unack>0?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:13px;font-weight:600;color:#92400e">⚠ ${unack} feedback message${unack>1?"s":""} awaiting acknowledgement</div>`:""}
       <div class="grid-2">
         <div class="card">
           <div class="section-title">✍️ Send Feedback</div>
-          <div style="margin-bottom:12px">
-            <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">SELECT EMPLOYEE</div>
-            <select class="inp" id="fb-sel" onchange="changeFbSel(this.value)">
+          <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">SELECT EMPLOYEE</div>
+            <select class="inp" id="fb-sel" onchange="window._fbSelChange(this.value)">
               <option value="">-- Choose team member --</option>
               ${users.map(u=>`<option value="${esc(u.empId)}"${selU===u.empId?"selected":""}>${esc(u.name)} (${esc(u.empId)})</option>`).join("")}
-            </select>
-          </div>
-          <div style="margin-bottom:12px">
-            <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">FEEDBACK DATE</div>
-            <input type="date" class="inp" id="fb-date" value="${fbDate}"/>
-          </div>
-          <div style="margin-bottom:16px">
-            <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">MESSAGE</div>
-            <textarea class="inp" id="fb-text" rows="5" placeholder="Write specific, constructive feedback on productivity, quality, or process…" style="resize:vertical">${esc(fbText)}</textarea>
-          </div>
-          <button class="btn btn-amber" onclick="sendFeedback()" style="width:100%;padding:11px">📤 Send Feedback</button>
+            </select></div>
+          <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">FEEDBACK DATE</div><input type="date" class="inp" id="fb-date" value="${fbDate}"/></div>
+          <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">MESSAGE</div><textarea class="inp" id="fb-text" rows="5" placeholder="Write specific, constructive feedback…" style="resize:vertical">${esc(fbText)}</textarea></div>
+          <button class="btn" onclick="window._sendFb()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:11px">📤 Send Feedback</button>
           <div id="fb-msg" style="margin-top:8px;font-size:13px;display:none"></div>
         </div>
         <div class="card">
-          <div class="section-title">📨 History ${sel?`— ${users.find(u=>u.empId===sel)?.name||""}`:""}</div>
-          <div style="max-height:420px;overflow-y:auto">${fbHTML}</div>
+          <div class="section-title">📨 History ${selU?`— ${users.find(u=>u.empId===selU)?.name||""}`:""}</div>
+          ${!selU?`<div style="color:#64748b;text-align:center;padding:40px;font-size:13px">Select an employee to view their feedback</div>`:
+          curFb.length===0?`<div style="color:#64748b;text-align:center;padding:40px;font-size:13px">No feedback sent yet</div>`:
+          `<div style="max-height:420px;overflow-y:auto">
+            ${curFb.map(f=>`
+              <div style="border:1.5px solid ${f.acknowledged?"#6ee7b7":"#fde68a"};border-radius:10px;padding:14px;margin-bottom:10px;background:${f.acknowledged?"#f0fdf4":"#fffbeb"}">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <span style="font-size:12px;font-weight:700;color:#0a1628">${fmtD(f.date)}</span>
+                  <div style="display:flex;gap:6px;align-items:center">
+                    ${pill(f.acknowledged?"✅ Acknowledged":"⏳ Awaiting",f.acknowledged?"#10b981":"#f97316")}
+                    <button class="btn" onclick="window._deleteFb(${f.id},'${esc(selU)}')" style="background:#fee2e2;color:#ef4444;padding:3px 9px;font-size:11px;border-radius:6px">🗑</button>
+                  </div>
+                </div>
+                <div style="font-size:13px;color:#1e293b;line-height:1.6">${esc(f.text)}</div>
+              </div>`).join("")}
+          </div>`}
         </div>
       </div>
     `);
-  }
 
-  window.changeFbSel = v => { selU=v; render(v); };
-  window.sendFeedback = async () => {
-    const sel=document.getElementById("fb-sel")?.value;
-    const date=document.getElementById("fb-date")?.value||today();
-    const text=document.getElementById("fb-text")?.value?.trim();
-    const msg=document.getElementById("fb-msg");
-    if(!sel||!text){if(msg){msg.textContent="⚠ Select employee and write a message.";msg.style.display="block";msg.style.color="#ef4444";}return;}
-    const all=await S.get("rcm:feedback")||{};
-    all[sel]=[...(all[sel]||[]),{id:Date.now(),date,text,acknowledged:false,sentAt:new Date().toISOString()}];
-    await S.set("rcm:feedback",all);
-    if(msg){msg.textContent="✅ Feedback sent successfully!";msg.style.display="block";msg.style.color="#10b981";}
-    setTimeout(()=>{if(msg)msg.style.display="none";},2500);
-  };
-  render(selU);
+    window._fbSelChange=v=>{selU=v;load();};
+    window._sendFb=async()=>{
+      const sel=document.getElementById("fb-sel")?.value;
+      const date=document.getElementById("fb-date")?.value||today();
+      const text=document.getElementById("fb-text")?.value?.trim();
+      const msg=document.getElementById("fb-msg");
+      if(!sel||!text){if(msg){msg.textContent="⚠ Select employee and write message.";msg.style.display="block";msg.style.color="#ef4444";}return;}
+      const all=await S.get("rcm:feedback")||{};
+      all[sel]=[...(all[sel]||[]),{id:Date.now(),date,text,acknowledged:false,sentAt:new Date().toISOString()}];
+      await S.set("rcm:feedback",all);
+      fbText="";
+      if(msg){msg.textContent="✅ Feedback sent!";msg.style.display="block";msg.style.color="#10b981";}
+      setTimeout(()=>load(),1200);
+    };
+    window._deleteFb=async(fbId,empId)=>{
+      if(!confirm("Delete this feedback? It will also be removed from the employee's view."))return;
+      const all=await S.get("rcm:feedback")||{};
+      if(all[empId])all[empId]=all[empId].filter(f=>f.id!==fbId);
+      await S.set("rcm:feedback",all);
+      load();
+    };
+  }
+  load();
 }
 
-// ── TEAM MANAGEMENT ───────────────────────────────────
-async function renderTeam() {
-  async function load() {
-    const users = await S.get("rcm:users")||[];
-    const pwReqs = (await S.get("rcm:pwreset")||[]).filter(r=>r.status==="pending");
-    const form={empId:"",name:"",password:"",process:PROCS[0],role:"employee",access:["Daily Entry","View Own Progress"]};
+// ── TEAM MANAGEMENT ────────────────────────────────────
+async function renderTeam(){
+  async function load(){
+    const users=await S.get("rcm:users")||[];
+    const pwReqs=(await S.get("rcm:pwreset")||[]).filter(r=>r.status==="pending");
 
     setPage(`
       ${pwReqs.length>0?`
         <div style="background:#fff7ed;border:2px solid rgba(249,115,22,0.3);border-radius:14px;padding:20px;margin-bottom:20px">
           <div class="section-title">🔔 Password Reset Requests (${pwReqs.length})</div>
-          ${pwReqs.map((r,i)=>`<div style="display:flex;align-items:center;gap:10px;background:white;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #fed7aa;flex-wrap:wrap">
+          ${pwReqs.map((r,i)=>`<div class="flex-row" style="background:white;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #fed7aa">
             <div style="flex:1"><div style="font-weight:800;color:#0a1628">${esc(r.empId)}</div><div style="font-size:11px;color:#64748b">${esc(r.reason||"No reason")} · ${new Date(r.requestedAt).toLocaleString("en-IN")}</div></div>
             <input class="inp" id="pr_${i}" placeholder="Set new password" style="width:180px"/>
-            <button class="btn btn-green" onclick="approvePR(${i},'${esc(r.empId)}','${esc(r.requestedAt)}')" style="padding:8px 14px;font-size:12px">✅ Approve</button>
+            <button class="btn btn-green" onclick="window._approvePR(${i},'${esc(r.empId)}','${esc(r.requestedAt)}')" style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:8px 14px;font-size:12px">✅ Approve</button>
           </div>`).join("")}
         </div>`:""}
+
       <div class="card" style="margin-bottom:20px">
-        <div class="section-title">➕ Create New User Account</div>
+        <div class="section-title">➕ Create New User</div>
         <div class="grid-3" style="margin-bottom:14px">
           <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">EMPLOYEE ID</div><input class="inp" id="nu-empid" placeholder="EMP001"/></div>
           <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">FULL NAME</div><input class="inp" id="nu-name" placeholder="Agent Name"/></div>
           <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">PASSWORD</div><input class="inp" id="nu-pass" placeholder="Set password"/></div>
-          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">PROCESS</div>
-            <select class="inp" id="nu-proc">${PROCS.map(p=>`<option>${esc(p)}</option>`).join("")}<option value="All">All Processes</option></select></div>
-          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">ROLE</div>
-            <select class="inp" id="nu-role" onchange="setRoleDefaults(this.value)"><option value="employee">👤 Employee</option><option value="manager">🔷 Manager</option><option value="admin">👑 Admin</option></select></div>
+          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">PROCESS</div><select class="inp" id="nu-proc">${PROCS.map(p=>`<option>${esc(p)}</option>`).join("")}<option value="All">All</option></select></div>
+          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">ROLE</div><select class="inp" id="nu-role" onchange="setRoleDef(this.value)"><option value="employee">👤 Employee</option><option value="manager">🔷 Manager</option><option value="admin">👑 Admin</option></select></div>
         </div>
-        <div style="margin-bottom:16px">
-          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">ACCESS PERMISSIONS</div>
-          <div id="access-pills" style="display:flex;flex-wrap:wrap;gap:8px">
-            ${ACCESSES.map(opt=>`<label style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:20px;padding:5px 13px;cursor:pointer;font-size:12px;font-weight:600;color:#64748b;transition:all 0.15s">
-              <input type="checkbox" value="${esc(opt)}" class="acc-cb" style="display:none"/> ${esc(opt)}
-            </label>`).join("")}
+        <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">ACCESS</div>
+          <div id="nu-acc" style="display:flex;flex-wrap:wrap;gap:8px">
+            ${ACCESSES.map(opt=>`<label style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:20px;padding:5px 13px;cursor:pointer;font-size:12px;font-weight:600;color:#64748b">
+              <input type="checkbox" value="${esc(opt)}" class="acc-cb" style="display:none"/> ${esc(opt)}</label>`).join("")}
           </div>
         </div>
         <div id="nu-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
-        <button class="btn btn-amber" onclick="createUser()" style="padding:11px 28px;font-size:14px">Create User Account</button>
+        <button class="btn" onclick="window._createUser()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;padding:11px 28px;font-size:14px">Create User</button>
       </div>
+
       <div class="card" style="padding:0;overflow:hidden">
         <div style="padding:14px 20px;background:#0a1628"><span style="color:white;font-weight:800;font-size:14px">👥 All Users (${users.length})</span></div>
         <div style="overflow-x:auto"><table>
-          <thead><tr style="background:#f8fafc"><th>Emp ID</th><th>Name</th><th>Role</th><th>Process</th><th>Status</th><th>Reset Password</th><th>Actions</th></tr></thead>
+          <thead><tr style="background:#f8fafc"><th>Emp ID</th><th>Name</th><th>Role</th><th>Process</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
             ${users.map((u,i)=>`<tr style="background:${i%2===0?"white":"#fafbff"};opacity:${u.active===false?0.5:1}">
               <td style="font-weight:800;color:#0a1628;font-family:monospace">${esc(u.empId)}</td>
-              <td style="font-weight:600">${esc(u.name)}</td>
-              <td>${pillHTML(u.role==="admin"?"👑 Admin":u.role==="manager"?"🔷 Manager":"👤 Employee",u.role==="admin"?"#ef4444":u.role==="manager"?"#2563eb":"#4f46e5")}</td>
+              <td style="font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;color:#0a1628" onclick="showEmpDetail('${esc(u.empId)}')">${esc(u.name)}</td>
+              <td>${pill(u.role==="admin"?"👑 Admin":u.role==="manager"?"🔷 Manager":"👤 Employee",u.role==="admin"?"#ef4444":u.role==="manager"?"#2563eb":"#4f46e5")}</td>
               <td style="color:#64748b;font-size:12px">${esc(u.process)}</td>
-              <td>${pillHTML(u.active!==false?"🟢 Active":"🔴 Disabled",u.active!==false?"#10b981":"#ef4444")}</td>
-              <td><div style="display:flex;gap:6px;align-items:center"><input class="inp" id="rpw_${esc(u.empId)}" placeholder="New password" style="width:140px;font-size:12px;padding:5px 9px"/><button class="btn btn-indigo" onclick="resetPw('${esc(u.empId)}')" style="padding:5px 10px;font-size:11px">💾</button></div></td>
-              <td>${u.empId!==currentUser.empId?`<button class="btn" onclick="toggleUser('${esc(u.empId)}')" style="background:${u.active!==false?"#fee2e2":"#d1fae5"};color:${u.active!==false?"#ef4444":"#10b981"};padding:5px 12px;font-size:11px">${u.active!==false?"Disable":"Enable"}</button>`:""}</td>
+              <td>${pill(u.active!==false?"🟢 Active":"🔴 Disabled",u.active!==false?"#10b981":"#ef4444")}</td>
+              <td>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button class="btn" onclick="openEditUser('${esc(u.empId)}')" style="background:#e0e7ff;color:#4f46e5;padding:5px 10px;font-size:11px">✏️ Edit</button>
+                  ${u.empId!==currentUser.empId?`<button class="btn" onclick="window._toggleUser('${esc(u.empId)}')" style="background:${u.active!==false?"#fee2e2":"#d1fae5"};color:${u.active!==false?"#ef4444":"#10b981"};padding:5px 10px;font-size:11px">${u.active!==false?"Disable":"Enable"}</button>`:""}
+                </div>
+              </td>
             </tr>`).join("")}
           </tbody>
         </table></div>
       </div>
     `);
 
-    window.setRoleDefaults = role => {
-      const def = role==="admin"?ACCESSES:role==="manager"?["View Team Progress","Generate Email","Send Feedback","View Reports","View Own Progress"]:["Daily Entry","View Own Progress"];
-      document.querySelectorAll(".acc-cb").forEach(cb=>{
-        const checked=def.includes(cb.value); cb.checked=checked;
-        const lbl=cb.closest("label"); if(lbl){lbl.style.background=checked?"#e0e7ff":"#f8fafc";lbl.style.borderColor=checked?"#4f46e5":"#e2e8f0";lbl.style.color=checked?"#4f46e5":"#64748b";}
-      });
-    };
+    // Access pill interactions
     document.querySelectorAll(".acc-cb").forEach(cb=>{
       cb.addEventListener("change",function(){const lbl=this.closest("label");if(lbl){lbl.style.background=this.checked?"#e0e7ff":"#f8fafc";lbl.style.borderColor=this.checked?"#4f46e5":"#e2e8f0";lbl.style.color=this.checked?"#4f46e5":"#64748b";}});
     });
-    window.createUser = async () => {
+
+    window.setRoleDef=role=>{
+      const def=role==="admin"?ACCESSES:role==="manager"?["View Team Progress","Generate Email","Send Feedback","View Reports","View Own Progress"]:["Daily Entry","View Own Progress"];
+      document.querySelectorAll(".acc-cb").forEach(cb=>{cb.checked=def.includes(cb.value);const lbl=cb.closest("label");if(lbl){lbl.style.background=cb.checked?"#e0e7ff":"#f8fafc";lbl.style.borderColor=cb.checked?"#4f46e5":"#e2e8f0";lbl.style.color=cb.checked?"#4f46e5":"#64748b";}});
+    };
+    window._createUser=async()=>{
       const empId=document.getElementById("nu-empid")?.value?.trim()?.toUpperCase();
       const name=document.getElementById("nu-name")?.value?.trim();
       const pass=document.getElementById("nu-pass")?.value?.trim();
@@ -729,62 +802,87 @@ async function renderTeam() {
       const users=await S.get("rcm:users")||[];
       if(users.find(u=>u.empId.toLowerCase()===empId.toLowerCase())){if(msg){msg.textContent="⚠ Employee ID already exists.";msg.style.color="#ef4444";msg.style.display="block";}return;}
       await S.set("rcm:users",[...users,{empId,name,password:pass,process,role,access,active:true}]);
-      if(msg){msg.textContent="✅ User created successfully!";msg.style.color="#10b981";msg.style.display="block";}
-      setTimeout(()=>load(),1500);
+      if(msg){msg.textContent="✅ User created!";msg.style.color="#10b981";msg.style.display="block";}
+      setTimeout(()=>load(),1200);
     };
-    window.resetPw = async id => {
-      const el=document.getElementById("rpw_"+id); if(!el?.value?.trim()){alert("Enter a new password first.");return;}
-      const users=await S.get("rcm:users")||[];
-      await S.set("rcm:users",users.map(u=>u.empId===id?{...u,password:el.value.trim()}:u));
-      alert("✅ Password updated!"); el.value="";
-    };
-    window.toggleUser = async id => {
-      const users=await S.get("rcm:users")||[];
-      await S.set("rcm:users",users.map(u=>u.empId===id?{...u,active:!u.active}:u));
-      load();
-    };
-    window.approvePR = async (i,empId,requestedAt) => {
-      const el=document.getElementById("pr_"+i); if(!el?.value?.trim()){alert("Enter a new password.");return;}
+    window._toggleUser=async id=>{const users=await S.get("rcm:users")||[];await S.set("rcm:users",users.map(u=>u.empId===id?{...u,active:!u.active}:u));load();};
+    window._approvePR=async(i,empId,requestedAt)=>{
+      const el=document.getElementById("pr_"+i);if(!el?.value?.trim()){alert("Enter a new password.");return;}
       const users=await S.get("rcm:users")||[];
       await S.set("rcm:users",users.map(u=>u.empId===empId?{...u,password:el.value.trim()}:u));
       const all=await S.get("rcm:pwreset")||[];
       await S.set("rcm:pwreset",all.map(r=>r.empId===empId&&r.requestedAt===requestedAt?{...r,status:"resolved"}:r));
-      alert("✅ Password reset approved!"); load();
+      alert("✅ Password reset approved!");load();
     };
   }
   load();
 }
 
-// ╔══════════════════════════════════════════════════╗
-// ║  EMPLOYEE APP                                    ║
-// ╚══════════════════════════════════════════════════╝
-function loadEmployeeApp() {
-  const tabs=[
-    {id:"entry",label:"📝 My Entry"},
-    {id:"progress",label:"📊 My Progress"},
-    {id:"feedback",label:"💬 Feedback"}
-  ];
-  setTabs(tabs, async id => {
-    // Check unread feedback count
+// ── EDIT USER MODAL ────────────────────────────────────
+async function openEditUser(empId){
+  const users=await S.get("rcm:users")||[];
+  const u=users.find(x=>x.empId===empId);
+  if(!u)return;
+  document.getElementById("edit-orig-id").value=empId;
+  document.getElementById("edit-name").value=u.name||"";
+  document.getElementById("edit-pass").value="";
+  document.getElementById("edit-process").value=u.process||PROCS[0];
+  document.getElementById("edit-role").value=u.role||"employee";
+  const pillsEl=document.getElementById("edit-access-pills");
+  pillsEl.innerHTML=ACCESSES.map(opt=>`<label style="display:flex;align-items:center;gap:6px;background:${(u.access||[]).includes(opt)?"#e0e7ff":"#f8fafc"};border:1.5px solid ${(u.access||[]).includes(opt)?"#4f46e5":"#e2e8f0"};border-radius:20px;padding:5px 13px;cursor:pointer;font-size:12px;font-weight:600;color:${(u.access||[]).includes(opt)?"#4f46e5":"#64748b"}">
+    <input type="checkbox" value="${esc(opt)}" class="edit-acc-cb" ${(u.access||[]).includes(opt)?"checked":""} style="display:none"/> ${esc(opt)}</label>`).join("");
+  document.querySelectorAll(".edit-acc-cb").forEach(cb=>{
+    cb.addEventListener("change",function(){const lbl=this.closest("label");if(lbl){lbl.style.background=this.checked?"#e0e7ff":"#f8fafc";lbl.style.borderColor=this.checked?"#4f46e5":"#e2e8f0";lbl.style.color=this.checked?"#4f46e5":"#64748b";}});
+  });
+  document.getElementById("edit-msg").style.display="none";
+  openModal("edit-modal");
+}
+
+async function saveEditUser(){
+  const origId=document.getElementById("edit-orig-id").value;
+  const name=document.getElementById("edit-name").value.trim();
+  const pass=document.getElementById("edit-pass").value.trim();
+  const process=document.getElementById("edit-process").value;
+  const role=document.getElementById("edit-role").value;
+  const access=[...document.querySelectorAll(".edit-acc-cb:checked")].map(c=>c.value);
+  const msg=document.getElementById("edit-msg");
+  if(!name){msg.textContent="⚠ Name cannot be empty.";msg.style.color="#ef4444";msg.style.display="block";return;}
+  const users=await S.get("rcm:users")||[];
+  const updated=users.map(u=>{
+    if(u.empId!==origId)return u;
+    const nu={...u,name,process,role,access};
+    if(pass)nu.password=pass;
+    return nu;
+  });
+  await S.set("rcm:users",updated);
+  msg.textContent="✅ User updated!";msg.style.color="#10b981";msg.style.display="block";
+  setTimeout(()=>{closeModal("edit-modal");renderTeam();},1200);
+}
+
+// ╔════════════════════════════════════════════════════╗
+// ║  EMPLOYEE APP                                      ║
+// ╚════════════════════════════════════════════════════╝
+function loadEmpApp(){
+  const tabs=[{id:"entry",label:"📝 My Entry"},{id:"progress",label:"📊 My Progress"},{id:"feedback",label:"💬 Feedback"}];
+  setTabs(tabs,async id=>{
     const allFb=await S.get("rcm:feedback")||{};
     const unread=(allFb[currentUser.empId]||[]).filter(f=>!f.acknowledged).length;
     document.querySelectorAll(".tab-btn").forEach(b=>{if(b.dataset.id==="feedback")b.textContent=`💬 Feedback${unread>0?` (${unread})`:""}`});
-    if(id==="entry") renderEntry();
-    else if(id==="progress") renderProgress();
-    else if(id==="feedback") renderEmployeeFeedback();
+    if(id==="entry")renderEntry();
+    else if(id==="progress")renderProgress();
+    else if(id==="feedback")renderEmpFeedback();
   });
-  selectTab("entry");
+  selTab("entry");
 }
 
-// ── EMPLOYEE ENTRY ────────────────────────────────────
-async function renderEntry() {
-  let entryDate = today();
-  async function load() {
+// ── EMPLOYEE ENTRY ─────────────────────────────────────
+async function renderEntry(){
+  let entryDate=today();
+  async function load(){
     const day=await S.get(`rcm:day:${entryDate}`)||{};
     const mine=day[currentUser.empId];
     const yd=(await S.get(`rcm:day:${yesterday()}`)||{})[currentUser.empId];
-    const isLow = mine?.prodPct&&parseFloat(mine.prodPct)<100;
-
+    const isLow=mine?.prodPct&&parseFloat(mine.prodPct)<100;
     setPage(`
       ${yd?`<div class="card" style="margin-bottom:18px;border:1.5px solid rgba(79,70,229,0.2);background:linear-gradient(135deg,#eef2ff,#f8fafc)">
         <div class="section-title">📅 Yesterday's Performance — ${fmtD(yesterday())}</div>
@@ -796,20 +894,18 @@ async function renderEntry() {
               <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;margin-top:2px">${l}</div>
             </div>`).join("")}
         </div>
-        ${parseFloat(yd.prodPct)<100?`<div style="margin-top:12px;background:#fffbeb;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400e;border:1px solid #fde68a">⚠ Yesterday you were ${(100-parseFloat(yd.prodPct)).toFixed(1)}% below target. Action plan: ${esc(yd.notes||"Not specified")}</div>`:""}
+        ${parseFloat(yd.prodPct)<100?`<div style="margin-top:12px;background:#fffbeb;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400e;border:1px solid #fde68a">⚠ Yesterday ${(100-parseFloat(yd.prodPct)).toFixed(1)}% below target. Action plan: ${esc(yd.notes||"Not specified")}</div>`:""}
       </div>`:""}
-
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
           <div><div style="font-size:16px;font-weight:800;color:#0a1628">📝 Submit Today's Production Data</div><div style="font-size:12px;color:#64748b;margin-top:3px">Your Team Lead monitors this in real time · ${esc(currentUser.process)}</div></div>
-          <input type="date" class="inp" id="entry-date" value="${entryDate}" onchange="changeEntryDate(this.value)" style="width:auto;font-weight:700"/>
+          <input type="date" class="inp" id="entry-date" value="${entryDate}" onchange="window._entryDateChange(this.value)" style="width:auto;font-weight:700"/>
         </div>
-        ${mine?`<div class="success"><span style="font-size:20px">✅</span><div><div style="font-weight:700;color:#065f46">Submitted for ${fmtD(entryDate)}</div><div style="font-size:12px;color:#047857">Your TL can see your data. You can update anytime.</div></div></div>`:""}
+        ${mine?`<div class="ok"><span style="font-size:20px">✅</span><div><div style="font-weight:700;color:#065f46">Submitted for ${fmtD(entryDate)}</div><div style="font-size:12px;color:#047857">Your TL can see your data. You can update anytime.</div></div></div>`:""}
         <div class="grid-3" style="margin-bottom:16px">
-          ${[{l:"Total Claims Processed",k:"total",ph:"e.g. 38",t:"number"},{l:"Target",k:"target",ph:"e.g. 50",t:"number"},{l:"Productivity % *",k:"prodPct",ph:"e.g. 97.5",t:"number",col:true},{l:"Downtime (hours)",k:"downtime",ph:"e.g. 4",t:"number"},{l:"Yesterday Quality %",k:"qualScore",ph:"e.g. 96.5",t:"number",col:true}].map(({l,k,ph,t,col})=>`
-            <div>
-              <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">${l}</div>
-              <input type="${t}" class="inp" id="ef-${k}" placeholder="${ph}" value="${esc(mine?.[k]||"")}" ${col?`style="color:${mine?.[k]?pCol(mine[k]):"#1e293b"};font-weight:${mine?.[k]?900:500};font-size:${mine?.[k]?15:13}px"`:""}/>
+          ${[{l:"Total Claims",k:"total",ph:"e.g. 38",t:"number"},{l:"Target",k:"target",ph:"e.g. 50",t:"number"},{l:"Productivity % *",k:"prodPct",ph:"e.g. 97.5",t:"number",col:true},{l:"Downtime (hours)",k:"downtime",ph:"e.g. 4",t:"number"},{l:"Yesterday Quality %",k:"qualScore",ph:"e.g. 96.5",t:"number",col:true}].map(({l,k,ph,t,col})=>`
+            <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">${l}</div>
+            <input type="${t}" class="inp" id="ef-${k}" placeholder="${ph}" value="${esc(mine?.[k]||"")}" ${col&&mine?.[k]?`style="color:${pCol(mine[k])};font-weight:900;font-size:15px"`:""}/>
             </div>`).join("")}
           <div style="display:flex;align-items:center;gap:8px;padding-top:24px">
             <input type="checkbox" id="ef-leave" ${mine?.onLeave?"checked":""} style="width:16px;height:16px;cursor:pointer"/>
@@ -817,36 +913,29 @@ async function renderEntry() {
           </div>
         </div>
         <div class="grid-2" style="margin-bottom:20px">
-          <div>
-            <div style="font-size:10px;font-weight:700;color:${isLow?"#b45309":"#64748b"};letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">${isLow?"⚠ Reason for Low Production":"Reason / Highlights"}</div>
-            <textarea class="inp" id="ef-reason" rows="3" placeholder="${isLow?"Explain: VDI issues, DDE downtime, complex claims, TAT pressure…":"Highlights from today"}" style="resize:vertical;border-color:${isLow?"#fcd34d":"#d1d5db"};background:${isLow?"#fffbeb":"white"}">${esc(mine?.reason||"")}</textarea>
-          </div>
-          <div>
-            <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">ACTION PLAN / RECOVERY</div>
-            <textarea class="inp" id="ef-notes" rows="3" placeholder="e.g. Will cover deficit by EOW, working on CCA project…" style="resize:vertical">${esc(mine?.notes||"")}</textarea>
-          </div>
+          <div><div style="font-size:10px;font-weight:700;color:${isLow?"#b45309":"#64748b"};letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">${isLow?"⚠ Reason for Low Production":"Reason / Highlights"}</div>
+            <textarea class="inp" id="ef-reason" rows="3" placeholder="${isLow?"Explain: VDI issues, DDE downtime, complex claims…":"Highlights from today"}" style="resize:vertical;border-color:${isLow?"#fcd34d":"#d1d5db"};background:${isLow?"#fffbeb":"white"}">${esc(mine?.reason||"")}</textarea></div>
+          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">ACTION PLAN / RECOVERY</div>
+            <textarea class="inp" id="ef-notes" rows="3" placeholder="e.g. Will cover deficit by EOW…" style="resize:vertical">${esc(mine?.notes||"")}</textarea></div>
         </div>
-        <button class="btn btn-amber" onclick="submitEntry('${entryDate}')" style="width:100%;padding:14px;font-size:15px;border-radius:12px">
+        <button class="btn" onclick="window._submitEntry('${entryDate}')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:14px;font-size:15px;border-radius:12px">
           ${mine?"🔄 Update My Submission":"📤 Submit to Team Lead"}
         </button>
       </div>
     `);
-    window.changeEntryDate = v => { entryDate=v; load(); };
-    window.submitEntry = async d => {
-      const prodPct=document.getElementById("ef-prodPct")?.value; // Note: id is ef-prodPct
+    window._entryDateChange=v=>{entryDate=v;load();};
+    window._submitEntry=async d=>{
       const total=document.getElementById("ef-total")?.value;
       const target=document.getElementById("ef-target")?.value||"50";
+      const prodPct=document.getElementById("ef-prodPct")?.value;
       const downtime=document.getElementById("ef-downtime")?.value;
       const qualScore=document.getElementById("ef-qualScore")?.value;
       const reason=document.getElementById("ef-reason")?.value;
       const notes=document.getElementById("ef-notes")?.value;
       const onLeave=document.getElementById("ef-leave")?.checked||false;
-      // Fix: get prodPct properly
-      const prodEl=document.getElementById("ef-prodPct");
-      const actualProd=prodEl?.value;
-      if(!actualProd&&!onLeave){alert("Please enter Prod% before submitting.");return;}
+      if(!prodPct&&!onLeave){alert("Please enter Prod% before submitting.");return;}
       const day=await S.get(`rcm:day:${d}`)||{};
-      day[currentUser.empId]={total,target,prodPct:actualProd,downtime,qualScore,reason,notes,onLeave,empId:currentUser.empId,name:currentUser.name,process:currentUser.process,submittedAt:new Date().toISOString()};
+      day[currentUser.empId]={total,target,prodPct,downtime,qualScore,reason,notes,onLeave,empId:currentUser.empId,name:currentUser.name,process:currentUser.process,submittedAt:new Date().toISOString()};
       await S.set(`rcm:day:${d}`,day);
       load();
     };
@@ -855,11 +944,10 @@ async function renderEntry() {
 }
 
 // ── EMPLOYEE PROGRESS ──────────────────────────────────
-async function renderProgress() {
-  let wStart=getMon(today()), year=new Date().getFullYear(), month=new Date().getMonth()+1;
-
-  async function load() {
-    const wd=wDays(wStart), md=mDays(year,month);
+async function renderProgress(){
+  let wStart=getMon(today()),year=new Date().getFullYear(),month=new Date().getMonth()+1;
+  async function load(){
+    const wd=wDays(wStart),md=mDays(year,month);
     const[wr,mr]=await Promise.all([Promise.all(wd.map(d=>S.get(`rcm:day:${d}`))),Promise.all(md.map(d=>S.get(`rcm:day:${d}`)))]);
     const wData=wd.map((d,i)=>{const s=wr[i]?.[currentUser.empId];return{date:fmtSh(d),prod:s?.prodPct?parseFloat(s.prodPct):null,total:s?.total?parseInt(s.total):null,target:s?.target?parseInt(s.target):50,onLeave:!!s?.onLeave};});
     const mData=md.map((d,i)=>{const s=mr[i]?.[currentUser.empId];return{date:fmtSh(d),prod:s?.prodPct?parseFloat(s.prodPct):null};});
@@ -868,53 +956,52 @@ async function renderProgress() {
     const totalW=activeW.reduce((s,d)=>s+(d.total||0),0);
     const targetW=activeW.reduce((s,d)=>s+d.target,0);
     const deficit=targetW-totalW;
-
     setPage(`
       <div class="card" style="padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <span style="font-weight:700;color:#0a1628;font-size:12px">📅 Week:</span>
-        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="wkPrev2()">←</button>
+        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wk2(-1)">←</button>
         <span style="flex:1;text-align:center;font-weight:700;color:#0a1628;font-size:13px">${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}</span>
-        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="wkNext2()">→</button>
-        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="reloadProgress()">↺</button>
+        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wk2(1)">→</button>
+        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="load()">↺</button>
       </div>
       <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
-        ${statHTML("Week Avg Prod",avgWProd?avgWProd+"%":"—",pCol(avgWProd),"","📊")}
-        ${statHTML("Total Claims",totalW,"#4f46e5","","📁")}
-        ${statHTML("Weekly Target",targetW,"#64748b","","🎯")}
-        ${statHTML("Deficit/Extra",deficit>0?`-${deficit}`:deficit===0?"✅ Met":`+${Math.abs(deficit)}`,deficit>0?"#ef4444":"#10b981",deficit>0?"Below target":"",deficit>0?"⚠":"✅")}
+        ${stat("Week Avg Prod",avgWProd?avgWProd+"%":"—",pCol(avgWProd),"","📊")}
+        ${stat("Total Claims",totalW,"#4f46e5","","📁")}
+        ${stat("Weekly Target",targetW,"#64748b","","🎯")}
+        ${stat("Deficit/Extra",deficit>0?`-${deficit}`:deficit===0?"✅ Met":`+${Math.abs(deficit)}`,deficit>0?"#ef4444":"#10b981",deficit>0?"Below target":"","" )}
       </div>
       <div class="card" style="margin-bottom:14px">
         <div class="section-title">📊 My Daily Productivity This Week</div>
-        ${barChartHTML(wData.filter(d=>d.prod!==null).map(d=>({name:d.date,prod:d.prod})))||`<div style="color:#64748b;text-align:center;padding:30px">No data submitted this week yet</div>`}
+        ${barChart(wData.filter(d=>d.prod!==null).map(d=>({name:d.date,prod:d.prod})))||`<div style="color:#64748b;text-align:center;padding:30px">No data submitted this week</div>`}
       </div>
       <div class="card" style="padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <span style="font-weight:700;color:#0a1628;font-size:12px">🗓 Month:</span>
-        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="moPrev2()">←</button>
+        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._mo2(-1)">←</button>
         <span style="flex:1;text-align:center;font-weight:700;color:#0a1628">${MONTHS[month-1]} ${year}</span>
-        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="moNext2()">→</button>
-        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="reloadProgress()">↺</button>
+        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._mo2(1)">→</button>
+        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="load()">↺</button>
       </div>
       <div class="card">
         <div class="section-title">📈 Monthly Trend — ${MONTHS[month-1]} ${year}</div>
-        ${mData.some(d=>d.prod!==null)?barChartHTML(mData.filter(d=>d.prod!==null).map(d=>({name:d.date,prod:d.prod}))):`<div style="color:#64748b;text-align:center;padding:30px">No data submitted this month yet</div>`}
+        ${mData.some(d=>d.prod!==null)?barChart(mData.filter(d=>d.prod!==null).map(d=>({name:d.date,prod:d.prod}))):`<div style="color:#64748b;text-align:center;padding:30px">No data submitted this month</div>`}
       </div>
     `);
-    window.wkPrev2=()=>{wStart=addDays(wStart,-7);load();};
-    window.wkNext2=()=>{wStart=addDays(wStart,7);load();};
-    window.moPrev2=()=>{if(month===1){month=12;year--;}else month--;load();};
-    window.moNext2=()=>{if(month===12){month=1;year++;}else month++;load();};
-    window.reloadProgress=load;
+    window._wk2=n=>{wStart=addDays(wStart,n*7);load();};
+    window._mo2=n=>{if(n<0){if(month===1){month=12;year--;}else month--;}else{if(month===12){month=1;year++;}else month++;}load();};
   }
   load();
 }
 
-// ── EMPLOYEE FEEDBACK ─────────────────────────────────
-async function renderEmployeeFeedback() {
+// ── EMPLOYEE FEEDBACK ──────────────────────────────────
+async function renderEmpFeedback(){
   const allFb=await S.get("rcm:feedback")||{};
+  // Show ALL feedback - both acknowledged and unacknowledged
   const feedback=(allFb[currentUser.empId]||[]).slice().reverse();
+  const unread=feedback.filter(f=>!f.acknowledged).length;
 
   setPage(`
     <div class="section-title">💬 Feedback from Your Team Lead</div>
+    ${unread>0?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:13px;font-weight:600;color:#92400e">📬 You have ${unread} unread feedback message${unread>1?"s":""} — please acknowledge below</div>`:""}
     ${feedback.length===0?`<div class="card" style="text-align:center;padding:50px;color:#64748b"><div style="font-size:38px;margin-bottom:10px">💬</div><div style="font-size:14px;font-weight:700;color:#0a1628">No feedback yet</div><div style="font-size:12px;margin-top:6px">Your team lead will share feedback here</div></div>`:
     feedback.map(f=>`
       <div class="card" style="margin-bottom:14px;border:2px solid ${f.acknowledged?"#6ee7b7":"#fde68a"};background:${f.acknowledged?"#f0fdf4":"#fffbeb"}">
@@ -923,19 +1010,19 @@ async function renderEmployeeFeedback() {
             <div style="font-weight:800;color:#0a1628;font-size:14px">📅 ${fmtD(f.date)}</div>
             <div style="font-size:11px;color:#64748b;margin-top:2px">${new Date(f.sentAt).toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}</div>
           </div>
-          ${pillHTML(f.acknowledged?"✅ Acknowledged":"⚠ Action Required",f.acknowledged?"#10b981":"#f97316")}
+          ${pill(f.acknowledged?"✅ Acknowledged":"⚠ Action Required",f.acknowledged?"#10b981":"#f97316")}
         </div>
-        <div style="font-size:14px;color:#1e293b;line-height:1.75;background:white;border-radius:8px;padding:14px 16px;margin-bottom:${f.acknowledged?0:14}px">${esc(f.text)}</div>
-        ${!f.acknowledged?`<button class="btn btn-green" onclick="ackFeedback(${f.id})" style="padding:9px 22px">✅ I Acknowledge This Feedback</button>`:""}
+        <div style="font-size:14px;color:#1e293b;line-height:1.75;background:white;border-radius:8px;padding:14px 16px;margin-bottom:${f.acknowledged?0:14}px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">${esc(f.text)}</div>
+        ${!f.acknowledged?`<button class="btn" onclick="ackFeedback(${f.id})" style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:9px 22px">✅ I Acknowledge This Feedback</button>`:""}
       </div>`).join("")}
   `);
+}
 
-  window.ackFeedback = async id => {
-    const all=await S.get("rcm:feedback")||{};
-    all[currentUser.empId]=(all[currentUser.empId]||[]).map(f=>f.id===id?{...f,acknowledged:true,ackedAt:new Date().toISOString()}:f);
-    await S.set("rcm:feedback",all);
-    renderEmployeeFeedback();
-  };
+async function ackFeedback(id){
+  const all=await S.get("rcm:feedback")||{};
+  all[currentUser.empId]=(all[currentUser.empId]||[]).map(f=>f.id===id?{...f,acknowledged:true,ackedAt:new Date().toISOString()}:f);
+  await S.set("rcm:feedback",all);
+  renderEmpFeedback();
 }
 </script>
 </body>
