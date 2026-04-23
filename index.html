@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>3Gen RCM Team Portal</title>
+<title>Helix Hub — RCM Team Portal</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -15,85 +15,121 @@ input,select,textarea,button{font-family:inherit}
 .btn{border:none;border-radius:9px;padding:9px 20px;cursor:pointer;font-weight:700;font-size:13px;transition:all 0.2s}
 .pill{border-radius:999px;padding:3px 11px;font-size:11px;font-weight:700;white-space:nowrap;display:inline-block}
 table{border-collapse:collapse;width:100%}
-th,td{padding:9px 12px;text-align:left;border-bottom:1px solid #f1f5f9;font-size:13px}
+th,td{padding:8px 11px;text-align:left;border-bottom:1px solid #f1f5f9;font-size:13px}
 th{font-size:10px;font-weight:700;letter-spacing:0.8px;color:#64748b;background:#f8fafc}
 .screen{display:none}.screen.active{display:block}
 .tab-btn{background:transparent;color:rgba(255,255,255,0.65);border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s}
 .tab-btn.active{background:#f59e0b;color:#0a1628}
-.sub-tab{background:#f1f5f9;color:#64748b;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s;margin-right:4px}
+.sub-tab{background:#f1f5f9;color:#64748b;border:none;border-radius:8px;padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s}
 .sub-tab.active{background:#4f46e5;color:white}
-.topbar{background:#0a1628;box-shadow:0 2px 12px rgba(0,0,0,0.3);position:sticky;top:0;z-index:100}
+.topbar{background:#0a1628;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.25)}
 .topbar-inner{max-width:1280px;margin:0 auto;padding:0 20px}
 .stat-card{background:white;border-radius:12px;padding:16px 18px;flex:1;min-width:110px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-.section-title{font-size:15px;font-weight:800;color:#0a1628;margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.flex-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.err{background:#fee2e2;color:#ef4444;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:12px}
-.ok{background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:center}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal-bg.open{display:flex}
-.modal{background:white;border-radius:16px;padding:28px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.35)}
-.deficit-banner{background:linear-gradient(135deg,#fef2f2,#fff1f1);border:2px solid #ef4444;border-radius:12px;padding:16px 20px;margin-bottom:18px}
-.fade{animation:fadeIn 0.3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:768px){.grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr}}
+.modal{background:white;border-radius:16px;padding:28px;max-width:680px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.3)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.flex{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.err{background:#fee2e2;color:#ef4444;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:12px}
+.ok{background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center}
+.deficit-alert{background:linear-gradient(135deg,#fef2f2,#fff8f8);border:2px solid #ef4444;border-radius:12px;padding:16px 20px;margin-bottom:18px}
+.hourly-cell{border:1px solid #e2e8f0;border-radius:8px;padding:8px;text-align:center;background:white}
+.fade{animation:fi 0.3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ═══ LOGIN ═══ -->
 <div id="screen-login" class="screen active">
-  <div style="min-height:100vh;background:linear-gradient(135deg,#0a1628 0%,#1a3a6e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px">
-    <div style="margin-bottom:28px;text-align:center">
-      <svg width="48" height="48" viewBox="0 0 100 100" fill="none" style="vertical-align:middle;margin-right:10px"><polygon points="50,12 84,32 84,68 50,88 16,68 16,32" fill="#2563eb"/><polygon points="30,42 50,30 50,54 30,66" fill="white" opacity="0.9"/><polygon points="70,42 50,30 50,54 70,66" fill="white" opacity="0.55"/><rect x="27" y="55" width="19" height="19" rx="3" fill="#dc2626" transform="rotate(-8,36,64)"/></svg>
-      <span style="font-weight:900;font-size:28px;color:white;vertical-align:middle">3Gen</span>
-      <span style="font-weight:700;font-size:18px;color:#93c5fd;vertical-align:middle"> Consulting</span>
-      <div style="color:rgba(255,255,255,0.45);font-size:12px;margin-top:4px">Powering Healthcare Forward</div>
+  <div style="min-height:100vh;background:linear-gradient(160deg,#0a1628 0%,#1e3a5f 50%,#0f2d4a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px">
+
+    <!-- Helix Hub Brand -->
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:20px;margin-bottom:16px;box-shadow:0 8px 32px rgba(79,70,229,0.4)">
+        <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+          <path d="M21 4 L38 14 L38 28 L21 38 L4 28 L4 14 Z" fill="white" opacity="0.15"/>
+          <path d="M21 8 L34 16 L34 26 L21 34 L8 26 L8 16 Z" fill="white" opacity="0.2"/>
+          <circle cx="21" cy="21" r="8" fill="white" opacity="0.9"/>
+          <path d="M17 21 Q21 15 25 21 Q21 27 17 21Z" fill="#4f46e5"/>
+        </svg>
+      </div>
+      <div style="font-size:36px;font-weight:900;color:white;letter-spacing:-1px;line-height:1">Helix Hub</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.5);margin-top:6px;letter-spacing:2px;text-transform:uppercase">RCM Team Performance Portal</div>
     </div>
-    <div style="background:white;border-radius:20px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,0.35)">
+
+    <div style="background:white;border-radius:20px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,0.4)">
       <div id="login-panel">
-        <div style="text-align:center;margin-bottom:24px"><div style="font-size:20px;font-weight:900;color:#0a1628">Team Performance Portal</div><div style="font-size:12px;color:#64748b;margin-top:4px">Sign in with your Employee ID &amp; Password</div></div>
-        <div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">EMPLOYEE ID</div><input class="inp" id="login-id" type="text" placeholder="e.g. ADMIN" style="padding:11px 13px;font-size:14px"/></div>
-        <div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">PASSWORD</div><input class="inp" id="login-pass" type="password" placeholder="Enter password" style="padding:11px 13px;font-size:14px"/></div>
+        <div style="text-align:center;margin-bottom:26px">
+          <div style="font-size:19px;font-weight:800;color:#0a1628">Welcome Back</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px">Sign in with your Employee ID & Password</div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">EMPLOYEE ID</div>
+          <input class="inp" id="login-id" type="text" placeholder="Enter your Employee ID" style="padding:11px 13px;font-size:14px"/>
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">PASSWORD</div>
+          <input class="inp" id="login-pass" type="password" placeholder="Enter your password" style="padding:11px 13px;font-size:14px"/>
+        </div>
         <div id="login-err" class="err" style="display:none"></div>
-        <button class="btn" onclick="doLogin()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:13px;font-size:15px;border-radius:10px;margin-bottom:12px;box-shadow:0 4px 20px rgba(245,158,11,0.44)">Sign In →</button>
-        <button onclick="showForgot()" style="background:none;border:none;color:#2563eb;font-size:13px;cursor:pointer;width:100%;text-align:center;font-weight:600">Forgot Password?</button>
-        <div style="text-align:center;margin-top:14px;color:#64748b;font-size:11px;border-top:1px solid #f1f5f9;padding-top:12px">Default Admin: <strong>ADMIN</strong> / <strong>Admin@123</strong></div>
+        <button class="btn" onclick="doLogin()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;width:100%;padding:13px;font-size:15px;border-radius:10px;margin-bottom:14px;box-shadow:0 4px 20px rgba(79,70,229,0.4)">Sign In →</button>
+        <button onclick="showForgot()" style="background:none;border:none;color:#4f46e5;font-size:13px;cursor:pointer;width:100%;text-align:center;font-weight:600">Forgot Password?</button>
       </div>
       <div id="forgot-panel" style="display:none">
-        <div style="text-align:center;margin-bottom:20px"><div style="font-size:18px;font-weight:800;color:#0a1628">🔐 Reset Password Request</div><div style="font-size:12px;color:#64748b;margin-top:4px">Admin will be notified and reset your password</div></div>
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:18px;font-weight:800;color:#0a1628">🔐 Reset Password</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px">Your request will be sent to the Admin</div>
+        </div>
         <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">YOUR EMPLOYEE ID *</div><input class="inp" id="fg-id" placeholder="e.g. EMP001"/></div>
         <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">REASON (optional)</div><input class="inp" id="fg-reason" placeholder="e.g. Forgot password"/></div>
         <div id="fg-err" class="err" style="display:none"></div>
-        <button class="btn" onclick="sendForgot()" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;width:100%;padding:12px;border-radius:10px;margin-bottom:10px">Send Reset Request</button>
+        <button class="btn" onclick="sendForgot()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;width:100%;padding:12px;border-radius:10px;margin-bottom:10px">Send Reset Request</button>
         <button onclick="showLogin()" style="background:none;border:none;color:#64748b;font-size:13px;cursor:pointer;width:100%;text-align:center">← Back to Login</button>
       </div>
       <div id="forgot-done" style="display:none;text-align:center;padding:20px 0">
-        <div style="font-size:40px;margin-bottom:12px">✅</div>
+        <div style="font-size:40px;margin-bottom:10px">✅</div>
         <div style="font-size:16px;font-weight:800;color:#0a1628;margin-bottom:8px">Request Sent!</div>
-        <div style="font-size:13px;color:#64748b;margin-bottom:20px">Admin has been notified.</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:18px">Admin has been notified and will reset your password.</div>
         <button class="btn" onclick="showLogin()" style="background:#0a1628;color:white;padding:10px 24px">← Back to Login</button>
       </div>
     </div>
-    <div style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:20px">© 3Gen Consulting · Home Health RCM Portal</div>
+    <div style="color:rgba(255,255,255,0.25);font-size:12px;margin-top:24px;text-align:center">
+      Helix Hub · Built for 3Gen Consulting<br/>
+      <span style="font-size:11px;opacity:0.7">Created by Faizan Shah</span>
+    </div>
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- ═══ MAIN APP ═══ -->
 <div id="screen-app" class="screen">
   <div class="topbar">
     <div class="topbar-inner">
-      <div style="display:flex;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);flex-wrap:wrap">
-        <svg width="30" height="30" viewBox="0 0 100 100" fill="none"><polygon points="50,12 84,32 84,68 50,88 16,68 16,32" fill="#2563eb"/><polygon points="30,42 50,30 50,54 30,66" fill="white" opacity="0.9"/><polygon points="70,42 50,30 50,54 70,66" fill="white" opacity="0.55"/><rect x="27" y="55" width="19" height="19" rx="3" fill="#dc2626" transform="rotate(-8,36,64)"/></svg>
-        <div><div style="font-weight:900;font-size:15px;color:white;line-height:1">3Gen Consulting</div><div style="font-size:10px;color:rgba(255,255,255,0.4)">Powering Healthcare Forward</div></div>
-        <div style="flex:1"></div>
-        <div id="deficit-header-alert" style="display:none;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);border-radius:8px;padding:6px 14px;cursor:pointer" onclick="selTab('prodreport')">
-          <span style="color:#fca5a5;font-size:12px;font-weight:700">⚠ Deficit Alert — Click to view</span>
+      <div style="display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);flex-wrap:wrap">
+        <!-- Helix Hub mini logo -->
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:34px;height:34px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 42 42" fill="none"><circle cx="21" cy="21" r="8" fill="white" opacity="0.9"/><path d="M17 21 Q21 15 25 21 Q21 27 17 21Z" fill="#4f46e5"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:900;font-size:16px;color:white;line-height:1">Helix Hub</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:1px">RCM PORTAL</div>
+          </div>
         </div>
+        <div style="flex:1"></div>
+        <!-- Deficit alert -->
+        <div id="deficit-header-alert" style="display:none;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);border-radius:8px;padding:6px 14px;cursor:pointer" onclick="selTab('prodreport')">
+          <span style="color:#fca5a5;font-size:12px;font-weight:700">⚠ Deficit Alert — Click here</span>
+        </div>
+        <!-- User badge -->
         <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.07);border-radius:10px;padding:7px 14px;cursor:pointer" onclick="openProfile()">
           <div id="user-avatar" style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;flex-shrink:0;overflow:hidden"></div>
-          <div><div id="user-name-display" style="color:white;font-weight:700;font-size:13px;line-height:1"></div><div id="user-role-display" style="color:#f59e0b;font-size:10px;font-weight:600;margin-top:2px"></div></div>
+          <div>
+            <div id="user-name-display" style="color:white;font-weight:700;font-size:13px;line-height:1"></div>
+            <div id="user-role-display" style="color:#f59e0b;font-size:10px;font-weight:600;margin-top:2px"></div>
+          </div>
         </div>
         <button class="btn" onclick="doLogout()" style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.25);padding:6px 14px;font-size:12px">Sign Out</button>
       </div>
@@ -103,140 +139,102 @@ th{font-size:10px;font-weight:700;letter-spacing:0.8px;color:#64748b;background:
   <div id="page-content" style="max-width:1280px;margin:0 auto;padding:22px 18px"></div>
 </div>
 
-<!-- EDIT USER MODAL -->
-<div id="edit-modal" class="modal-bg">
-  <div class="modal">
-    <div style="font-size:18px;font-weight:800;color:#0a1628;margin-bottom:20px">✏️ Edit User</div>
-    <input type="hidden" id="edit-orig-id"/>
-    <div class="grid-3" style="margin-bottom:14px">
-      <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">FULL NAME</div><input class="inp" id="edit-name"/></div>
-      <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">PASSWORD</div><input class="inp" id="edit-pass" placeholder="Leave blank to keep"/></div>
-      <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">PROCESS</div>
-        <select class="inp" id="edit-process"><option>PMB MCO</option><option>MCD (Medicaid)</option><option>MCR (Medicare)</option><option value="All">All</option></select></div>
-      <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">ROLE</div>
-        <select class="inp" id="edit-role"><option value="employee">👤 Employee</option><option value="manager">🔷 Manager</option><option value="admin">👑 Admin</option></select></div>
-      <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">OVERALL TARGET</div>
-        <input class="inp" id="edit-target" type="number" placeholder="50"/></div>
-    </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">ACCESS PERMISSIONS</div>
-      <div id="edit-access-pills" style="display:flex;flex-wrap:wrap;gap:8px"></div>
-    </div>
-    <div id="edit-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
-    <div style="display:flex;gap:10px">
-      <button class="btn" onclick="saveEditUser()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;flex:1;padding:11px">Save Changes</button>
-      <button class="btn" onclick="closeModal('edit-modal')" style="background:#f1f5f9;color:#64748b;padding:11px 20px">Cancel</button>
-    </div>
+<!-- Edit User Modal -->
+<div id="edit-modal" class="modal-bg"><div class="modal" style="max-width:580px">
+  <div style="font-size:18px;font-weight:800;color:#0a1628;margin-bottom:20px">✏️ Edit User</div>
+  <input type="hidden" id="edit-orig-id"/>
+  <div class="grid-3" style="margin-bottom:14px">
+    <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Full Name</div><input class="inp" id="edit-name"/></div>
+    <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Password</div><input class="inp" id="edit-pass" placeholder="Leave blank to keep"/></div>
+    <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Process</div>
+      <select class="inp" id="edit-process"><option>PMB MCO</option><option>MCD (Medicaid)</option><option>MCR (Medicare)</option><option value="All">All</option></select></div>
+    <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Role</div>
+      <select class="inp" id="edit-role"><option value="employee">👤 Employee</option><option value="manager">🔷 Manager</option><option value="admin">👑 Admin</option></select></div>
+    <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Overall Target</div><input class="inp" id="edit-target" type="number" placeholder="50"/></div>
   </div>
-</div>
+  <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Access</div>
+    <div id="edit-access-pills" style="display:flex;flex-wrap:wrap;gap:8px"></div></div>
+  <div id="edit-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
+  <div style="display:flex;gap:10px">
+    <button class="btn" onclick="saveEditUser()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;flex:1;padding:11px">Save Changes</button>
+    <button class="btn" onclick="closeModal('edit-modal')" style="background:#f1f5f9;color:#64748b;padding:11px 20px">Cancel</button>
+  </div>
+</div></div>
 
-<!-- EMPLOYEE DETAIL MODAL -->
-<div id="emp-modal" class="modal-bg">
-  <div class="modal" style="max-width:700px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div style="font-size:18px;font-weight:800;color:#0a1628" id="emp-modal-title">Employee Details</div>
-      <button onclick="closeModal('emp-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#64748b">×</button>
-    </div>
-    <div id="emp-modal-content"></div>
+<!-- Employee Detail Modal -->
+<div id="emp-modal" class="modal-bg"><div class="modal" style="max-width:760px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <div style="font-size:18px;font-weight:800;color:#0a1628" id="emp-modal-title">Employee Details</div>
+    <button onclick="closeModal('emp-modal')" style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8;line-height:1">×</button>
   </div>
-</div>
+  <div id="emp-modal-content"></div>
+</div></div>
 
-<!-- PROFILE MODAL -->
-<div id="profile-modal" class="modal-bg">
-  <div class="modal">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div style="font-size:18px;font-weight:800;color:#0a1628">👤 My Profile</div>
-      <button onclick="closeModal('profile-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#64748b">×</button>
-    </div>
-    <div id="profile-content"></div>
+<!-- Profile Modal -->
+<div id="profile-modal" class="modal-bg"><div class="modal">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <div style="font-size:18px;font-weight:800;color:#0a1628">👤 My Profile</div>
+    <button onclick="closeModal('profile-modal')" style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8;line-height:1">×</button>
   </div>
-</div>
+  <div id="profile-content"></div>
+</div></div>
 
 <script>
-// ╔══════════════════════════════════════════════════╗
-// ║  PASTE YOUR SUPABASE DETAILS HERE                ║
-// ╚══════════════════════════════════════════════════╝
-const SUPABASE_URL = "https://blgwwlzidffeuvtkjdwe.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsZ3d3bHppZGZmZXV2dGtqZHdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4ODUzMDksImV4cCI6MjA5MjQ2MTMwOX0.-wJ5j3YucH6mkm68MslNit8i5Wir0dqAEU--vPBl6Cs";
+// ══════════════════════════════════════════════════
+//  PASTE YOUR SUPABASE CREDENTIALS HERE
+// ══════════════════════════════════════════════════
+const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE";
+const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const PROCS = ["PMB MCO","MCD (Medicaid)","MCR (Medicare)"];
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const ACCESSES = ["Daily Entry","View Own Progress","View Team Progress","Generate Email","Send Feedback","Manage Users","View Reports","Prod Report"];
-const SHIFT_HOURS = 8;
+const PROCS   = ["PMB MCO","MCD (Medicaid)","MCR (Medicare)"];
+const MONTHS  = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const ACCESSES= ["Prod Report","View Own Progress","View Team Progress","Generate Email","Send Feedback","Manage Users","View Reports","Hourly Tracker"];
+const SHIFT_H = 8;
 
-// ── Default Task Config ────────────────────────────────────────────────────
-// Weight = 50 / task_target  →  Total = Σ(count × 50/task_target)
-// Downtime: AdjustedTarget = overallTarget × (8 - downtime) / 8
+// Hourly slots: 5:30 PM → 2:30 AM (9 slots)
+const HOURLY_SLOTS = ["5:30 PM","6:30 PM","7:30 PM","8:30 PM","9:30 PM","10:30 PM","11:30 PM","12:30 AM","1:30 AM","2:30 AM"];
+
 const DEFAULT_TASKS = {
-  MCO: [
-    {name:"Email",           target:40},
-    {name:"AR MCO Calling",  target:40},
-    {name:"Review",          target:80},
-    {name:"Appeal",          target:35},
-    {name:"Denial",          target:40},
-    {name:"Rej(P)",          target:80},
-    {name:"Rej(W)",          target:80},
+  MCO:[
+    {name:"Email",target:40},{name:"AR MCO Calling",target:40},{name:"Review",target:80},
+    {name:"Appeal",target:35},{name:"Denial",target:40},{name:"Rej(P)",target:80},{name:"Rej(W)",target:80}
   ],
-  MCD: [
-    {name:"Email",                      target:45},
-    {name:"AR MCO Calling",             target:45},
-    {name:"AR Medicaid Calling/Portal", target:80},
-    {name:"Review",                     target:80},
-    {name:"Appeal",                     target:35},
-    {name:"Denial",                     target:80},
-    {name:"Rej(P)",                     target:80},
-    {name:"Rej(W)",                     target:80},
+  MCD:[
+    {name:"Email",target:45},{name:"AR MCO Calling",target:45},{name:"AR Medicaid Calling/Portal",target:80},
+    {name:"Review",target:80},{name:"Appeal",target:35},{name:"Denial",target:80},{name:"Rej(P)",target:80},{name:"Rej(W)",target:80}
   ],
-  MCR: [
-    {name:"5th Days NOA",           target:480},
-    {name:"NOA Status",             target:50},
-    {name:"Medicare RTP",           target:50},
-    {name:"NOE/NOA Handkey",        target:40},
-    {name:"Claim Handkey",          target:20},
-    {name:"Hospice Sequential Report",target:90},
-    {name:"Email",                  target:50},
-    {name:"AR Calling",             target:50},
-    {name:"AR Non Calling/Portal",  target:90},
-    {name:"Review",                 target:220},
-    {name:"Voice Mail",             target:60},
-    {name:"Appeal",                 target:28},
-    {name:"Denial",                 target:35},
-    {name:"Rej(P)",                 target:60},
-    {name:"Rej(W)",                 target:120},
+  MCR:[
+    {name:"5th Days NOA",target:480},{name:"NOA Status",target:50},{name:"Medicare RTP",target:50},
+    {name:"NOE/NOA Handkey",target:40},{name:"Claim Handkey",target:20},{name:"Hospice Sequential Report",target:90},
+    {name:"Email",target:50},{name:"AR Calling",target:50},{name:"AR Non Calling/Portal",target:90},
+    {name:"Review",target:220},{name:"Voice Mail",target:60},{name:"Appeal",target:28},
+    {name:"Denial",target:35},{name:"Rej(P)",target:60},{name:"Rej(W)",target:120}
   ]
 };
 
-// ── Storage ────────────────────────────────────────────────────────────────
-const S = {
-  get: async k => { try { const{data}=await sb.from("rcm_store").select("val").eq("k",k).single(); return data?JSON.parse(data.val):null; } catch{return null;} },
-  set: async (k,v) => { try { await sb.from("rcm_store").upsert({k,val:JSON.stringify(v),updated_at:new Date().toISOString()},{onConflict:"k"}); return true; } catch{return false;} }
+// ── Storage ───────────────────────────────────────
+const S={
+  get:async k=>{try{const{data}=await sb.from("rcm_store").select("val").eq("k",k).single();return data?JSON.parse(data.val):null;}catch{return null;}},
+  set:async(k,v)=>{try{await sb.from("rcm_store").upsert({k,val:JSON.stringify(v),updated_at:new Date().toISOString()},{onConflict:"k"});return true;}catch{return false;}}
 };
 
-async function getTaskConfig() {
-  const stored = await S.get("rcm:task_config");
-  return stored || JSON.parse(JSON.stringify(DEFAULT_TASKS));
+async function getTaskConfig(){const s=await S.get("rcm:task_config");return s||JSON.parse(JSON.stringify(DEFAULT_TASKS));}
+
+// ── Prod Formula ──────────────────────────────────
+function calcProd(tasks,counts,overallTarget,downtimeHours){
+  let total=0;for(const t of tasks){const c=parseFloat(counts[t.name])||0;total+=c*(50/t.target);}
+  total=+total.toFixed(2);
+  const eff=Math.max(0,(SHIFT_H-(parseFloat(downtimeHours)||0))/SHIFT_H);
+  const adjTarget=+(overallTarget*eff).toFixed(2);
+  const prodPct=adjTarget>0?+((total/adjTarget)*100).toFixed(1):0;
+  const deficit=+(adjTarget-total).toFixed(2);
+  const deficitPct=+(100-prodPct).toFixed(1);
+  return{total,adjTarget,prodPct,deficit,deficitPct};
 }
 
-// ── Prod Formula ───────────────────────────────────────────────────────────
-function calcProd(tasks, counts, overallTarget, downtimeHours) {
-  let total = 0;
-  for (const t of tasks) {
-    const count = parseFloat(counts[t.name]) || 0;
-    const weight = 50 / t.target; // each unit worth 50/target points
-    total += count * weight;
-  }
-  total = +total.toFixed(2);
-  const effectiveRatio = Math.max(0, (SHIFT_HOURS - (parseFloat(downtimeHours)||0)) / SHIFT_HOURS);
-  const adjTarget = +(overallTarget * effectiveRatio).toFixed(2);
-  const prodPct = adjTarget > 0 ? +((total / adjTarget) * 100).toFixed(1) : 0;
-  const deficit = +(adjTarget - total).toFixed(2);
-  const deficitPct = +(100 - prodPct).toFixed(1);
-  return { total, adjTarget, prodPct, deficit, deficitPct };
-}
-
-// ── Helpers ────────────────────────────────────────────────────────────────
-let currentUser = null;
+// ── Helpers ───────────────────────────────────────
+let currentUser=null;
 const today=()=>new Date().toISOString().split("T")[0];
 const yesterday=()=>{const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().split("T")[0];};
 const fmtD=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
@@ -249,25 +247,22 @@ const mDays=(y,m)=>{const o=[];const last=new Date(y,m,0).getDate();for(let d=1;
 const pCol=v=>{const n=parseFloat(v);return isNaN(n)?"#64748b":n>=100?"#10b981":n>=75?"#f97316":"#ef4444";};
 const avg=arr=>arr.length?+(arr.reduce((s,v)=>s+parseFloat(v),0)/arr.length).toFixed(1):null;
 const esc=s=>String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-const dlCSV=(headers,rows,name)=>{const csv=[headers,...rows.map(r=>r.map(c=>`"${String(c??"").replace(/"/g,'""')}"`))].map(r=>r.join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download=name;a.click();};
-function pill(label,color){return `<span class="pill" style="background:${color}22;color:${color}">${esc(label)}</span>`;}
-function stat(label,value,color,sub="",icon=""){return `<div class="stat-card" style="border-left:4px solid ${color}"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">${icon} ${label}</div><div style="font-size:22px;font-weight:900;color:${color}">${esc(String(value??'—'))}</div>${sub?`<div style="font-size:11px;color:#64748b;margin-top:3px">${esc(sub)}</div>`:""}</div>`;}
-function barChart(data,height=160){if(!data||!data.length)return`<div style="color:#64748b;text-align:center;padding:30px;font-size:13px">No data</div>`;const maxVal=130;let h=`<div style="display:flex;align-items:flex-end;gap:6px;height:${height}px;padding:8px 0 0;border-bottom:2px solid #e2e8f0;position:relative;margin-bottom:8px">`;const lp=(100/maxVal)*100;h+=`<div style="position:absolute;bottom:${lp}%;left:0;right:0;border-top:2px dashed #ef4444;z-index:1"><span style="position:absolute;right:0;top:-14px;font-size:9px;color:#ef4444;font-weight:700">100%</span></div>`;data.forEach(d=>{const prod=parseFloat(d.prod)||0,prodH=Math.min((prod/maxVal)*100,100),col=pCol(prod);h+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end;z-index:2"><span style="font-size:9px;font-weight:800;color:${col}">${prod.toFixed(0)}%</span><div style="width:80%;background:${col};height:${prodH}%;border-radius:4px 4px 0 0;min-height:4px"></div><span style="font-size:9px;font-weight:700;color:#0a1628;text-align:center;word-break:break-all;max-width:100%">${esc(d.name)}</span></div>`;});h+=`</div>`;return h;}
-function closeModal(id){document.getElementById(id).classList.remove("open");}
-function openModal(id){document.getElementById(id).classList.add("open");}
-function setPage(html){const el=document.getElementById("page-content");el.innerHTML=html;el.classList.remove("fade");void el.offsetWidth;el.classList.add("fade");}
+const dlCSV=(h,rows,name)=>{const csv=[h,...rows.map(r=>r.map(c=>`"${String(c??"").replace(/"/g,'""')}"`))].map(r=>r.join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download=name;a.click();};
+const pill=(label,color)=>`<span class="pill" style="background:${color}22;color:${color}">${esc(label)}</span>`;
+const stat=(label,value,color,sub="",icon="")=>`<div class="stat-card" style="border-left:4px solid ${color}"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">${icon} ${label}</div><div style="font-size:22px;font-weight:900;color:${color}">${esc(String(value??'—'))}</div>${sub?`<div style="font-size:11px;color:#64748b;margin-top:2px">${esc(sub)}</div>`:""}</div>`;
+const barChart=(data,h=160)=>{if(!data?.length)return`<div style="color:#64748b;text-align:center;padding:24px;font-size:13px">No data</div>`;const max=130;let s=`<div style="display:flex;align-items:flex-end;gap:5px;height:${h}px;padding:8px 0 0;border-bottom:2px solid #e2e8f0;position:relative;margin-bottom:6px">`;const lp=(100/max)*100;s+=`<div style="position:absolute;bottom:${lp}%;left:0;right:0;border-top:2px dashed #ef4444;z-index:1"><span style="position:absolute;right:0;top:-13px;font-size:9px;color:#ef4444;font-weight:700">100%</span></div>`;data.forEach(d=>{const p=parseFloat(d.prod)||0,ph=Math.min((p/max)*100,100),c=pCol(p);s+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end;z-index:2"><span style="font-size:9px;font-weight:800;color:${c}">${p.toFixed(0)}%</span><div style="width:80%;background:${c};height:${ph}%;border-radius:4px 4px 0 0;min-height:3px"></div><span style="font-size:9px;font-weight:700;color:#0a1628;text-align:center;word-break:break-all">${esc(d.name)}</span></div>`;});return s+`</div>`;};
+const closeModal=id=>document.getElementById(id).classList.remove("open");
+const openModal=id=>document.getElementById(id).classList.add("open");
+const setPage=html=>{const el=document.getElementById("page-content");el.innerHTML=html;el.classList.remove("fade");void el.offsetWidth;el.classList.add("fade");};
+const showSectionTitle=(t,icon)=>`<div style="font-size:15px;font-weight:800;color:#0a1628;margin-bottom:14px;display:flex;align-items:center;gap:7px"><span>${icon}</span>${t}</div>`;
 
 async function callAI(prompt){
-  const settings=await S.get("rcm:settings")||{};
-  const apiKey=settings.anthropicKey||"";
-  if(!apiKey)throw new Error("NO_KEY");
-  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-opus-4-5",max_tokens:1500,messages:[{role:"user",content:prompt}]})});
-  const d=await r.json();
-  if(d.error)throw new Error(d.error.message||"API error");
-  return d.content?.map(b=>b.text||"").join("")||"";
+  const s=await S.get("rcm:settings")||{};if(!s.anthropicKey)throw new Error("NO_KEY");
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":s.anthropicKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-opus-4-5",max_tokens:1500,messages:[{role:"user",content:prompt}]})});
+  const d=await r.json();if(d.error)throw new Error(d.error.message);return d.content?.map(b=>b.text||"").join("")||"";
 }
 
-// ── Login ──────────────────────────────────────────────────────────────────
+// ── Login ─────────────────────────────────────────
 function showLogin(){document.getElementById("login-panel").style.display="block";document.getElementById("forgot-panel").style.display="none";document.getElementById("forgot-done").style.display="none";}
 function showForgot(){document.getElementById("login-panel").style.display="none";document.getElementById("forgot-panel").style.display="block";}
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.getElementById("screen-login").classList.contains("active"))doLogin();});
@@ -278,13 +273,12 @@ async function doLogin(){
   const errEl=document.getElementById("login-err");errEl.style.display="none";
   if(!empId||!pass){errEl.textContent="Enter your ID and password.";errEl.style.display="block";return;}
   let users=await S.get("rcm:users");
-  if(!users||!users.length){users=[{empId:"ADMIN",name:"Team Lead Admin",password:"Admin@123",process:"All",role:"admin",access:ACCESSES,active:true,overallTarget:50}];await S.set("rcm:users",users);}
+  if(!users?.length){users=[{empId:"ADMIN",name:"Team Lead Admin",password:"Admin@123",process:"All",role:"admin",access:ACCESSES,active:true,overallTarget:50}];await S.set("rcm:users",users);}
   const u=users.find(x=>x.empId.toLowerCase()===empId.toLowerCase()&&x.password===pass&&x.active!==false);
-  if(u){currentUser=u;startApp();}else{errEl.textContent="Invalid ID or password, or account is disabled.";errEl.style.display="block";}
+  if(u){currentUser=u;startApp();}else{errEl.textContent="Invalid Employee ID or password.";errEl.style.display="block";}
 }
-
 async function sendForgot(){
-  const id=document.getElementById("fg-id").value.trim();const reason=document.getElementById("fg-reason").value.trim();
+  const id=document.getElementById("fg-id").value.trim(),reason=document.getElementById("fg-reason").value.trim();
   const errEl=document.getElementById("fg-err");
   if(!id){errEl.textContent="Enter your Employee ID.";errEl.style.display="block";return;}
   errEl.style.display="none";
@@ -302,35 +296,33 @@ async function startApp(){
   else{av.style.background=`linear-gradient(135deg,${rc},${rc}88)`;av.textContent=currentUser.name.charAt(0).toUpperCase();}
   document.getElementById("user-name-display").textContent=currentUser.name;
   document.getElementById("user-role-display").textContent=`${currentUser.empId} · ${currentUser.role==="admin"?"👑 Admin":currentUser.role==="manager"?"🔷 Manager":"👤 Employee"}`;
-  if(currentUser.role==="employee"){
-    // Check for deficit
-    await checkDeficitAlert();
-    loadEmpApp();
-  } else {
-    loadAdminApp();
-  }
+  if(currentUser.role==="employee"){await checkDeficitAlert();loadEmpApp();}
+  else loadAdminApp();
 }
 
 async function checkDeficitAlert(){
   const pr=await S.get(`rcm:prod:${currentUser.empId}:${today()}`);
-  const bypass=await S.get(`rcm:bypass:${currentUser.empId}:${today()}`);
-  if(pr&&!bypass&&parseFloat(pr.prodPct)<100){
-    document.getElementById("deficit-header-alert").style.display="block";
-  }
+  const bp=await S.get(`rcm:bypass:${currentUser.empId}:${today()}`);
+  if(pr&&!bp&&parseFloat(pr.prodPct)<100)document.getElementById("deficit-header-alert").style.display="block";
 }
 
-function doLogout(){currentUser=null;document.getElementById("screen-app").classList.remove("active");document.getElementById("screen-login").classList.add("active");document.getElementById("login-id").value="";document.getElementById("login-pass").value="";document.getElementById("deficit-header-alert").style.display="none";showLogin();}
+function doLogout(){
+  currentUser=null;
+  document.getElementById("screen-app").classList.remove("active");
+  document.getElementById("screen-login").classList.add("active");
+  document.getElementById("login-id").value="";document.getElementById("login-pass").value="";
+  document.getElementById("deficit-header-alert").style.display="none";showLogin();
+}
 
 function setTabs(tabs,onSel){
-  const bar=document.getElementById("tab-bar");
-  bar.innerHTML=tabs.map(t=>`<button class="tab-btn" data-id="${t.id}" onclick="selTab('${t.id}')">${esc(t.label)}</button>`).join("");
+  document.getElementById("tab-bar").innerHTML=tabs.map(t=>`<button class="tab-btn" data-id="${t.id}" onclick="selTab('${t.id}')">${esc(t.label)}</button>`).join("");
   window._onSelTab=onSel;
 }
 function selTab(id){document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.id===id));window._onSelTab(id);}
 
-// ╔══════════════════════════════════════════════════╗
-// ║  ADMIN APP                                       ║
-// ╚══════════════════════════════════════════════════╝
+// ══════════════════════════════════════════════════
+//  ADMIN APP
+// ══════════════════════════════════════════════════
 function loadAdminApp(){
   const tabs=[
     {id:"today",label:"📋 Today"},
@@ -352,172 +344,13 @@ function loadAdminApp(){
   selTab("today");
 }
 
-// ── ADMIN PROD MONITOR ─────────────────────────────────────────────────────
-async function renderAdminProdMonitor(){
-  let selDate=today();
-  async function load(){
-    const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
-    const taskCfg=await getTaskConfig();
-    const records=await Promise.all(users.map(u=>S.get(`rcm:prod:${u.empId}:${selDate}`)));
-    const bypasses=await Promise.all(users.map(u=>S.get(`rcm:bypass:${u.empId}:${selDate}`)));
-
-    setPage(`
-      <div class="flex-row" style="margin-bottom:18px">
-        <div class="card" style="padding:10px 14px;display:flex;align-items:center;gap:10px">
-          <span style="font-size:11px;font-weight:700;color:#64748b">DATE</span>
-          <input type="date" value="${selDate}" onchange="window._pmDate(this.value)" style="border:none;background:transparent;font-weight:700;color:#0a1628;font-size:14px;cursor:pointer"/>
-        </div>
-        <button class="btn" onclick="load()" style="background:#eef2ff;color:#4f46e5;padding:8px 14px;font-size:12px">↺ Refresh</button>
-        <button class="btn" onclick="exportProdMonitor()" style="background:#f0fdf4;color:#10b981;padding:8px 14px;font-size:12px">📥 Export CSV</button>
-      </div>
-
-      <div class="card" style="padding:0;overflow:hidden">
-        <div style="background:#0a1628;padding:12px 18px"><span style="color:white;font-weight:800;font-size:14px">📊 Team Productivity Monitor — ${fmtD(selDate)}</span></div>
-        <div style="overflow-x:auto"><table>
-          <thead><tr>
-            <th>Employee</th><th>Process</th><th>Submitted</th>
-            <th>Total</th><th>Adj. Target</th><th>Prod %</th>
-            <th>Deficit (units)</th><th>Deficit %</th><th>Downtime</th><th>Status</th><th>Action</th>
-          </tr></thead>
-          <tbody>
-            ${users.map((u,i)=>{
-              const pr=records[i];
-              const bp=bypasses[i];
-              const hasData=!!pr;
-              const isBypassed=!!bp;
-              const prodPct=isBypassed?100:(pr?.prodPct||0);
-              const deficit=isBypassed?0:(pr?.deficit||0);
-              const deficitPct=isBypassed?0:(pr?.deficitPct||0);
-              return `<tr style="background:${i%2===0?"white":"#fafbff"}">
-                <td><div style="font-weight:700;color:#0a1628;cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="showEmpDetail('${esc(u.empId)}')">${esc(u.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(u.empId)}</div></td>
-                <td style="color:#64748b;font-size:12px">${esc(u.process)}</td>
-                <td>${hasData?pill("✅ Yes","#10b981"):pill("⏳ No","#f97316")}</td>
-                <td style="font-weight:700">${hasData?pr.total.toFixed(1):"—"}</td>
-                <td style="color:#64748b">${hasData?pr.adjTarget.toFixed(1):"—"}</td>
-                <td style="font-weight:900;color:${pCol(prodPct)};font-size:15px">${hasData?(isBypassed?"100%":prodPct+"%"):"—"}</td>
-                <td style="font-weight:700;color:${deficit>0?"#ef4444":"#10b981"}">${hasData?(isBypassed?"0":deficit.toFixed(1)):"—"}</td>
-                <td style="color:${deficitPct>0?"#ef4444":"#10b981"}">${hasData?(isBypassed?"0%":deficitPct.toFixed(1)+"%"):"—"}</td>
-                <td style="color:#64748b">${pr?.downtimeHours?pr.downtimeHours+"h":"—"}</td>
-                <td>${isBypassed?pill("🛡 Bypassed","#4f46e5"):deficit>0&&hasData?pill("⚠ Deficit","#ef4444"):hasData?pill("✅ On Target","#10b981"):pill("—","#64748b")}</td>
-                <td>
-                  ${hasData&&!isBypassed&&deficit>0?`<button class="btn" onclick="bypassDeficit('${esc(u.empId)}','${selDate}')" style="background:#e0e7ff;color:#4f46e5;padding:5px 10px;font-size:11px">🛡 Bypass Deficit</button>`:""}
-                  ${isBypassed?`<button class="btn" onclick="removeBypass('${esc(u.empId)}','${selDate}')" style="background:#fee2e2;color:#ef4444;padding:5px 10px;font-size:11px">✕ Remove Bypass</button>`:""}
-                </td>
-              </tr>`;
-            }).join("")}
-          </tbody>
-        </table></div>
-      </div>
-
-      <div style="margin-top:20px" id="pm-task-detail"></div>
-    `);
-
-    window._pmDate=v=>{selDate=v;load();};
-    window._pmRecs=records;window._pmUsers=users;window._pmSelDate=selDate;
-
-    window.exportProdMonitor=()=>{
-      const rows=users.map((u,i)=>{const pr=records[i];const bp=bypasses[i];const isBypassed=!!bp;return[u.empId,u.name,u.process,selDate,pr?pr.total.toFixed(1):"",pr?pr.adjTarget.toFixed(1):"",pr?(isBypassed?"100":pr.prodPct):"",pr?(isBypassed?"0":pr.deficit.toFixed(1)):"",pr?pr.downtimeHours:"",isBypassed?"Yes":"No"];});
-      dlCSV(["EmpID","Name","Process","Date","Total","Adj.Target","Prod%","Deficit","Downtime(h)","Bypassed"],rows,`ProdMonitor_${selDate}.csv`);
-    };
-
-    window.bypassDeficit=async(empId,date)=>{
-      const reason=prompt("Reason for bypassing deficit (will be logged):");
-      if(reason===null)return;
-      await S.set(`rcm:bypass:${empId}:${date}`,{bypassedBy:currentUser.empId,bypassedAt:new Date().toISOString(),reason});
-      load();
-    };
-    window.removeBypass=async(empId,date)=>{
-      if(!confirm("Remove bypass? Deficit will reappear for this agent."))return;
-      await S.set(`rcm:bypass:${empId}:${date}`,null);
-      load();
-    };
-  }
-  load();
-}
-
-// ── SETTINGS ───────────────────────────────────────────────────────────────
-async function renderSettings(){
-  const settings=await S.get("rcm:settings")||{};
-  const taskCfg=await getTaskConfig();
-
-  function renderTaskTable(proc){
-    const tasks=taskCfg[proc]||[];
-    return `<table style="font-size:12px;margin-bottom:8px">
-      <thead><tr><th>Task Name</th><th>Target (daily)</th><th>Weight (50/target)</th></tr></thead>
-      <tbody>
-        ${tasks.map((t,i)=>`<tr style="background:${i%2===0?"white":"#f8fafc"}">
-          <td style="font-weight:600">${esc(t.name)}</td>
-          <td><input type="number" value="${t.target}" min="1" style="border:1px solid #d1d5db;border-radius:6px;padding:4px 8px;width:80px;font-size:12px" onchange="window._taskCfg['${proc}'][${i}].target=parseInt(this.value)||1;updateWeightDisplay('${proc}',${i},this.value)" id="tw_${proc}_${i}"/></td>
-          <td id="wdisp_${proc}_${i}" style="color:#4f46e5;font-weight:700">${(50/t.target).toFixed(3)}</td>
-        </tr>`).join("")}
-      </tbody>
-    </table>`;
-  }
-
-  setPage(`
-    <div class="grid-2" style="gap:20px">
-      <div class="card">
-        <div class="section-title">⚙️ API Settings</div>
-        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px;margin-bottom:20px;font-size:13px;color:#92400e">
-          <strong>📧 To enable AI email generation:</strong><br/>
-          1. Go to <a href="https://console.anthropic.com" target="_blank" style="color:#2563eb">console.anthropic.com</a> → API Keys → Create Key<br/>
-          2. Paste it below and Save
-        </div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">ANTHROPIC API KEY</div>
-          <input class="inp" id="api-key-input" type="password" value="${esc(settings.anthropicKey||"")}" placeholder="sk-ant-api03-..."/>
-        </div>
-        <div id="settings-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
-        <button class="btn" onclick="saveSettings()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;padding:11px 28px">💾 Save API Key</button>
-      </div>
-
-      <div class="card">
-        <div class="section-title">🎯 Task Config — MCO</div>
-        ${renderTaskTable("MCO")}
-        <div class="section-title" style="margin-top:16px">🎯 Task Config — MCD</div>
-        ${renderTaskTable("MCD")}
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:18px">
-      <div class="section-title">🎯 Task Config — MCR (Medicare)</div>
-      ${renderTaskTable("MCR")}
-      <div style="margin-top:16px;display:flex;gap:10px">
-        <button class="btn" onclick="saveTaskConfig()" style="background:linear-gradient(135deg,#4f46e5,#3730a3);color:white;padding:11px 28px">💾 Save Task Config</button>
-        <button class="btn" onclick="resetTaskConfig()" style="background:#f1f5f9;color:#64748b;padding:11px 20px">↺ Reset to Defaults</button>
-      </div>
-      <div id="tc-msg" style="font-size:13px;margin-top:10px;display:none"></div>
-    </div>
-  `);
-
-  window._taskCfg = JSON.parse(JSON.stringify(taskCfg));
-  window.updateWeightDisplay=(proc,i,val)=>{const w=50/(parseInt(val)||1);document.getElementById(`wdisp_${proc}_${i}`).textContent=w.toFixed(3);};
-  window.saveSettings=async()=>{
-    const key=document.getElementById("api-key-input").value.trim();
-    const msg=document.getElementById("settings-msg");
-    if(!key){msg.textContent="⚠ Paste your Anthropic API key.";msg.style.color="#ef4444";msg.style.display="block";return;}
-    const s=await S.get("rcm:settings")||{};
-    await S.set("rcm:settings",{...s,anthropicKey:key});
-    msg.textContent="✅ API key saved!";msg.style.color="#10b981";msg.style.display="block";
-  };
-  window.saveTaskConfig=async()=>{
-    await S.set("rcm:task_config",window._taskCfg);
-    const msg=document.getElementById("tc-msg");msg.textContent="✅ Task config saved! New weights apply to all future entries.";msg.style.color="#10b981";msg.style.display="block";
-    setTimeout(()=>msg.style.display="none",3000);
-  };
-  window.resetTaskConfig=async()=>{
-    if(!confirm("Reset all task targets to factory defaults?"))return;
-    await S.set("rcm:task_config",JSON.parse(JSON.stringify(DEFAULT_TASKS)));
-    renderSettings();
-  };
-}
-
-// ── TODAY STATUS ───────────────────────────────────────────────────────────
+// ── TODAY ─────────────────────────────────────────
 async function renderToday(){
-  let date=today(),ctx="";
+  let date=today(),ctx="",filterProc="ALL";
   async function load(){
     const users=await S.get("rcm:users")||[];
-    const members=users.filter(u=>u.role==="employee"&&u.active!==false);
+    let members=users.filter(u=>u.role==="employee"&&u.active!==false);
+    if(filterProc!=="ALL")members=members.filter(u=>u.process===filterProc||u.process==="All");
     const dayData=await S.get(`rcm:day:${date}`)||{};
     const agents=Object.values(dayData).filter(a=>a&&a.name);
     const subs=members.filter(u=>dayData[u.empId]);
@@ -527,15 +360,18 @@ async function renderToday(){
     const qualA=agents.filter(a=>a.qualScore);
     const avgProd=avg(activeA.map(a=>parseFloat(a.prodPct)));
     const avgQual=avg(qualA.map(a=>parseFloat(a.qualScore)));
-    const chartData=agents.filter(a=>a.prodPct).map(a=>({name:a.name.split(" ")[0],prod:parseFloat(a.prodPct)||0}));
+    const chartData=members.filter(u=>dayData[u.empId]?.prodPct).map(u=>({name:dayData[u.empId].name.split(" ")[0],prod:parseFloat(dayData[u.empId].prodPct)||0}));
     setPage(`
-      <div class="flex-row" style="margin-bottom:20px">
+      <div class="flex" style="margin-bottom:18px">
         <div class="card" style="padding:10px 14px;display:flex;align-items:center;gap:10px">
           <span style="font-size:11px;font-weight:700;color:#64748b">DATE</span>
-          <input type="date" id="today-date" value="${date}" onchange="window._tdChange(this.value)" style="border:none;background:transparent;font-weight:700;color:#0a1628;font-size:14px;cursor:pointer"/>
-          <button class="btn" onclick="load()" style="background:#eef2ff;color:#4f46e5;padding:5px 12px;font-size:11px">↺</button>
+          <input type="date" value="${date}" onchange="window._tdDate(this.value)" style="border:none;background:transparent;font-weight:700;color:#0a1628;font-size:14px;cursor:pointer"/>
         </div>
-        <input class="inp" id="today-ctx" placeholder="Team-wide context (DDE downtime, VDI issues…)" value="${esc(ctx)}" style="max-width:320px"/>
+        <select style="border:1px solid #d1d5db;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:700;color:#0a1628;background:white;cursor:pointer" onchange="window._tdProc(this.value)">
+          <option value="ALL" ${filterProc==="ALL"?"selected":""}>All Processes</option>
+          ${PROCS.map(p=>`<option value="${p}" ${filterProc===p?"selected":""}>${p}</option>`).join("")}
+        </select>
+        <input class="inp" id="today-ctx" placeholder="Team-wide context…" value="${esc(ctx)}" style="max-width:300px"/>
         <button class="btn" onclick="window._exportDay()" style="background:#f0fdf4;color:#10b981">📥 Export CSV</button>
       </div>
       <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
@@ -545,7 +381,7 @@ async function renderToday(){
         ${stat("Avg Prod",avgProd?avgProd+"%":"—",pCol(avgProd),"","📊")}
         ${stat("Avg Quality",avgQual?avgQual+"%":"—","#7c3aed","","⭐")}
       </div>
-      ${chartData.length?`<div class="card" style="margin-bottom:18px"><div class="section-title">📊 Team Productivity — ${fmtD(date)}</div>${barChart(chartData)}</div>`:""}
+      ${chartData.length?`<div class="card" style="margin-bottom:18px">${showSectionTitle("Team Productivity — "+fmtD(date),"📊")}${barChart(chartData)}</div>`:""}
       <div class="card" style="padding:0;overflow:hidden;margin-bottom:18px">
         <div style="background:#0a1628;padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
           <span style="color:white;font-weight:800;font-size:14px">📋 Submission Tracker — ${fmtD(date)}</span>
@@ -553,110 +389,153 @@ async function renderToday(){
         </div>
         <div style="overflow-x:auto"><table>
           <thead><tr><th>Employee</th><th>Process</th><th>Status</th><th>Total</th><th>Target</th><th>Prod %</th><th>Quality</th><th>DT(h)</th><th>Reason</th><th>Time</th></tr></thead>
-          <tbody>
-            ${members.map((u,i)=>{const d=dayData[u.empId];const pc=d?pCol(d.prodPct):"#64748b";return`<tr style="background:${i%2===0?"white":"#fafbff"}">
-              <td><div style="font-weight:700;color:#0a1628;cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="showEmpDetail('${esc(u.empId)}')">${esc(u.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(u.empId)}</div></td>
-              <td style="color:#64748b;font-size:12px">${esc(u.process)}</td>
-              <td>${d?pill("✅ Done","#10b981"):pill("⏳ Pending","#f97316")}</td>
-              <td style="font-weight:600">${d?.total||"—"}</td><td style="color:#64748b">${d?.target||"—"}</td>
-              <td style="font-weight:900;color:${pc};font-size:15px">${d?.prodPct?d.prodPct+"%":"—"}</td>
-              <td style="font-weight:700;color:${d?.qualScore?pCol(d.qualScore):"#64748b"}">${d?.qualScore?d.qualScore+"%":"—"}</td>
-              <td style="color:#64748b">${d?.downtime||"—"}</td>
-              <td style="color:#64748b;font-size:11px;max-width:140px">${d?.reason?esc(d.reason.slice(0,38)+(d.reason.length>38?"…":"")):"—"}</td>
-              <td style="color:#64748b;font-size:11px;white-space:nowrap">${d?.submittedAt?new Date(d.submittedAt).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):"—"}</td>
-            </tr>`;}).join("")}
-          </tbody>
+          <tbody>${members.map((u,i)=>{const d=dayData[u.empId];const pc=d?pCol(d.prodPct):"#64748b";return`<tr style="background:${i%2===0?"white":"#fafbff"}">
+            <td><div style="font-weight:700;color:#0a1628;cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="showEmpDetail('${esc(u.empId)}')">${esc(u.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(u.empId)}</div></td>
+            <td style="color:#64748b;font-size:12px">${esc(u.process)}</td>
+            <td>${d?pill("✅ Done","#10b981"):pill("⏳ Pending","#f97316")}</td>
+            <td style="font-weight:600">${d?.total||"—"}</td><td style="color:#64748b">${d?.target||"—"}</td>
+            <td style="font-weight:900;color:${pc};font-size:15px">${d?.prodPct?d.prodPct+"%":"—"}</td>
+            <td style="font-weight:700;color:${d?.qualScore?pCol(d.qualScore):"#64748b"}">${d?.qualScore?d.qualScore+"%":"—"}</td>
+            <td style="color:#64748b">${d?.downtime||"—"}</td>
+            <td style="color:#64748b;font-size:11px;max-width:130px">${d?.reason?esc(d.reason.slice(0,36)+"…"):"—"}</td>
+            <td style="color:#64748b;font-size:11px;white-space:nowrap">${d?.submittedAt?new Date(d.submittedAt).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):"—"}</td>
+          </tr>`;}).join("")}</tbody>
         </table></div>
       </div>
-      <button class="btn" id="gen-email-btn" onclick="window._genEmail()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:14px;font-size:15px;border-radius:12px;margin-bottom:16px">
-        ${allDone?"✨ Generate Professional Email":"✨ Generate Email (Partial Data)"}
-      </button>
+      <button class="btn" onclick="window._genEmail()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;width:100%;padding:14px;font-size:15px;border-radius:12px;margin-bottom:16px">✨ Generate Professional Email</button>
       <div id="email-output"></div>
     `);
-    window._tdChange=v=>{date=v;load();};
-    window._exportDay=async()=>{const dd=await S.get(`rcm:day:${date}`)||{};const rows=Object.values(dd).filter(a=>a&&a.name).map(a=>[a.empId,a.name,a.process,date,a.total||"",a.target||"",a.prodPct||"",a.qualScore||"",a.downtime||"",a.onLeave?"Yes":"No",a.reason||"",a.notes||""]);dlCSV(["EmpID","Name","Process","Date","Total","Target","Prod%","Quality%","Downtime","OnLeave","Reason","ActionPlan"],rows,`RCM_Daily_${date}.csv`);};
+    window._tdDate=v=>{date=v;load();};
+    window._tdProc=v=>{filterProc=v;load();};
+    window._exportDay=async()=>{const dd=await S.get(`rcm:day:${date}`)||{};const rows=Object.values(dd).filter(a=>a?.name).map(a=>[a.empId,a.name,a.process,date,a.total||"",a.target||"",a.prodPct||"",a.qualScore||"",a.downtime||"",a.onLeave?"Yes":"No",a.reason||"",a.notes||""]);dlCSV(["EmpID","Name","Process","Date","Total","Target","Prod%","Quality%","Downtime","OnLeave","Reason","Notes"],rows,`Daily_${date}.csv`);};
     window._genEmail=async()=>{
-      const dd=await S.get(`rcm:day:${date}`)||{};const agents=Object.values(dd).filter(a=>a&&a.name);if(!agents.length){alert("No data.");return;}
+      const dd=await S.get(`rcm:day:${date}`)||{};const agents=Object.values(dd).filter(a=>a?.name);if(!agents.length){alert("No data.");return;}
       const ctx=document.getElementById("today-ctx")?.value||"";
       document.getElementById("email-output").innerHTML=`<div class="card" style="text-align:center;padding:30px;color:#64748b">⏳ AI is writing your email…</div>`;
-      const text=agents.map(a=>`• ${a.name}(${a.empId})|${a.process}${a.onLeave?" LEAVE":""} Total:${a.total||"N/A"} Target:${a.target||"N/A"} Prod:${a.prodPct?a.prodPct+"%":"N/A"}${a.downtime?` DT:${a.downtime}h`:""}${a.qualScore?` Qual:${a.qualScore}%`:""}${a.reason?` REASON:${a.reason}`:""}${a.notes?` ACTION:${a.notes}`:""}`).join("\n");
-      const qualA=agents.filter(a=>a.qualScore);const avgQ=qualA.length?avg(qualA.map(a=>parseFloat(a.qualScore))):null;
-      const prompt=`You are Home Health RCM Team Lead at 3Gen Consulting. Write professional daily productivity summary email to manager Ketan Sir for ${fmtD(date)}.
-TEAM DATA:\n${text}\n${ctx?`CONTEXT: ${ctx}`:""}${avgQ?`\nTEAM AVG QUALITY: ${avgQ}%`:""}
-Write (plain text, ═══ dividers, ○ bullets):
-Hi Ketan Sir, [intro] [Per PROCESS: ══ PROCESS ══ 🏆 Top Performer: highlights ⚠ Needs Attention: root cause + action plan]
-${avgQ?`📊 Quality: Team Average ${avgQ}%`:""}
-Please let me know if you need any additional details.\nRegards, ${currentUser.name}\nHome Health RCM Team Lead | 3Gen Consulting`;
+      const text=agents.map(a=>`• ${a.name}(${a.empId})|${a.process}${a.onLeave?" LEAVE":""} Total:${a.total||"N/A"} Prod:${a.prodPct?a.prodPct+"%":"N/A"}${a.downtime?` DT:${a.downtime}h`:""}${a.qualScore?` Qual:${a.qualScore}%`:""}${a.reason?` REASON:${a.reason}`:""}${a.notes?` ACTION:${a.notes}`:""}`).join("\n");
+      const prompt=`You are Home Health RCM Team Lead at 3Gen Consulting. Write professional daily productivity summary email to manager Ketan Sir for ${fmtD(date)}.\nTEAM DATA:\n${text}\n${ctx?`CONTEXT: ${ctx}`:""}\nWrite (plain text, ═══ dividers, ○ bullets): Hi Ketan Sir, [intro] [Per PROCESS: ══ PROCESS ══ 🏆 Top Performer: ○highlights ○impact ⚠ Needs Attention: ○root cause ○action plan]\nRegards, ${currentUser.name}\nHome Health RCM Team Lead | 3Gen Consulting`;
       try{
-        const emailText=await callAI(prompt);window._emailText=emailText;
-        document.getElementById("email-output").innerHTML=`<div class="card" style="padding:0;overflow:hidden"><div style="background:#0a1628;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><div style="color:rgba(255,255,255,0.6);font-size:12px">Subject: Team Productivity Summary – ${fmtD(date)}</div><div style="display:flex;gap:8px"><button class="btn" onclick="navigator.clipboard.writeText(window._emailText);this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy',2000)" style="background:#f59e0b;color:#0a1628;padding:6px 16px;font-size:12px">📋 Copy Email</button><button class="btn" onclick="window.location.href='mailto:?subject='+encodeURIComponent('Team Productivity Summary – ${fmtD(date)}')+'&body='+encodeURIComponent(window._emailText)" style="background:rgba(99,102,241,0.2);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3);padding:6px 16px;font-size:12px">📧 Outlook</button></div></div><div style="padding:24px 28px;white-space:pre-wrap;font-size:14px;line-height:1.9;color:#1e293b;font-family:Calibri,Segoe UI,sans-serif">${esc(emailText)}</div></div>`;
+        const et=await callAI(prompt);window._et=et;
+        document.getElementById("email-output").innerHTML=`<div class="card" style="padding:0;overflow:hidden"><div style="background:#0a1628;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span style="color:rgba(255,255,255,0.6);font-size:12px">Subject: Team Productivity Summary – ${fmtD(date)}</span><div style="display:flex;gap:8px"><button class="btn" onclick="navigator.clipboard.writeText(window._et);this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy',2000)" style="background:#4f46e5;color:white;padding:6px 14px;font-size:12px">📋 Copy Email</button><button class="btn" onclick="window.location.href='mailto:?subject='+encodeURIComponent('Team Productivity Summary – ${fmtD(date)}')+'&body='+encodeURIComponent(window._et)" style="background:rgba(99,102,241,0.2);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3);padding:6px 14px;font-size:12px">📧 Outlook</button></div></div><div style="padding:24px 28px;white-space:pre-wrap;font-size:14px;line-height:1.9;color:#1e293b;font-family:Calibri,Segoe UI,sans-serif">${esc(et)}</div></div>`;
       }catch(e){document.getElementById("email-output").innerHTML=`<div class="err">${e.message==="NO_KEY"?"⚠ No API key. Go to ⚙️ Settings and add your Anthropic key.":"❌ Failed. Check API key in Settings."}</div>`;}
     };
   }
   load();
 }
 
-// ── SUMMARY ─────────────────────────────────────────────────────────────────
+// ── PROD MONITOR ──────────────────────────────────
+async function renderAdminProdMonitor(){
+  let selDate=today(),filterProc="ALL";
+  async function load(){
+    const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
+    let members=users;
+    if(filterProc!=="ALL")members=users.filter(u=>u.process===filterProc||u.process==="All");
+    const records=await Promise.all(members.map(u=>S.get(`rcm:prod:${u.empId}:${selDate}`)));
+    const bypasses=await Promise.all(members.map(u=>S.get(`rcm:bypass:${u.empId}:${selDate}`)));
+    setPage(`
+      <div class="flex" style="margin-bottom:18px">
+        <div class="card" style="padding:10px 14px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:11px;font-weight:700;color:#64748b">DATE</span>
+          <input type="date" value="${selDate}" onchange="window._pmDate(this.value)" style="border:none;background:transparent;font-weight:700;color:#0a1628;font-size:14px;cursor:pointer"/>
+        </div>
+        <select style="border:1px solid #d1d5db;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:700;color:#0a1628;background:white;cursor:pointer" onchange="window._pmProc(this.value)">
+          <option value="ALL" ${filterProc==="ALL"?"selected":""}>All Processes</option>
+          ${PROCS.map(p=>`<option value="${p}" ${filterProc===p?"selected":""}>${p}</option>`).join("")}
+        </select>
+        <button class="btn" onclick="load()" style="background:#eef2ff;color:#4f46e5">↺ Refresh</button>
+        <button class="btn" onclick="window._exportPM()" style="background:#f0fdf4;color:#10b981">📥 Export CSV</button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="background:#0a1628;padding:12px 18px"><span style="color:white;font-weight:800;font-size:14px">📊 Prod Monitor — ${fmtD(selDate)}</span></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Employee</th><th>Process</th><th>Submitted</th><th>Total</th><th>Adj.Target</th><th>Prod %</th><th>Deficit</th><th>Downtime</th><th>Status</th><th>Bypass</th></tr></thead>
+          <tbody>${members.map((u,i)=>{
+            const pr=records[i];const bp=bypasses[i];const isBP=!!bp;
+            const prodPct=isBP?100:(pr?.prodPct||0);const deficit=isBP?0:(pr?.deficit||0);
+            return`<tr style="background:${i%2===0?"white":"#fafbff"}">
+              <td><div style="font-weight:700;color:#0a1628;cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="showEmpDetail('${esc(u.empId)}')">${esc(u.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(u.empId)}</div></td>
+              <td style="color:#64748b;font-size:12px">${esc(u.process)}</td>
+              <td>${pr?pill("✅ Yes","#10b981"):pill("⏳ No","#f97316")}</td>
+              <td style="font-weight:700">${pr?pr.total.toFixed(1):"—"}</td>
+              <td style="color:#64748b">${pr?pr.adjTarget.toFixed(1):"—"}</td>
+              <td style="font-weight:900;color:${pCol(prodPct)};font-size:15px">${pr?(isBP?"100%":prodPct+"%"):"—"}</td>
+              <td style="font-weight:700;color:${deficit>0?"#ef4444":"#10b981"}">${pr?(isBP?"0":"-"+deficit.toFixed(1)):"—"}</td>
+              <td style="color:#64748b">${pr?.downtimeHours?pr.downtimeHours+"h":"—"}</td>
+              <td>${isBP?pill("🛡 Bypassed","#4f46e5"):deficit>0&&pr?pill("⚠ Deficit","#ef4444"):pr?pill("✅ On Target","#10b981"):pill("—","#64748b")}</td>
+              <td>${pr&&!isBP&&deficit>0?`<button class="btn" onclick="bypassDeficit('${esc(u.empId)}','${selDate}')" style="background:#e0e7ff;color:#4f46e5;padding:4px 10px;font-size:11px">🛡 Bypass</button>`:""}${isBP?`<button class="btn" onclick="removeBypass('${esc(u.empId)}','${selDate}')" style="background:#fee2e2;color:#ef4444;padding:4px 10px;font-size:11px">✕ Remove</button>`:""}</td>
+            </tr>`;}).join("")}
+          </tbody>
+        </table></div>
+      </div>
+    `);
+    window._pmDate=v=>{selDate=v;load();};window._pmProc=v=>{filterProc=v;load();};
+    window._pmRecs=records;window._pmMembers=members;window._pmSel=selDate;
+    window._exportPM=()=>{const rows=members.map((u,i)=>{const pr=records[i];const bp=bypasses[i];const isBP=!!bp;return[u.empId,u.name,u.process,selDate,pr?pr.total.toFixed(1):"",pr?pr.adjTarget.toFixed(1):"",pr?(isBP?"100":pr.prodPct):"",pr?(isBP?"0":pr.deficit.toFixed(1)):"",pr?pr.downtimeHours:"",isBP?"Yes":"No"];});dlCSV(["EmpID","Name","Process","Date","Total","AdjTarget","Prod%","Deficit","Downtime","Bypassed"],rows,`ProdMonitor_${selDate}.csv`);};
+    window.bypassDeficit=async(empId,date)=>{const reason=prompt("Reason for bypassing deficit:");if(reason===null)return;await S.set(`rcm:bypass:${empId}:${date}`,{bypassedBy:currentUser.empId,reason,at:new Date().toISOString()});load();};
+    window.removeBypass=async(empId,date)=>{if(!confirm("Remove bypass?"))return;await S.set(`rcm:bypass:${empId}:${date}`,null);load();};
+  }
+  load();
+}
+
+// ── SUMMARY ───────────────────────────────────────
 async function renderSummary(type){
-  let year=new Date().getFullYear(),month=new Date().getMonth()+1,wStart=getMon(today()),selUser="ALL";
+  let year=new Date().getFullYear(),month=new Date().getMonth()+1,wStart=getMon(today()),selUser="ALL",filterProc="ALL";
   async function load(){
     const dates=type==="weekly"?wDays(wStart):mDays(year,month);
     const recs=(await Promise.all(dates.map(d=>S.get(`rcm:day:${d}`).then(r=>r?{date:d,...r}:null)))).filter(Boolean);
     const map={};
-    for(const rec of recs){for(const[k,sub] of Object.entries(rec)){if(k==="date"||!sub?.name)continue;const id=sub.empId||sub.name;if(!map[id])map[id]={name:sub.name,empId:sub.empId,process:sub.process,prods:[],quals:[],totals:[]};if(!sub.onLeave&&sub.prodPct)map[id].prods.push(parseFloat(sub.prodPct));if(sub.qualScore)map[id].quals.push(parseFloat(sub.qualScore));if(sub.total)map[id].totals.push(parseInt(sub.total)||0);}}
+    for(const rec of recs){for(const[k,sub] of Object.entries(rec)){if(k==="date"||!sub?.name)continue;if(filterProc!=="ALL"&&sub.process!==filterProc&&sub.process!=="All")continue;const id=sub.empId||sub.name;if(!map[id])map[id]={name:sub.name,empId:sub.empId,process:sub.process,prods:[],quals:[],totals:[]};if(!sub.onLeave&&sub.prodPct)map[id].prods.push(parseFloat(sub.prodPct));if(sub.qualScore)map[id].quals.push(parseFloat(sub.qualScore));if(sub.total)map[id].totals.push(parseInt(sub.total)||0);}}
     let agStats=Object.values(map).map(a=>({...a,avgProd:avg(a.prods)||0,avgQual:avg(a.quals)||0,totalClaims:a.totals.reduce((s,v)=>s+v,0),daysWorked:a.prods.length,above100:a.prods.filter(p=>p>=100).length,below75:a.prods.filter(p=>p<75).length})).sort((a,b)=>b.avgProd-a.avgProd);
     const fStats=selUser==="ALL"?agStats:agStats.filter(a=>a.empId===selUser||a.name===selUser);
-    const teamAvgProd=avg(fStats.map(a=>a.avgProd)),teamAvgQual=avg(fStats.filter(a=>a.avgQual>0).map(a=>a.avgQual)),totalClaims=fStats.reduce((s,a)=>s+a.totalClaims,0);
-    const periodLabel=type==="weekly"?`${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}`:`${MONTHS[month-1]} ${year}`;
+    const tap=avg(fStats.map(a=>a.avgProd)),taq=avg(fStats.filter(a=>a.avgQual>0).map(a=>a.avgQual)),tc=fStats.reduce((s,a)=>s+a.totalClaims,0);
+    const pL=type==="weekly"?`${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}`:`${MONTHS[month-1]} ${year}`;
     const agOpts=agStats.map(a=>`<option value="${esc(a.empId||a.name)}"${selUser===a.empId?"selected":""}>${esc(a.name)} (${esc(a.empId)})</option>`).join("");
     setPage(`
-      <div class="card flex-row" style="margin-bottom:18px">
-        ${type==="weekly"?`<button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wkP()">←</button><span style="font-weight:700;color:#0a1628;font-size:13px;min-width:230px;text-align:center">${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}</span><button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wkN()">→</button>`:`<button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._moP()">←</button><span style="font-weight:700;color:#0a1628;font-size:14px;min-width:130px;text-align:center">${MONTHS[month-1]} ${year}</span><button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._moN()">→</button>`}
-        <span style="font-size:11px;font-weight:700;color:#64748b">🔍 Agent:</span>
-        <select class="inp" style="width:auto;min-width:180px" onchange="window._selA(this.value)"><option value="ALL">All Agents</option>${agOpts}</select>
+      <div class="card flex" style="margin-bottom:18px">
+        ${type==="weekly"?`<button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wP()">←</button><span style="font-weight:700;color:#0a1628;font-size:13px;min-width:230px;text-align:center">${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}</span><button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wN()">→</button>`:`<button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._mP()">←</button><span style="font-weight:700;color:#0a1628;font-size:14px;min-width:130px;text-align:center">${MONTHS[month-1]} ${year}</span><button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._mN()">→</button>`}
+        <select style="border:1px solid #d1d5db;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:700;color:#0a1628;background:white;cursor:pointer" onchange="window._fProc(this.value)"><option value="ALL">All Processes</option>${PROCS.map(p=>`<option value="${p}" ${filterProc===p?"selected":""}>${p}</option>`).join("")}</select>
+        <select class="inp" style="width:auto;min-width:170px" onchange="window._sA(this.value)"><option value="ALL">All Agents</option>${agOpts}</select>
         <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="load()">↺</button>
         <button class="btn" style="background:#f0fdf4;color:#10b981" onclick="window._expS()">📥 Export CSV</button>
       </div>
       ${recs.length===0?`<div class="card" style="text-align:center;padding:60px;color:#64748b"><div style="font-size:44px;margin-bottom:14px">📭</div><div style="font-size:16px;font-weight:700;color:#0a1628">No data for this ${type==="weekly"?"week":"month"}</div></div>`:`
       <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-        ${stat("Days with Data",`${recs.length}/${dates.length}`,recs.length===dates.length?"#10b981":"#f97316","","📅")}
-        ${stat("Agents",fStats.length,"#4f46e5","","👥")}${stat("Avg Prod",teamAvgProd?teamAvgProd+"%":"—",pCol(teamAvgProd),"","📊")}
-        ${stat("Avg Quality",teamAvgQual?teamAvgQual+"%":"—","#7c3aed","","⭐")}${stat("Total Claims",totalClaims,"#2563eb","","📁")}
+        ${stat("Days with Data",`${recs.length}/${dates.length}`,recs.length===dates.length?"#10b981":"#f97316","","📅")}${stat("Agents",fStats.length,"#4f46e5","","👥")}${stat("Avg Prod",tap?tap+"%":"—",pCol(tap),"","📊")}${stat("Avg Quality",taq?taq+"%":"—","#7c3aed","","⭐")}${stat("Total Claims",tc,"#2563eb","","📁")}
       </div>
-      ${fStats.length?`<div class="card" style="margin-bottom:18px"><div class="section-title">📊 Agent Avg Productivity — ${periodLabel}</div>${barChart(fStats.map(a=>({name:a.name.split(" ")[0],prod:a.avgProd})))}</div>`:""}
+      ${fStats.length?`<div class="card" style="margin-bottom:18px">${showSectionTitle("Agent Average Productivity — "+pL,"📊")}${barChart(fStats.map(a=>({name:a.name.split(" ")[0],prod:a.avgProd})))}</div>`:""}
       <div class="card" style="padding:0;overflow:hidden;margin-bottom:18px">
-        <div style="background:#0a1628;padding:12px 18px"><span style="color:white;font-weight:800;font-size:14px">👥 Performance Summary — ${periodLabel}</span></div>
+        <div style="background:#0a1628;padding:12px 18px"><span style="color:white;font-weight:800;font-size:14px">👥 Performance Summary — ${pL}</span></div>
         <div style="overflow-x:auto"><table><thead><tr><th>Rank</th><th>Agent</th><th>Process</th><th>Days</th><th>Avg Prod</th><th>≥100</th><th>&lt;75</th><th>Claims</th><th>Avg Qual</th></tr></thead>
         <tbody>${fStats.map((a,i)=>`<tr style="background:${i===0?"#fffbeb":i%2===0?"white":"#fafbff"}">
           <td style="font-weight:800;color:${i===0?"#f59e0b":"#64748b"};font-size:${i===0?16:13}px">${i===0?"🏆":"#"+(i+1)}</td>
-          <td><div style="font-weight:700;color:#0a1628;cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="showEmpDetail('${esc(a.empId)}')">${esc(a.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(a.empId)}</div></td>
+          <td><div style="font-weight:700;color:#0a1628;cursor:pointer;text-decoration:underline" onclick="showEmpDetail('${esc(a.empId)}')">${esc(a.name)}</div><div style="font-size:10px;color:#64748b;font-family:monospace">${esc(a.empId)}</div></td>
           <td style="color:#64748b;font-size:11px">${esc(a.process)}</td><td style="text-align:center;font-weight:600">${a.daysWorked}</td>
           <td style="font-weight:900;color:${pCol(a.avgProd)};font-size:16px">${a.avgProd}%</td>
           <td style="text-align:center">${pill(a.above100,"#10b981")}</td><td style="text-align:center">${pill(a.below75,a.below75>0?"#ef4444":"#64748b")}</td>
           <td style="text-align:center;font-weight:600">${a.totalClaims}</td><td style="font-weight:700;color:${a.avgQual>0?pCol(a.avgQual):"#64748b"}">${a.avgQual>0?a.avgQual+"%":"—"}</td>
         </tr>`).join("")}</tbody></table></div>
       </div>
-      <button class="btn" onclick="window._genSE()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:14px;font-size:15px;border-radius:12px;margin-bottom:16px">✨ Generate ${type==="weekly"?"Weekly":"Monthly"} Summary Email</button>
+      <button class="btn" onclick="window._genSE()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;width:100%;padding:14px;font-size:15px;border-radius:12px;margin-bottom:16px">✨ Generate ${type==="weekly"?"Weekly":"Monthly"} Summary Email</button>
       <div id="sum-email-out"></div>`}
     `);
-    window._sumD={agStats:fStats,periodLabel,type,teamAvgProd,teamAvgQual};window._sumRecs=recs;
-    window._wkP=()=>{wStart=addDays(wStart,-7);load();};window._wkN=()=>{wStart=addDays(wStart,7);load();};
-    window._moP=()=>{if(month===1){month=12;year--;}else month--;load();};window._moN=()=>{if(month===12){month=1;year++;}else month++;load();};
-    window._selA=v=>{selUser=v;load();};
-    window._expS=()=>{const rows=[];for(const rec of window._sumRecs)for(const[k,s] of Object.entries(rec)){if(k==="date"||!s?.name)continue;if(selUser!=="ALL"&&s.empId!==selUser&&s.name!==selUser)continue;rows.push([s.empId,s.name,s.process,rec.date,s.total||"",s.target||"",s.prodPct||"",s.qualScore||"",s.downtime||"",s.onLeave?"Yes":"No",s.reason||"",s.notes||""]);}dlCSV(["EmpID","Name","Process","Date","Total","Target","Prod%","Quality%","Downtime","OnLeave","Reason","ActionPlan"],rows,`RCM_${type}.csv`);};
+    window._sumD={agStats:fStats,pL,type,tap,taq};window._sumRecs=recs;
+    window._wP=()=>{wStart=addDays(wStart,-7);load();};window._wN=()=>{wStart=addDays(wStart,7);load();};
+    window._mP=()=>{if(month===1){month=12;year--;}else month--;load();};window._mN=()=>{if(month===12){month=1;year++;}else month++;load();};
+    window._sA=v=>{selUser=v;load();};window._fProc=v=>{filterProc=v;load();};
+    window._expS=()=>{const rows=[];for(const rec of window._sumRecs)for(const[k,s] of Object.entries(rec)){if(k==="date"||!s?.name)continue;if(selUser!=="ALL"&&s.empId!==selUser&&s.name!==selUser)continue;rows.push([s.empId,s.name,s.process,rec.date,s.total||"",s.target||"",s.prodPct||"",s.qualScore||"",s.downtime||"",s.onLeave?"Yes":"No",s.reason||"",s.notes||""]);}dlCSV(["EmpID","Name","Process","Date","Total","Target","Prod%","Quality%","Downtime","OnLeave","Reason","Notes"],rows,`RCM_${type}.csv`);};
     window._genSE=async()=>{
-      const{agStats,periodLabel,type:t,teamAvgProd:tap,teamAvgQual:taq}=window._sumD;if(!agStats.length){alert("No data.");return;}
+      const{agStats,pL,type:t,tap,taq}=window._sumD;if(!agStats.length){alert("No data.");return;}
       document.getElementById("sum-email-out").innerHTML=`<div class="card" style="text-align:center;padding:30px;color:#64748b">⏳ Writing ${t} summary…</div>`;
       const txt=agStats.map(a=>`• ${a.name}(${a.empId})|${a.process}|AvgProd:${a.avgProd}%|Days:${a.daysWorked}|≥100:${a.above100}|<75:${a.below75}|Claims:${a.totalClaims}${a.avgQual?`|AvgQual:${a.avgQual}%`:""}`).join("\n");
-      const prompt=`You are Home Health RCM Team Lead at 3Gen Consulting. Write professional ${t} summary for ${periodLabel} to Ketan Sir.\nDATA:\n${txt}\nTeamAvgProd:${tap}%${taq?` TeamAvgQual:${taq}%`:""}\nFormat: Hi Ketan Sir, [Intro] | ══ TEAM OVERVIEW ══ | ══ TOP PERFORMERS ══ | ══ NEEDS ATTENTION ══ | ══ SYSTEM IMPACT ══ | ══ PLAN FOR ${t==="weekly"?"NEXT WEEK":"NEXT MONTH"} ══ | Regards, ${currentUser.name} | Home Health RCM Team Lead | 3Gen Consulting\nPlain text. ○ bullets. RCM terms.`;
-      try{const emailText=await callAI(prompt);window._sumET=emailText;document.getElementById("sum-email-out").innerHTML=`<div class="card" style="padding:0;overflow:hidden"><div style="background:#0a1628;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><span style="color:rgba(255,255,255,0.6);font-size:12px">Subject: ${t==="weekly"?"Weekly":"Monthly"} Summary – ${periodLabel}</span><button class="btn" onclick="navigator.clipboard.writeText(window._sumET);this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy',2000)" style="background:#f59e0b;color:#0a1628;padding:6px 14px;font-size:12px">📋 Copy</button></div><div style="padding:24px 28px;white-space:pre-wrap;font-size:14px;line-height:1.9;color:#1e293b;font-family:Calibri,Segoe UI,sans-serif">${esc(emailText)}</div></div>`;}
-      catch(e){document.getElementById("sum-email-out").innerHTML=`<div class="err">${e.message==="NO_KEY"?"⚠ No API key. Go to ⚙️ Settings.":"❌ Failed. Check API key."}</div>`;}
+      const prompt=`You are Home Health RCM Team Lead at 3Gen Consulting. Write professional ${t} summary for ${pL} to Ketan Sir.\nDATA:\n${txt}\nTeamAvgProd:${tap}%${taq?` TeamAvgQual:${taq}%`:""}\nFormat: Hi Ketan Sir,[Intro]|══ TEAM OVERVIEW ══|══ TOP PERFORMERS ══|══ NEEDS ATTENTION ══|══ PLAN FOR ${t==="weekly"?"NEXT WEEK":"NEXT MONTH"} ══|Regards,${currentUser.name}|Home Health RCM Team Lead|3Gen Consulting\nPlain text. ○ bullets. RCM terms.`;
+      try{const et=await callAI(prompt);window._set=et;document.getElementById("sum-email-out").innerHTML=`<div class="card" style="padding:0;overflow:hidden"><div style="background:#0a1628;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span style="color:rgba(255,255,255,0.6);font-size:12px">Subject: ${t==="weekly"?"Weekly":"Monthly"} Summary – ${pL}</span><button class="btn" onclick="navigator.clipboard.writeText(window._set);this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy',2000)" style="background:#4f46e5;color:white;padding:6px 14px;font-size:12px">📋 Copy</button></div><div style="padding:24px 28px;white-space:pre-wrap;font-size:14px;line-height:1.9;color:#1e293b;font-family:Calibri,Segoe UI,sans-serif">${esc(et)}</div></div>`;}
+      catch(e){document.getElementById("sum-email-out").innerHTML=`<div class="err">${e.message==="NO_KEY"?"⚠ No API key. Go to ⚙️ Settings.":"❌ Failed."}</div>`;}
     };
   }
   load();
 }
 
-// ── ADMIN FEEDBACK ──────────────────────────────────────────────────────────
+// ── ADMIN FEEDBACK ────────────────────────────────
 async function renderAdminFeedback(){
   const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
   let selU="",fbDate=today();
@@ -668,48 +547,47 @@ async function renderAdminFeedback(){
       ${unack>0?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:13px;font-weight:600;color:#92400e">⚠ ${unack} feedback message${unack>1?"s":""} awaiting acknowledgement</div>`:""}
       <div class="grid-2">
         <div class="card">
-          <div class="section-title">✍️ Send Feedback</div>
+          ${showSectionTitle("Send Feedback","✍️")}
           <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">SELECT EMPLOYEE</div>
             <select class="inp" id="fb-sel" onchange="window._fbSel(this.value)"><option value="">-- Choose team member --</option>${users.map(u=>`<option value="${esc(u.empId)}"${selU===u.empId?"selected":""}>${esc(u.name)} (${esc(u.empId)})</option>`).join("")}</select></div>
           <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">DATE</div><input type="date" class="inp" id="fb-date" value="${fbDate}"/></div>
           <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">MESSAGE</div><textarea class="inp" id="fb-text" rows="5" placeholder="Write specific, constructive feedback…" style="resize:vertical"></textarea></div>
-          <button class="btn" onclick="window._sendFb()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:11px">📤 Send Feedback</button>
+          <button class="btn" onclick="window._sendFb()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;width:100%;padding:11px">📤 Send Feedback</button>
           <div id="fb-msg" style="margin-top:8px;font-size:13px;display:none"></div>
         </div>
         <div class="card">
-          <div class="section-title">📨 History ${selU?`— ${users.find(u=>u.empId===selU)?.name||""}`:""}</div>
+          ${showSectionTitle(`History${selU?` — ${users.find(u=>u.empId===selU)?.name||""}`:""}`, "📨")}
           ${!selU?`<div style="color:#64748b;text-align:center;padding:40px;font-size:13px">Select an employee to view feedback</div>`:curFb.length===0?`<div style="color:#64748b;text-align:center;padding:40px;font-size:13px">No feedback sent yet</div>`:`<div style="max-height:420px;overflow-y:auto">${curFb.map(f=>`<div style="border:1.5px solid ${f.acknowledged?"#6ee7b7":"#fde68a"};border-radius:10px;padding:14px;margin-bottom:10px;background:${f.acknowledged?"#f0fdf4":"#fffbeb"}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;font-weight:700;color:#0a1628">${fmtD(f.date)}</span><div style="display:flex;gap:6px;align-items:center">${pill(f.acknowledged?"✅ Acknowledged":"⏳ Awaiting",f.acknowledged?"#10b981":"#f97316")}<button class="btn" onclick="window._delFb(${f.id},'${esc(selU)}')" style="background:#fee2e2;color:#ef4444;padding:3px 9px;font-size:11px;border-radius:6px">🗑</button></div></div><div style="font-size:13px;color:#1e293b;line-height:1.6">${esc(f.text)}</div></div>`).join("")}</div>`}
         </div>
       </div>
     `);
     window._fbSel=v=>{selU=v;load();};
     window._sendFb=async()=>{const sel=document.getElementById("fb-sel")?.value;const date=document.getElementById("fb-date")?.value||today();const text=document.getElementById("fb-text")?.value?.trim();const msg=document.getElementById("fb-msg");if(!sel||!text){if(msg){msg.textContent="⚠ Select employee and write message.";msg.style.display="block";msg.style.color="#ef4444";}return;}const all=await S.get("rcm:feedback")||{};all[sel]=[...(all[sel]||[]),{id:Date.now(),date,text,acknowledged:false,sentAt:new Date().toISOString()}];await S.set("rcm:feedback",all);if(msg){msg.textContent="✅ Feedback sent!";msg.style.display="block";msg.style.color="#10b981";}setTimeout(()=>load(),1200);};
-    window._delFb=async(fbId,empId)=>{if(!confirm("Delete this feedback?"))return;const all=await S.get("rcm:feedback")||{};if(all[empId])all[empId]=all[empId].filter(f=>f.id!==fbId);await S.set("rcm:feedback",all);load();};
+    window._delFb=async(fbId,empId)=>{if(!confirm("Delete this feedback? It will be removed from the employee's view too."))return;const all=await S.get("rcm:feedback")||{};if(all[empId])all[empId]=all[empId].filter(f=>f.id!==fbId);await S.set("rcm:feedback",all);load();};
   }
   load();
 }
 
-// ── TEAM MANAGEMENT ─────────────────────────────────────────────────────────
+// ── TEAM MANAGEMENT ───────────────────────────────
 async function renderTeam(){
   async function load(){
     const users=await S.get("rcm:users")||[];const pwReqs=(await S.get("rcm:pwreset")||[]).filter(r=>r.status==="pending");
     setPage(`
-      ${pwReqs.length>0?`<div style="background:#fff7ed;border:2px solid rgba(249,115,22,0.3);border-radius:14px;padding:20px;margin-bottom:20px"><div class="section-title">🔔 Password Reset Requests (${pwReqs.length})</div>${pwReqs.map((r,i)=>`<div class="flex-row" style="background:white;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #fed7aa"><div style="flex:1"><div style="font-weight:800;color:#0a1628">${esc(r.empId)}</div><div style="font-size:11px;color:#64748b">${esc(r.reason||"No reason")} · ${new Date(r.requestedAt).toLocaleString("en-IN")}</div></div><input class="inp" id="pr_${i}" placeholder="Set new password" style="width:180px"/><button class="btn" onclick="window._approvePR(${i},'${esc(r.empId)}','${esc(r.requestedAt)}')" style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:8px 14px;font-size:12px">✅ Approve</button></div>`).join("")}</div>`:""}
+      ${pwReqs.length>0?`<div style="background:#fff7ed;border:2px solid rgba(249,115,22,0.3);border-radius:14px;padding:20px;margin-bottom:20px">${showSectionTitle(`Password Reset Requests (${pwReqs.length})`,"🔔")}${pwReqs.map((r,i)=>`<div class="flex" style="background:white;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #fed7aa"><div style="flex:1"><div style="font-weight:800;color:#0a1628">${esc(r.empId)}</div><div style="font-size:11px;color:#64748b">${esc(r.reason||"No reason")} · ${new Date(r.requestedAt).toLocaleString("en-IN")}</div></div><input class="inp" id="pr_${i}" placeholder="Set new password" style="width:180px"/><button class="btn" onclick="window._approvePR(${i},'${esc(r.empId)}','${esc(r.requestedAt)}')" style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:8px 14px;font-size:12px">✅ Approve</button></div>`).join("")}</div>`:""}
       <div class="card" style="margin-bottom:20px">
-        <div class="section-title">➕ Create New User</div>
+        ${showSectionTitle("Create New User Account","➕")}
         <div class="grid-3" style="margin-bottom:14px">
-          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">EMPLOYEE ID</div><input class="inp" id="nu-empid" placeholder="EMP001"/></div>
-          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">FULL NAME</div><input class="inp" id="nu-name" placeholder="Agent Name"/></div>
-          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">PASSWORD</div><input class="inp" id="nu-pass" placeholder="Set password"/></div>
-          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">PROCESS</div><select class="inp" id="nu-proc">${PROCS.map(p=>`<option>${esc(p)}</option>`).join("")}<option value="All">All</option></select></div>
-          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">ROLE</div><select class="inp" id="nu-role" onchange="setRoleDef(this.value)"><option value="employee">👤 Employee</option><option value="manager">🔷 Manager</option><option value="admin">👑 Admin</option></select></div>
-          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">OVERALL TARGET</div><input class="inp" id="nu-target" type="number" placeholder="50" value="50"/></div>
+          <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Employee ID</div><input class="inp" id="nu-empid" placeholder="EMP001"/></div>
+          <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Full Name</div><input class="inp" id="nu-name" placeholder="Agent Name"/></div>
+          <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Password</div><input class="inp" id="nu-pass" placeholder="Set password"/></div>
+          <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Process</div><select class="inp" id="nu-proc">${PROCS.map(p=>`<option>${esc(p)}</option>`).join("")}<option value="All">All</option></select></div>
+          <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Role</div><select class="inp" id="nu-role" onchange="setRoleDef(this.value)"><option value="employee">👤 Employee</option><option value="manager">🔷 Manager</option><option value="admin">👑 Admin</option></select></div>
+          <div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Overall Target</div><input class="inp" id="nu-target" type="number" placeholder="50" value="50"/></div>
         </div>
-        <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">ACCESS</div>
-          <div id="nu-acc" style="display:flex;flex-wrap:wrap;gap:8px">${ACCESSES.map(opt=>`<label style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:20px;padding:5px 13px;cursor:pointer;font-size:12px;font-weight:600;color:#64748b"><input type="checkbox" value="${esc(opt)}" class="acc-cb" style="display:none"/> ${esc(opt)}</label>`).join("")}</div>
-        </div>
+        <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Access</div>
+          <div id="nu-acc" style="display:flex;flex-wrap:wrap;gap:8px">${ACCESSES.map(opt=>`<label style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:20px;padding:5px 13px;cursor:pointer;font-size:12px;font-weight:600;color:#64748b"><input type="checkbox" value="${esc(opt)}" class="acc-cb" style="display:none"/> ${esc(opt)}</label>`).join("")}</div></div>
         <div id="nu-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
-        <button class="btn" onclick="window._createUser()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;padding:11px 28px;font-size:14px">Create User</button>
+        <button class="btn" onclick="window._createUser()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;padding:11px 28px;font-size:14px">Create User Account</button>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
         <div style="padding:14px 20px;background:#0a1628"><span style="color:white;font-weight:800;font-size:14px">👥 All Users (${users.length})</span></div>
@@ -729,7 +607,7 @@ async function renderTeam(){
       </div>
     `);
     document.querySelectorAll(".acc-cb").forEach(cb=>{cb.addEventListener("change",function(){const lbl=this.closest("label");if(lbl){lbl.style.background=this.checked?"#e0e7ff":"#f8fafc";lbl.style.borderColor=this.checked?"#4f46e5":"#e2e8f0";lbl.style.color=this.checked?"#4f46e5":"#64748b";}});});
-    window.setRoleDef=role=>{const def=role==="admin"?ACCESSES:role==="manager"?["View Team Progress","Generate Email","Send Feedback","View Reports","View Own Progress"]:["Daily Entry","View Own Progress","Prod Report"];document.querySelectorAll(".acc-cb").forEach(cb=>{cb.checked=def.includes(cb.value);const lbl=cb.closest("label");if(lbl){lbl.style.background=cb.checked?"#e0e7ff":"#f8fafc";lbl.style.borderColor=cb.checked?"#4f46e5":"#e2e8f0";lbl.style.color=cb.checked?"#4f46e5":"#64748b";}});};
+    window.setRoleDef=r=>{const def=r==="admin"?ACCESSES:r==="manager"?["View Team Progress","Generate Email","Send Feedback","View Reports","View Own Progress"]:["Prod Report","View Own Progress","Hourly Tracker"];document.querySelectorAll(".acc-cb").forEach(cb=>{cb.checked=def.includes(cb.value);const lbl=cb.closest("label");if(lbl){lbl.style.background=cb.checked?"#e0e7ff":"#f8fafc";lbl.style.borderColor=cb.checked?"#4f46e5":"#e2e8f0";lbl.style.color=cb.checked?"#4f46e5":"#64748b";}});};
     window._createUser=async()=>{const empId=document.getElementById("nu-empid")?.value?.trim()?.toUpperCase();const name=document.getElementById("nu-name")?.value?.trim();const pass=document.getElementById("nu-pass")?.value?.trim();const process=document.getElementById("nu-proc")?.value;const role=document.getElementById("nu-role")?.value;const access=[...document.querySelectorAll(".acc-cb:checked")].map(c=>c.value);const overallTarget=parseInt(document.getElementById("nu-target")?.value)||50;const msg=document.getElementById("nu-msg");if(!empId||!name||!pass){if(msg){msg.textContent="⚠ All fields required.";msg.style.color="#ef4444";msg.style.display="block";}return;}const users=await S.get("rcm:users")||[];if(users.find(u=>u.empId.toLowerCase()===empId.toLowerCase())){if(msg){msg.textContent="⚠ Employee ID already exists.";msg.style.color="#ef4444";msg.style.display="block";}return;}await S.set("rcm:users",[...users,{empId,name,password:pass,process,role,access,active:true,overallTarget}]);if(msg){msg.textContent="✅ User created!";msg.style.color="#10b981";msg.style.display="block";}setTimeout(()=>load(),1200);};
     window._toggleU=async id=>{const users=await S.get("rcm:users")||[];await S.set("rcm:users",users.map(u=>u.empId===id?{...u,active:!u.active}:u));load();};
     window._approvePR=async(i,empId,requestedAt)=>{const el=document.getElementById("pr_"+i);if(!el?.value?.trim()){alert("Enter a new password.");return;}const users=await S.get("rcm:users")||[];await S.set("rcm:users",users.map(u=>u.empId===empId?{...u,password:el.value.trim()}:u));const all=await S.get("rcm:pwreset")||[];await S.set("rcm:pwreset",all.map(r=>r.empId===empId&&r.requestedAt===requestedAt?{...r,status:"resolved"}:r));alert("✅ Password reset approved!");load();};
@@ -737,7 +615,41 @@ async function renderTeam(){
   load();
 }
 
-// ── EDIT USER MODAL ──────────────────────────────────────────────────────────
+// ── SETTINGS ──────────────────────────────────────
+async function renderSettings(){
+  const settings=await S.get("rcm:settings")||{};
+  const taskCfg=await getTaskConfig();
+  const renderTT=proc=>`<table style="font-size:12px;margin-bottom:6px"><thead><tr><th>Task Name</th><th>Target</th><th>Weight (50/target)</th></tr></thead><tbody>${(taskCfg[proc]||[]).map((t,i)=>`<tr style="background:${i%2===0?"white":"#f8fafc"}"><td style="font-weight:600">${esc(t.name)}</td><td><input type="number" value="${t.target}" min="1" style="border:1px solid #d1d5db;border-radius:6px;padding:4px 8px;width:80px;font-size:12px" onchange="window._tc['${proc}'][${i}].target=parseInt(this.value)||1;document.getElementById('wd_${proc}_${i}').textContent=(50/(parseInt(this.value)||1)).toFixed(3)" /></td><td id="wd_${proc}_${i}" style="color:#4f46e5;font-weight:700">${(50/t.target).toFixed(3)}</td></tr>`).join("")}</tbody></table>`;
+  setPage(`
+    <div class="grid-2" style="gap:20px">
+      <div class="card">
+        ${showSectionTitle("API Settings","⚙️")}
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px;margin-bottom:18px;font-size:13px;color:#92400e"><strong>📧 To enable AI email generation:</strong><br/>1. Go to <a href="https://console.anthropic.com" target="_blank" style="color:#4f46e5">console.anthropic.com</a> → API Keys → Create Key<br/>2. Paste below and Save</div>
+        <div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">ANTHROPIC API KEY</div><input class="inp" id="api-key-input" type="password" value="${esc(settings.anthropicKey||"")}" placeholder="sk-ant-api03-..."/></div>
+        <div id="settings-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
+        <button class="btn" onclick="window._saveAPI()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;padding:11px 28px">💾 Save API Key</button>
+      </div>
+      <div class="card">
+        ${showSectionTitle("Task Config — MCO","🎯")}${renderTT("MCO")}
+        <div style="margin-top:14px">${showSectionTitle("Task Config — MCD","🎯")}</div>${renderTT("MCD")}
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      ${showSectionTitle("Task Config — MCR (Medicare)","🎯")}${renderTT("MCR")}
+      <div style="margin-top:16px;display:flex;gap:10px">
+        <button class="btn" onclick="window._saveTasks()" style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:11px 28px">💾 Save Task Config</button>
+        <button class="btn" onclick="window._resetTasks()" style="background:#f1f5f9;color:#64748b;padding:11px 20px">↺ Reset Defaults</button>
+      </div>
+      <div id="tc-msg" style="font-size:13px;margin-top:10px;display:none"></div>
+    </div>
+  `);
+  window._tc=JSON.parse(JSON.stringify(taskCfg));
+  window._saveAPI=async()=>{const key=document.getElementById("api-key-input").value.trim();const msg=document.getElementById("settings-msg");if(!key){msg.textContent="⚠ Paste your Anthropic API key.";msg.style.color="#ef4444";msg.style.display="block";return;}const s=await S.get("rcm:settings")||{};await S.set("rcm:settings",{...s,anthropicKey:key});msg.textContent="✅ API key saved!";msg.style.color="#10b981";msg.style.display="block";};
+  window._saveTasks=async()=>{await S.set("rcm:task_config",window._tc);const msg=document.getElementById("tc-msg");msg.textContent="✅ Task config saved!";msg.style.color="#10b981";msg.style.display="block";setTimeout(()=>msg.style.display="none",3000);};
+  window._resetTasks=async()=>{if(!confirm("Reset to factory defaults?"))return;await S.set("rcm:task_config",JSON.parse(JSON.stringify(DEFAULT_TASKS)));renderSettings();};
+}
+
+// ── EDIT USER ─────────────────────────────────────
 async function openEditUser(empId){
   const users=await S.get("rcm:users")||[];const u=users.find(x=>x.empId===empId);if(!u)return;
   document.getElementById("edit-orig-id").value=empId;
@@ -746,13 +658,11 @@ async function openEditUser(empId){
   document.getElementById("edit-process").value=u.process||PROCS[0];
   document.getElementById("edit-role").value=u.role||"employee";
   document.getElementById("edit-target").value=u.overallTarget||50;
-  const pillsEl=document.getElementById("edit-access-pills");
-  pillsEl.innerHTML=ACCESSES.map(opt=>`<label style="display:flex;align-items:center;gap:6px;background:${(u.access||[]).includes(opt)?"#e0e7ff":"#f8fafc"};border:1.5px solid ${(u.access||[]).includes(opt)?"#4f46e5":"#e2e8f0"};border-radius:20px;padding:5px 13px;cursor:pointer;font-size:12px;font-weight:600;color:${(u.access||[]).includes(opt)?"#4f46e5":"#64748b"}"><input type="checkbox" value="${esc(opt)}" class="edit-acc-cb" ${(u.access||[]).includes(opt)?"checked":""} style="display:none"/> ${esc(opt)}</label>`).join("");
+  document.getElementById("edit-access-pills").innerHTML=ACCESSES.map(opt=>`<label style="display:flex;align-items:center;gap:6px;background:${(u.access||[]).includes(opt)?"#e0e7ff":"#f8fafc"};border:1.5px solid ${(u.access||[]).includes(opt)?"#4f46e5":"#e2e8f0"};border-radius:20px;padding:5px 13px;cursor:pointer;font-size:12px;font-weight:600;color:${(u.access||[]).includes(opt)?"#4f46e5":"#64748b"}"><input type="checkbox" value="${esc(opt)}" class="edit-acc-cb" ${(u.access||[]).includes(opt)?"checked":""} style="display:none"/> ${esc(opt)}</label>`).join("");
   document.querySelectorAll(".edit-acc-cb").forEach(cb=>{cb.addEventListener("change",function(){const lbl=this.closest("label");if(lbl){lbl.style.background=this.checked?"#e0e7ff":"#f8fafc";lbl.style.borderColor=this.checked?"#4f46e5":"#e2e8f0";lbl.style.color=this.checked?"#4f46e5":"#64748b";}});});
   document.getElementById("edit-msg").style.display="none";
   openModal("edit-modal");
 }
-
 async function saveEditUser(){
   const origId=document.getElementById("edit-orig-id").value;
   const name=document.getElementById("edit-name").value.trim();
@@ -764,17 +674,17 @@ async function saveEditUser(){
   const msg=document.getElementById("edit-msg");
   if(!name){msg.textContent="⚠ Name cannot be empty.";msg.style.color="#ef4444";msg.style.display="block";return;}
   const users=await S.get("rcm:users")||[];
-  const updated=users.map(u=>{if(u.empId!==origId)return u;const nu={...u,name,process,role,access,overallTarget};if(pass)nu.password=pass;return nu;});
-  await S.set("rcm:users",updated);
+  await S.set("rcm:users",users.map(u=>{if(u.empId!==origId)return u;const nu={...u,name,process,role,access,overallTarget};if(pass)nu.password=pass;return nu;}));
   msg.textContent="✅ User updated!";msg.style.color="#10b981";msg.style.display="block";
   setTimeout(()=>{closeModal("edit-modal");renderTeam();},1200);
 }
 
-// ── EMPLOYEE DETAIL MODAL ────────────────────────────────────────────────────
+// ── EMPLOYEE DETAIL MODAL (with task breakdown + admin controls) ───────────
 async function showEmpDetail(empId){
   const users=await S.get("rcm:users")||[];const u=users.find(x=>x.empId===empId);if(!u)return;
   const dates=[];let c=today();for(let i=0;i<30;i++){dates.unshift(c);c=addDays(c,-1);}
   const recs=await Promise.all(dates.map(d=>S.get(`rcm:day:${d}`)));
+  const prodRecs=await Promise.all(dates.slice(-7).map(d=>S.get(`rcm:prod:${empId}:${d}`)));
   const myData=dates.map((d,i)=>{const s=recs[i]?.[empId];return s?{date:d,...s}:null;}).filter(Boolean);
   const prods=myData.filter(d=>!d.onLeave&&d.prodPct).map(d=>parseFloat(d.prodPct));
   const quals=myData.filter(d=>d.qualScore).map(d=>parseFloat(d.qualScore));
@@ -783,27 +693,88 @@ async function showEmpDetail(empId){
   const above100=prods.filter(p=>p>=100).length,below75=prods.filter(p=>p<75).length;
   const chartData=myData.filter(d=>d.prodPct).slice(-14).map(d=>({name:fmtSh(d.date),prod:parseFloat(d.prodPct)||0}));
   const rc=u.role==="admin"?"#ef4444":u.role==="manager"?"#2563eb":"#4f46e5";
+
+  // Recent prod report with task breakdown (last 7 days)
+  const recentProd=dates.slice(-7).map((d,i)=>({date:d,pr:prodRecs[i]})).filter(x=>x.pr).reverse();
+
+  const isAdmin=currentUser.role==="admin";
+
   document.getElementById("emp-modal-title").textContent=u.name;
   document.getElementById("emp-modal-content").innerHTML=`
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #e2e8f0">
       <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,${rc},${rc}88);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:white;flex-shrink:0;overflow:hidden">${u.picture?`<img src="${esc(u.picture)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:u.name.charAt(0).toUpperCase()}</div>
-      <div><div style="font-size:18px;font-weight:800;color:#0a1628">${esc(u.name)}</div><div style="font-size:12px;color:#64748b;margin-top:3px">${esc(u.empId)} · ${esc(u.process)} · Target: ${u.overallTarget||50}</div><div style="margin-top:6px">${pill(u.role==="admin"?"👑 Admin":u.role==="manager"?"🔷 Manager":"👤 Employee",rc)} ${pill(u.active!==false?"🟢 Active":"🔴 Disabled",u.active!==false?"#10b981":"#ef4444")}</div></div>
+      <div style="flex:1">
+        <div style="font-size:18px;font-weight:800;color:#0a1628">${esc(u.name)}</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px">${esc(u.empId)} · ${esc(u.process)} · Target: ${u.overallTarget||50}/day</div>
+        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">${pill(u.role==="admin"?"👑 Admin":u.role==="manager"?"🔷 Manager":"👤 Employee",rc)} ${pill(u.active!==false?"🟢 Active":"🔴 Disabled",u.active!==false?"#10b981":"#ef4444")}</div>
+      </div>
+      ${isAdmin?`<button class="btn" onclick="openEditUser('${esc(u.empId)}')" style="background:#e0e7ff;color:#4f46e5;padding:7px 14px;font-size:12px">✏️ Edit User</button>`:""}
     </div>
-    <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">LAST 30 DAYS PERFORMANCE</div>
+
+    <!-- Performance KPIs -->
+    <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">📈 Last 30 Days Performance</div>
     <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
       ${stat("Avg Prod",avgProd?avgProd+"%":"—",pCol(avgProd),"","📊")}${stat("Days ≥100%",above100,"#10b981","","🏆")}
       ${stat("Days <75%",below75,below75>0?"#ef4444":"#64748b","","⚠")}${stat("Total Claims",totalClaims,"#2563eb","","📁")}${stat("Avg Quality",avgQual?avgQual+"%":"—","#7c3aed","","⭐")}
     </div>
-    ${chartData.length?`<div style="margin-bottom:16px"><div style="font-size:12px;font-weight:700;color:#0a1628;margin-bottom:8px">📈 Last 14 Days Productivity</div>${barChart(chartData,120)}</div>`:""}
-    <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">RECENT SUBMISSIONS (Last 7)</div>
-    <div style="overflow-x:auto"><table style="font-size:12px"><thead><tr><th>Date</th><th>Total</th><th>Target</th><th>Prod%</th><th>Quality%</th><th>DT</th><th>Reason</th></tr></thead>
-    <tbody>${myData.slice(-7).reverse().map(d=>`<tr><td style="font-weight:600;color:#0a1628;white-space:nowrap">${fmtD(d.date)}</td><td>${d.total||"—"}</td><td>${d.target||"—"}</td><td style="font-weight:800;color:${pCol(d.prodPct)}">${d.prodPct?d.prodPct+"%":"—"}</td><td style="font-weight:700;color:${d.qualScore?pCol(d.qualScore):"#64748b"}">${d.qualScore?d.qualScore+"%":"—"}</td><td>${d.downtime?d.downtime+"h":"—"}</td><td style="color:#64748b;max-width:150px">${d.reason?esc(d.reason.slice(0,40)):"—"}</td></tr>`).join("")}</tbody></table></div>
+    ${chartData.length?`<div style="margin-bottom:16px">${showSectionTitle("Last 14 Days Productivity","📊")}${barChart(chartData,120)}</div>`:""}
+
+    <!-- Task Breakdown (last 7 days prod reports) -->
+    ${recentProd.length>0?`
+    <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">📋 Task Breakdown — Last 7 Days</div>
+    <div style="overflow-x:auto;margin-bottom:16px">
+      <table style="font-size:12px">
+        <thead><tr><th>Date</th><th>Process</th><th>Total</th><th>Adj.Target</th><th>Prod%</th><th>Deficit</th><th>Downtime</th><th>Remark</th>${isAdmin?`<th>Actions</th>`:""}</tr></thead>
+        <tbody>${recentProd.map(({date,pr})=>`<tr>
+          <td style="font-weight:600;color:#0a1628;white-space:nowrap">${fmtD(date)}</td>
+          <td style="color:#64748b">${esc(pr.process||"—")}</td>
+          <td style="font-weight:700">${pr.total?.toFixed(1)||"—"}</td>
+          <td style="color:#64748b">${pr.adjTarget?.toFixed(1)||"—"}</td>
+          <td style="font-weight:900;color:${pCol(pr.prodPct)}">${pr.prodPct?pr.prodPct+"%":"—"}</td>
+          <td style="color:${pr.deficit>0?"#ef4444":"#10b981"};font-weight:700">${pr.deficit>0?"-"+pr.deficit.toFixed(1):"✅"}</td>
+          <td style="color:#64748b">${pr.downtimeHours?pr.downtimeHours+"h":"—"}</td>
+          <td style="color:#64748b;max-width:120px;font-size:11px">${pr.remark?esc(pr.remark.slice(0,40)):"—"}</td>
+          ${isAdmin?`<td><button class="btn" onclick="adminDeleteProdReport('${esc(u.empId)}','${date}')" style="background:#fee2e2;color:#ef4444;padding:3px 8px;font-size:10px;border-radius:6px">🗑 Del</button></td>`:""}
+        </tr>`).join("")}</tbody>
+      </table>
+    </div>`:
+    `<div style="text-align:center;padding:20px;color:#64748b;font-size:13px">No detailed prod reports in last 7 days</div>`}
+
+    <!-- Recent submissions -->
+    <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📝 Recent Daily Submissions</div>
+    <div style="overflow-x:auto"><table style="font-size:12px"><thead><tr><th>Date</th><th>Total</th><th>Prod%</th><th>Quality%</th><th>DT</th><th>Reason</th>${isAdmin?`<th>Delete</th>`:""}</tr></thead>
+    <tbody>${myData.slice(-7).reverse().map(d=>`<tr>
+      <td style="font-weight:600;color:#0a1628;white-space:nowrap">${fmtD(d.date)}</td>
+      <td>${d.total||"—"}</td>
+      <td style="font-weight:800;color:${pCol(d.prodPct)}">${d.prodPct?d.prodPct+"%":"—"}</td>
+      <td style="font-weight:700;color:${d.qualScore?pCol(d.qualScore):"#64748b"}">${d.qualScore?d.qualScore+"%":"—"}</td>
+      <td>${d.downtime?d.downtime+"h":"—"}</td>
+      <td style="color:#64748b;max-width:150px">${d.reason?esc(d.reason.slice(0,40)):"—"}</td>
+      ${isAdmin?`<td><button class="btn" onclick="adminDeleteDailyEntry('${esc(u.empId)}','${d.date}')" style="background:#fee2e2;color:#ef4444;padding:3px 8px;font-size:10px;border-radius:6px">🗑</button></td>`:""}
+    </tr>`).join("")}</tbody></table></div>
+
     ${myData.length===0?`<div style="text-align:center;padding:30px;color:#64748b;font-size:13px">No submissions in last 30 days</div>`:""}
+
+    <!-- Admin Controls -->
+    ${isAdmin?`
+    <div style="margin-top:20px;padding-top:16px;border-top:2px dashed #e2e8f0">
+      <div style="font-size:12px;font-weight:800;color:#ef4444;margin-bottom:12px">🔐 Admin Controls</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="adminClearAllFeedback('${esc(u.empId)}')" style="background:#fff7ed;color:#f97316;border:1px solid #fed7aa;padding:7px 14px;font-size:12px">🗑 Clear All Feedback</button>
+        <button class="btn" onclick="adminClearHourlyTracker('${esc(u.empId)}')" style="background:#fff7ed;color:#f97316;border:1px solid #fed7aa;padding:7px 14px;font-size:12px">🗑 Clear Today's Hourly</button>
+      </div>
+    </div>`:""} 
   `;
   openModal("emp-modal");
 }
 
-// ── PROFILE ──────────────────────────────────────────────────────────────────
+// Admin delete functions
+async function adminDeleteProdReport(empId,date){if(!confirm(`Delete prod report for ${fmtD(date)}? This cannot be undone.`))return;await S.set(`rcm:prod:${empId}:${date}`,null);alert("✅ Prod report deleted.");showEmpDetail(empId);}
+async function adminDeleteDailyEntry(empId,date){if(!confirm(`Delete daily entry for ${fmtD(date)}?`))return;const day=await S.get(`rcm:day:${date}`)||{};delete day[empId];await S.set(`rcm:day:${date}`,day);alert("✅ Entry deleted.");showEmpDetail(empId);}
+async function adminClearAllFeedback(empId){if(!confirm(`Clear ALL feedback for this employee?`))return;const all=await S.get("rcm:feedback")||{};delete all[empId];await S.set("rcm:feedback",all);alert("✅ Feedback cleared.");showEmpDetail(empId);}
+async function adminClearHourlyTracker(empId){if(!confirm("Clear today's hourly tracker for this employee?"))return;await S.set(`rcm:hourly:${empId}:${today()}`,null);alert("✅ Hourly tracker cleared.");showEmpDetail(empId);}
+
+// ── PROFILE ───────────────────────────────────────
 async function openProfile(){
   const users=await S.get("rcm:users")||[];
   const teamSize=users.filter(u=>u.role==="employee"&&u.active!==false).length;
@@ -815,17 +786,16 @@ async function openProfile(){
       <div style="font-size:13px;color:#64748b;margin-top:4px">${esc(currentUser.empId)} · ${pill(currentUser.role==="admin"?"👑 Admin":currentUser.role==="manager"?"🔷 Manager":"👤 Employee",rc)}</div>
     </div>
     <div style="display:flex;gap:12px;margin-bottom:20px">
-      ${stat("Process",currentUser.process||"—","#4f46e5","","🏥")}${stat("Team Size",teamSize+" Members","#10b981","Employees","👥")}${stat("My Target",currentUser.overallTarget||50,"#f59e0b","Claims/day","🎯")}
+      ${stat("Process",currentUser.process||"—","#4f46e5","","🏥")}${stat("Team Size",teamSize+" Members","#10b981","Active Employees","👥")}${stat("My Target",currentUser.overallTarget||50,"#f59e0b","Claims/day","🎯")}
     </div>
     <div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">UPDATE NAME</div><input class="inp" id="profile-name" value="${esc(currentUser.name)}"/></div>
     <div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">PROFILE PICTURE URL</div><input class="inp" id="profile-pic-url" value="${esc(currentUser.picture||"")}" placeholder="Paste any image URL…"/></div>
     <div style="margin-bottom:20px"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">NEW PASSWORD (leave blank to keep)</div><input class="inp" id="profile-newpass" type="password" placeholder="Enter new password"/></div>
     <div id="profile-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
-    <button class="btn" onclick="saveProfile()" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:12px">💾 Save Profile</button>
+    <button class="btn" onclick="saveProfile()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;width:100%;padding:12px">💾 Save Profile</button>
   `;
   openModal("profile-modal");
 }
-
 async function saveProfile(){
   const name=document.getElementById("profile-name").value.trim();
   const pic=document.getElementById("profile-pic-url").value.trim();
@@ -839,31 +809,39 @@ async function saveProfile(){
   if(pic){av.innerHTML=`<img src="${esc(pic)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;} else{av.style.background=`linear-gradient(135deg,${rc},${rc}88)`;av.textContent=currentUser.name.charAt(0).toUpperCase();}
   document.getElementById("user-name-display").textContent=name;
   msg.textContent="✅ Profile updated!";msg.style.color="#10b981";msg.style.display="block";
-  setTimeout(()=>closeModal("profile-modal"),1500);
+  setTimeout(()=>closeModal("profile-modal"),1400);
 }
 
-// ╔══════════════════════════════════════════════════╗
-// ║  EMPLOYEE APP                                    ║
-// ╚══════════════════════════════════════════════════╝
+// ══════════════════════════════════════════════════
+//  EMPLOYEE APP
+// ══════════════════════════════════════════════════
 function loadEmpApp(){
-  const tabs=[{id:"entry",label:"📝 My Entry"},{id:"prodreport",label:"📋 Prod Report"},{id:"progress",label:"📊 My Progress"},{id:"feedback",label:"💬 Feedback"}];
+  const tabs=[
+    {id:"prodreport",label:"📋 Prod Report"},
+    {id:"progress",label:"📊 My Progress"},
+    {id:"hourly",label:"⏰ Hourly Tracker"},
+    {id:"feedback",label:"💬 Feedback"}
+  ];
   setTabs(tabs,async id=>{
     const allFb=await S.get("rcm:feedback")||{};
     const unread=(allFb[currentUser.empId]||[]).filter(f=>!f.acknowledged).length;
     document.querySelectorAll(".tab-btn").forEach(b=>{if(b.dataset.id==="feedback")b.textContent=`💬 Feedback${unread>0?` (${unread})`:""}`});
-    if(id==="entry")renderEntry();
-    else if(id==="prodreport")renderProdReport();
+    if(id==="prodreport")renderProdReport();
     else if(id==="progress")renderProgress();
+    else if(id==="hourly")renderHourlyTracker();
     else if(id==="feedback")renderEmpFeedback();
   });
-  selTab("entry");
+  selTab("prodreport");
 }
 
-// ── PROD REPORT ────────────────────────────────────────────────────────────
+// ── PROD REPORT (main entry + report) ─────────────
 async function renderProdReport(){
-  let selDate=today();
-  let selProc="MCO"; // MCO | MCD | MCR
+  let selDate=today(),selProc="MCO";
   const taskCfg=await getTaskConfig();
+
+  // Auto-detect process from user's assigned process
+  if(currentUser.process==="MCD (Medicaid)")selProc="MCD";
+  else if(currentUser.process==="MCR (Medicare)")selProc="MCR";
 
   async function load(){
     const pr=await S.get(`rcm:prod:${currentUser.empId}:${selDate}`);
@@ -872,236 +850,284 @@ async function renderProdReport(){
     const savedCounts=pr?.tasks||{};
     const savedDT=pr?.downtimeHours||0;
     const overallTarget=currentUser.overallTarget||50;
-
-    // Calculate live
     const counts={};tasks.forEach(t=>{counts[t.name]=savedCounts[t.name]||0;});
-    const {total,adjTarget,prodPct,deficit,deficitPct}=calcProd(tasks,counts,overallTarget,savedDT);
-    const isDeficit=prodPct<100&&!bypass;
+    const{total,adjTarget,prodPct,deficit,deficitPct}=calcProd(tasks,counts,overallTarget,savedDT);
+    const isDeficit=prodPct<100&&!bypass&&pr;
 
     setPage(`
-      ${isDeficit&&pr?`<div class="deficit-banner">
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span style="font-size:24px">⚠️</span>
+      <!-- Deficit Banner -->
+      ${isDeficit?`<div class="deficit-alert">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <span style="font-size:28px">⚠️</span>
           <div style="flex:1">
-            <div style="font-weight:800;color:#991b1b;font-size:15px">Productivity Deficit Alert</div>
-            <div style="color:#b91c1c;font-size:13px;margin-top:4px">You are <strong>${deficit.toFixed(1)} units short</strong> (${deficitPct.toFixed(1)}% below target). Please work to cover this deficit.</div>
+            <div style="font-weight:800;color:#991b1b;font-size:16px">Productivity Deficit Alert</div>
+            <div style="color:#b91c1c;font-size:13px;margin-top:4px">You are <strong>${deficit.toFixed(1)} units short</strong> — that's <strong>${deficitPct.toFixed(1)}%</strong> below your target. Please work to cover this.</div>
           </div>
-          <div style="text-align:center"><div style="font-size:28px;font-weight:900;color:${pCol(prodPct)}">${prodPct.toFixed(1)}%</div><div style="font-size:11px;color:#64748b">Current Prod</div></div>
+          <div style="text-align:center;background:white;border-radius:12px;padding:12px 18px;box-shadow:0 2px 8px rgba(239,68,68,0.2)">
+            <div style="font-size:30px;font-weight:900;color:${pCol(prodPct)}">${prodPct.toFixed(1)}%</div>
+            <div style="font-size:11px;color:#64748b">Current Prod</div>
+          </div>
         </div>
       </div>`:""}
       ${bypass?`<div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#3730a3"><strong>🛡 Deficit Bypassed by Admin</strong> — Reason: ${esc(bypass.reason||"Not specified")}</div>`:""}
 
-      <div class="card" style="margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <!-- Professional Header Card -->
+      <div class="card" style="margin-bottom:18px;background:linear-gradient(135deg,#0a1628 0%,#1e3a5f 100%);color:white;padding:24px 28px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
           <div>
-            <div style="font-size:16px;font-weight:800;color:#0a1628">📋 Daily Productivity Report</div>
-            <div style="font-size:12px;color:#64748b;margin-top:3px">${esc(currentUser.name)} · ${esc(currentUser.empId)} · Target: ${overallTarget} · Shift: 8h</div>
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Daily Productivity Report</div>
+            <div style="font-size:20px;font-weight:900;color:white">${esc(currentUser.name)}</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px">${esc(currentUser.empId)} · ${esc(currentUser.process)} · Target: ${overallTarget} · Shift: 8h</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <input type="date" value="${selDate}" onchange="window._prDate(this.value)" style="border:1px solid #d1d5db;border-radius:8px;padding:7px 10px;font-size:13px;color:#0a1628;font-weight:700;cursor:pointer"/>
-            ${["MCO","MCD","MCR"].map(p=>`<button class="sub-tab ${selProc===p?"active":""}" onclick="window._prProc('${p}')">${p}</button>`).join("")}
+            <input type="date" value="${selDate}" onchange="window._prDate(this.value)" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 12px;color:white;font-size:13px;font-weight:700;cursor:pointer"/>
+            ${["MCO","MCD","MCR"].map(p=>`<button class="sub-tab ${selProc===p?"active":""}" onclick="window._prProc('${p}')" style="${selProc===p?"background:#4f46e5;color:white":"background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7)"}">${p}</button>`).join("")}
           </div>
         </div>
-
-        <!-- Live summary bar -->
-        <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-          ${stat("Total",total.toFixed(1),pCol(prodPct),"(weighted)","📊")}
-          ${stat("Adj. Target",adjTarget.toFixed(1),"#4f46e5",`After ${savedDT}h downtime`,"🎯")}
-          ${stat("Prod %",prodPct.toFixed(1)+"%",pCol(prodPct),"","📈")}
-          ${stat("Deficit",deficit>0?"-"+deficit.toFixed(1):"✅ Met",deficit>0?"#ef4444":"#10b981",deficit>0?"units short":"","⚠")}
+        <!-- Live KPIs in header -->
+        <div style="display:flex;gap:14px;margin-top:20px;flex-wrap:wrap">
+          ${[{l:"TOTAL (weighted)",v:total.toFixed(2),c:pCol(prodPct)},{l:"ADJ. TARGET",v:adjTarget.toFixed(1),c:"white"},{l:"PROD %",v:prodPct.toFixed(1)+"%",c:pCol(prodPct)},{l:"DEFICIT",v:deficit>0?"-"+deficit.toFixed(1):"✅ Met",c:deficit>0?"#fca5a5":"#6ee7b7"}].map(({l,v,c})=>`
+            <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;flex:1;min-width:100px;text-align:center">
+              <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">${l}</div>
+              <div id="pr-hdr-${l.replace(/[^a-z]/gi,"")}" style="font-size:20px;font-weight:900;color:${c}">${v}</div>
+            </div>`).join("")}
         </div>
+      </div>
 
-        <!-- Downtime -->
-        <div style="margin-bottom:16px;background:#f8fafc;border-radius:10px;padding:14px;border:1px solid #e2e8f0">
-          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-            <div>
-              <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">⏱ Downtime (hours)</div>
-              <input type="number" id="pr-downtime" value="${savedDT}" min="0" max="8" step="0.5" placeholder="0" style="border:1px solid #d1d5db;border-radius:8px;padding:7px 10px;width:100px;font-size:14px;font-weight:700" onchange="window._prLiveCalc()"/>
-            </div>
-            <div style="color:#64748b;font-size:12px;flex:1">
-              Shift = 8h · Downtime reduces effective target<br/>
-              Adjusted Target = ${overallTarget} × (8 − downtime) ÷ 8
-            </div>
-            <div style="text-align:center;background:white;border-radius:8px;padding:10px 16px;border:1px solid #e2e8f0">
-              <div style="font-size:22px;font-weight:900;color:${pCol(prodPct)}" id="pr-live-pct">${prodPct.toFixed(1)}%</div>
-              <div style="font-size:10px;color:#64748b">Live Prod %</div>
-            </div>
+      <!-- Downtime Card -->
+      <div class="card" style="margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">⏱ Downtime (hours)</div>
+            <input type="number" id="pr-downtime" value="${savedDT}" min="0" max="8" step="0.5" style="border:2px solid #4f46e5;border-radius:8px;padding:8px 12px;width:110px;font-size:16px;font-weight:800;color:#4f46e5" onchange="window._prLive()" onkeyup="window._prLive()"/>
+          </div>
+          <div style="flex:1;font-size:12px;color:#64748b;line-height:1.6">
+            <strong>Formula:</strong> Adjusted Target = ${overallTarget} × (8 − downtime) ÷ 8<br/>
+            <strong>Current:</strong> ${overallTarget} × (8 − ${savedDT}) ÷ 8 = <strong id="pr-adj-formula">${adjTarget.toFixed(1)}</strong>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:32px;font-weight:900;color:${pCol(prodPct)}" id="pr-live-pct">${prodPct.toFixed(1)}%</div>
+            <div style="font-size:10px;color:#64748b">Live Prod %</div>
           </div>
         </div>
+      </div>
 
-        <!-- Task input table -->
-        <div style="overflow-x:auto">
-          <table>
-            <thead><tr>
-              <th>Task Name</th>
-              <th>Individual Target</th>
-              <th>Weight (50/target)</th>
-              <th>Count Entered</th>
-              <th>Contribution</th>
-            </tr></thead>
-            <tbody id="pr-task-rows">
-              ${tasks.map((t,i)=>{
-                const cnt=savedCounts[t.name]||0;
-                const wt=(50/t.target).toFixed(3);
-                const contrib=(cnt*(50/t.target)).toFixed(2);
-                return`<tr style="background:${i%2===0?"white":"#f8fafc"}">
-                  <td style="font-weight:600;color:#0a1628">${esc(t.name)}</td>
-                  <td style="color:#4f46e5;font-weight:700">${t.target}</td>
-                  <td style="color:#64748b;font-size:12px">${wt}</td>
-                  <td><input type="number" id="prt_${i}" value="${cnt}" min="0" step="1" style="border:1px solid #d1d5db;border-radius:7px;padding:5px 9px;width:90px;font-size:13px;font-weight:700" onchange="window._prLiveCalc()" onkeyup="window._prLiveCalc()"/></td>
-                  <td style="font-weight:700;color:#4f46e5" id="prcontrib_${i}">${contrib}</td>
-                </tr>`;
-              }).join("")}
-            </tbody>
-            <tfoot>
-              <tr style="background:#f0f4ff;border-top:2px solid #4f46e5">
-                <td colspan="3" style="font-weight:800;color:#0a1628;padding:10px 12px">TOTAL (weighted sum)</td>
-                <td colspan="2" style="font-weight:900;font-size:16px;color:${pCol(prodPct)};padding:10px 12px" id="pr-total-row">${total.toFixed(2)}</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+      <!-- Task Table -->
+      <div class="card" style="margin-bottom:18px;padding:0;overflow:hidden">
+        <div style="background:#0a1628;padding:12px 18px"><span style="color:white;font-weight:800;font-size:14px">📋 Task Entry — ${selProc}</span></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Task Name</th><th>Individual Target</th><th>Weight (50÷target)</th><th>Count</th><th>Contribution</th></tr></thead>
+          <tbody id="pr-task-rows">
+            ${tasks.map((t,i)=>{const cnt=savedCounts[t.name]||0;const wt=(50/t.target).toFixed(3);const contrib=(cnt*(50/t.target)).toFixed(2);return`<tr style="background:${i%2===0?"white":"#f8fafc"}">
+              <td style="font-weight:600;color:#0a1628">${esc(t.name)}</td>
+              <td style="color:#4f46e5;font-weight:700">${t.target}</td>
+              <td style="color:#64748b;font-size:12px">${wt}</td>
+              <td><input type="number" id="prt_${i}" value="${cnt}" min="0" style="border:1px solid #d1d5db;border-radius:7px;padding:6px 10px;width:90px;font-size:14px;font-weight:700;color:#0a1628" onchange="window._prLive()" onkeyup="window._prLive()"/></td>
+              <td style="font-weight:700;color:#4f46e5" id="pc_${i}">${contrib}</td>
+            </tr>`;}).join("")}
+          </tbody>
+          <tfoot>
+            <tr style="background:#eef2ff;border-top:2px solid #4f46e5">
+              <td colspan="3" style="font-weight:800;color:#0a1628;padding:10px 11px">TOTAL (weighted sum)</td>
+              <td colspan="2" style="font-weight:900;font-size:17px;color:${pCol(prodPct)};padding:10px 11px" id="pr-total-row">${total.toFixed(2)}</td>
+            </tr>
+          </tfoot>
+        </table></div>
+      </div>
 
-        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button class="btn" onclick="window._saveProdReport()" style="background:linear-gradient(135deg,#4f46e5,#3730a3);color:white;padding:11px 28px;font-size:14px">💾 Save Prod Report</button>
-          ${pr?`<button class="btn" onclick="exportProdReport()" style="background:#f0fdf4;color:#10b981;padding:11px 20px;font-size:13px">📥 Export Day CSV</button>`:""}
-          <div id="pr-save-msg" style="font-size:13px;display:none"></div>
+      <!-- Remark & Quality -->
+      <div class="grid-2" style="margin-bottom:18px">
+        <div class="card">
+          <div style="font-size:10px;font-weight:700;color:${isDeficit?"#b45309":"#64748b"};letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">${isDeficit?"⚠ ":""}Remark / Deficit Reason</div>
+          <textarea class="inp" id="pr-remark" rows="4" placeholder="${isDeficit?"Explain the reason for deficit: VDI issues, DDE downtime, complex claims, TAT pressure, physician tasks…":"Any highlights, achievements, or context for today"}" style="resize:vertical;border-color:${isDeficit?"#fcd34d":"#d1d5db"};background:${isDeficit?"#fffbeb":"white"}">${esc(pr?.remark||"")}</textarea>
         </div>
+        <div class="card">
+          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⭐ Yesterday's Quality %</div>
+          <input type="number" class="inp" id="pr-quality" placeholder="e.g. 96.5" value="${esc(pr?.qualScore||"")}" style="margin-bottom:14px"/>
+          <div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">💬 Action Plan / Recovery</div>
+          <textarea class="inp" id="pr-notes" rows="3" placeholder="e.g. Will cover deficit by EOW, working on CCA project…" style="resize:vertical">${esc(pr?.notes||"")}</textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn" onclick="window._savePR()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;padding:12px 32px;font-size:15px">💾 Save Prod Report</button>
+        ${pr?`<button class="btn" onclick="window._exportPR()" style="background:#f0fdf4;color:#10b981;padding:12px 20px;font-size:13px">📥 Export CSV</button>`:""}
+        <div id="pr-save-msg" style="font-size:13px;font-weight:600;display:none"></div>
       </div>
     `);
 
-    // Live calculation on input change
-    const taskCfgLocal=tasks;const overallTgt=overallTarget;
-    window._prLiveCalc=()=>{
+    const tasksCopy=tasks;const tgt=overallTarget;
+    window._prLive=()=>{
       const dt=parseFloat(document.getElementById("pr-downtime")?.value)||0;
-      const cnt={};taskCfgLocal.forEach((t,i)=>{cnt[t.name]=parseFloat(document.getElementById(`prt_${i}`)?.value)||0;});
-      const res=calcProd(taskCfgLocal,cnt,overallTgt,dt);
-      // Update contribution cells
-      taskCfgLocal.forEach((t,i)=>{const el=document.getElementById(`prcontrib_${i}`);if(el)el.textContent=(cnt[t.name]*(50/t.target)).toFixed(2);});
-      const totEl=document.getElementById("pr-total-row");if(totEl)totEl.textContent=res.total.toFixed(2);
+      const cnt={};tasksCopy.forEach((t,i)=>{cnt[t.name]=parseFloat(document.getElementById(`prt_${i}`)?.value)||0;});
+      const res=calcProd(tasksCopy,cnt,tgt,dt);
+      tasksCopy.forEach((t,i)=>{const el=document.getElementById(`pc_${i}`);if(el)el.textContent=(cnt[t.name]*(50/t.target)).toFixed(2);});
+      const totEl=document.getElementById("pr-total-row");if(totEl){totEl.textContent=res.total.toFixed(2);totEl.style.color=pCol(res.prodPct);}
       const pctEl=document.getElementById("pr-live-pct");if(pctEl){pctEl.textContent=res.prodPct.toFixed(1)+"%";pctEl.style.color=pCol(res.prodPct);}
+      const adjEl=document.getElementById("pr-adj-formula");if(adjEl)adjEl.textContent=res.adjTarget.toFixed(1);
     };
-
     window._prDate=v=>{selDate=v;load();};
     window._prProc=v=>{selProc=v;load();};
-
-    window._saveProdReport=async()=>{
+    window._savePR=async()=>{
       const dt=parseFloat(document.getElementById("pr-downtime")?.value)||0;
       const cnt={};tasks.forEach((t,i)=>{cnt[t.name]=parseFloat(document.getElementById(`prt_${i}`)?.value)||0;});
       const res=calcProd(tasks,cnt,overallTarget,dt);
-      await S.set(`rcm:prod:${currentUser.empId}:${selDate}`,{tasks:cnt,downtimeHours:dt,process:selProc,...res,overallTarget,submittedAt:new Date().toISOString()});
+      const remark=document.getElementById("pr-remark")?.value||"";
+      const qualScore=document.getElementById("pr-quality")?.value||"";
+      const notes=document.getElementById("pr-notes")?.value||"";
+      // Save prod report
+      await S.set(`rcm:prod:${currentUser.empId}:${selDate}`,{tasks:cnt,downtimeHours:dt,process:selProc,...res,overallTarget,remark,qualScore,notes,submittedAt:new Date().toISOString()});
+      // Also sync to daily data for admin Today view
+      const day=await S.get(`rcm:day:${selDate}`)||{};
+      day[currentUser.empId]={empId:currentUser.empId,name:currentUser.name,process:currentUser.process,total:res.total.toFixed(1),target:overallTarget,prodPct:res.prodPct.toFixed(1),downtime:dt,qualScore,reason:remark,notes,submittedAt:new Date().toISOString()};
+      await S.set(`rcm:day:${selDate}`,day);
       const msg=document.getElementById("pr-save-msg");
-      if(msg){msg.textContent=`✅ Saved! Prod: ${res.prodPct.toFixed(1)}% ${res.deficit>0?"— Deficit: "+res.deficit.toFixed(1)+" units":"— ✅ Target Met"}`;msg.style.color=res.deficit>0?"#ef4444":"#10b981";msg.style.display="block";}
-      // Update header alert
-      if(res.prodPct<100&&!bypass){document.getElementById("deficit-header-alert").style.display="block";}
-      else{document.getElementById("deficit-header-alert").style.display="none";}
-      setTimeout(()=>load(),1000);
+      if(msg){msg.textContent=`✅ Saved! Prod: ${res.prodPct.toFixed(1)}% ${res.deficit>0?"⚠ Deficit: "+res.deficit.toFixed(1)+" units":"✅ Target Met!"}`;msg.style.color=res.deficit>0?"#ef4444":"#10b981";msg.style.display="block";}
+      if(res.prodPct<100&&!bypass)document.getElementById("deficit-header-alert").style.display="block";
+      else document.getElementById("deficit-header-alert").style.display="none";
+      setTimeout(()=>load(),1200);
     };
-
-    window.exportProdReport=()=>{
+    window._exportPR=()=>{
       if(!pr)return;
       const rows=tasks.map(t=>[t.name,t.target,(50/t.target).toFixed(3),pr.tasks?.[t.name]||0,((pr.tasks?.[t.name]||0)*(50/t.target)).toFixed(2)]);
-      rows.push(["TOTAL","","","",pr.total.toFixed(2)],["Adj. Target","","","",pr.adjTarget.toFixed(2)],["Prod %","","","",pr.prodPct.toFixed(1)+"%"],["Deficit","","","",pr.deficit.toFixed(2)],["Downtime (h)","","","",pr.downtimeHours]);
+      rows.push(["","","","",""],["TOTAL","","","",pr.total?.toFixed(2)],["Adj. Target","","","",pr.adjTarget?.toFixed(2)],["Prod %","","","",pr.prodPct?.toFixed(1)+"%"],["Deficit","","","",pr.deficit?.toFixed(2)],["Downtime(h)","","","",pr.downtimeHours],["Remark","","","",pr.remark||""]);
       dlCSV(["Task","Individual Target","Weight","Count","Contribution"],rows,`ProdReport_${currentUser.empId}_${selDate}.csv`);
     };
   }
   load();
 }
 
-// ── EMPLOYEE ENTRY ───────────────────────────────────────────────────────────
-async function renderEntry(){
-  let entryDate=today();
+// ── PROGRESS ──────────────────────────────────────
+async function renderProgress(){
+  let wStart=getMon(today()),year=new Date().getFullYear(),month=new Date().getMonth()+1;
   async function load(){
-    const day=await S.get(`rcm:day:${entryDate}`)||{};const mine=day[currentUser.empId];const yd=(await S.get(`rcm:day:${yesterday()}`)||{})[currentUser.empId];const isLow=mine?.prodPct&&parseFloat(mine.prodPct)<100;
+    const wd=wDays(wStart),md=mDays(year,month);
+    const[wr,mr]=await Promise.all([Promise.all(wd.map(d=>S.get(`rcm:prod:${currentUser.empId}:${d}`))),Promise.all(md.map(d=>S.get(`rcm:prod:${currentUser.empId}:${d}`)))]);
+    const wData=wd.map((d,i)=>{const s=wr[i];return{date:fmtSh(d),prod:s?.prodPct?parseFloat(s.prodPct):null,total:s?.total||null,adjTarget:s?.adjTarget||null,deficit:s?.deficit||null};});
+    const mData=md.map((d,i)=>{const s=mr[i];return{date:fmtSh(d),prod:s?.prodPct?parseFloat(s.prodPct):null};});
+    const activeW=wData.filter(d=>d.prod!==null);const avgWProd=avg(activeW.map(d=>d.prod));
+    const totalW=activeW.reduce((s,d)=>s+(parseFloat(d.total)||0),0);const targetW=activeW.reduce((s,d)=>s+(parseFloat(d.adjTarget)||currentUser.overallTarget||50),0);const deficit=+(targetW-totalW).toFixed(1);
     setPage(`
-      ${yd?`<div class="card" style="margin-bottom:18px;border:1.5px solid rgba(79,70,229,0.2);background:linear-gradient(135deg,#eef2ff,#f8fafc)">
-        <div class="section-title">📅 Yesterday's Performance — ${fmtD(yesterday())}</div>
-        <div style="display:flex;gap:12px;flex-wrap:wrap">
-          ${[{l:"Productivity",v:yd.prodPct?yd.prodPct+"%":"—",c:pCol(yd.prodPct),i:"📊"},{l:"Claims",v:yd.total||"—",c:"#4f46e5",i:"📁"},{l:"Target",v:yd.target||"—",c:"#64748b",i:"🎯"},{l:"Quality",v:yd.qualScore?yd.qualScore+"%":"—",c:yd.qualScore?pCol(yd.qualScore):"#64748b",i:"⭐"},{l:"Downtime",v:yd.downtime?yd.downtime+"h":"None",c:"#f97316",i:"⏱"}].map(({l,v,c,i})=>`<div style="background:white;border-radius:10px;padding:12px 16px;flex:1;min-width:80px;border:1px solid ${c}33;text-align:center"><div style="font-size:20px;margin-bottom:4px">${i}</div><div style="font-size:18px;font-weight:900;color:${c}">${esc(String(v))}</div><div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;margin-top:2px">${l}</div></div>`).join("")}
-        </div>
-        ${parseFloat(yd.prodPct)<100?`<div style="margin-top:12px;background:#fffbeb;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400e;border:1px solid #fde68a">⚠ Yesterday ${(100-parseFloat(yd.prodPct)).toFixed(1)}% below target. Action plan: ${esc(yd.notes||"Not specified")}</div>`:""}
-      </div>`:""}
+      <div class="card" style="padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-weight:700;color:#0a1628;font-size:12px">📅 Week:</span>
+        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._w(-1)">←</button>
+        <span style="flex:1;text-align:center;font-weight:700;color:#0a1628;font-size:13px">${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}</span>
+        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._w(1)">→</button>
+        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="load()">↺</button>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        ${stat("Week Avg Prod",avgWProd?avgWProd+"%":"—",pCol(avgWProd),"","📊")}${stat("Total (weighted)",totalW.toFixed(1),"#4f46e5","","📁")}${stat("Week Target",targetW.toFixed(1),"#64748b","(adj. for downtime)","🎯")}${stat("Deficit/Extra",deficit>0?`-${deficit}`:deficit===0?"✅ Met":`+${Math.abs(deficit)}`,deficit>0?"#ef4444":"#10b981",deficit>0?"Below target":"")}
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        ${showSectionTitle("My Daily Productivity This Week","📊")}
+        ${barChart(wData.filter(d=>d.prod!==null).map(d=>({name:d.date,prod:d.prod})))||`<div style="color:#64748b;text-align:center;padding:30px">No data submitted this week</div>`}
+      </div>
+      <div class="card" style="padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-weight:700;color:#0a1628;font-size:12px">🗓 Month:</span>
+        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._m(-1)">←</button>
+        <span style="flex:1;text-align:center;font-weight:700;color:#0a1628">${MONTHS[month-1]} ${year}</span>
+        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._m(1)">→</button>
+        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="load()">↺</button>
+      </div>
       <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
-          <div><div style="font-size:16px;font-weight:800;color:#0a1628">📝 Submit Today's Production Data</div><div style="font-size:12px;color:#64748b;margin-top:3px">Your Team Lead monitors this in real time · ${esc(currentUser.process)}</div></div>
-          <input type="date" class="inp" id="entry-date" value="${entryDate}" onchange="window._entryDateChange(this.value)" style="width:auto;font-weight:700"/>
-        </div>
-        ${mine?`<div class="ok"><span style="font-size:20px">✅</span><div><div style="font-weight:700;color:#065f46">Submitted for ${fmtD(entryDate)}</div><div style="font-size:12px;color:#047857">Your TL can see your data. You can update anytime.</div></div></div>`:""}
-        <div class="grid-3" style="margin-bottom:16px">
-          ${[{l:"Total Claims",k:"total",ph:"e.g. 38",t:"number"},{l:"Target",k:"target",ph:"e.g. 50",t:"number"},{l:"Productivity % *",k:"prodPct",ph:"e.g. 97.5",t:"number",col:true},{l:"Downtime (hours)",k:"downtime",ph:"e.g. 4",t:"number"},{l:"Yesterday Quality %",k:"qualScore",ph:"e.g. 96.5",t:"number",col:true}].map(({l,k,ph,t,col})=>`<div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">${l}</div><input type="${t}" class="inp" id="ef-${k}" placeholder="${ph}" value="${esc(mine?.[k]||"")}" ${col&&mine?.[k]?`style="color:${pCol(mine[k])};font-weight:900;font-size:15px"`:""}/></div>`).join("")}
-          <div style="display:flex;align-items:center;gap:8px;padding-top:24px"><input type="checkbox" id="ef-leave" ${mine?.onLeave?"checked":""} style="width:16px;height:16px;cursor:pointer"/><label for="ef-leave" style="font-size:13px;font-weight:600;color:#0a1628;cursor:pointer">On Leave today</label></div>
-        </div>
-        <div class="grid-2" style="margin-bottom:20px">
-          <div><div style="font-size:10px;font-weight:700;color:${isLow?"#b45309":"#64748b"};letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">${isLow?"⚠ Reason for Low Production":"Reason / Highlights"}</div><textarea class="inp" id="ef-reason" rows="3" placeholder="${isLow?"Explain: VDI, DDE downtime, complex claims…":"Highlights from today"}" style="resize:vertical;border-color:${isLow?"#fcd34d":"#d1d5db"};background:${isLow?"#fffbeb":"white"}">${esc(mine?.reason||"")}</textarea></div>
-          <div><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">ACTION PLAN / RECOVERY</div><textarea class="inp" id="ef-notes" rows="3" placeholder="e.g. Will cover deficit by EOW…" style="resize:vertical">${esc(mine?.notes||"")}</textarea></div>
-        </div>
-        <button class="btn" onclick="window._submitEntry('${entryDate}')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;width:100%;padding:14px;font-size:15px;border-radius:12px">
-          ${mine?"🔄 Update My Submission":"📤 Submit to Team Lead"}
-        </button>
+        ${showSectionTitle("Monthly Trend — "+MONTHS[month-1]+" "+year,"📈")}
+        ${mData.some(d=>d.prod!==null)?barChart(mData.filter(d=>d.prod!==null).map(d=>({name:d.date,prod:d.prod}))):`<div style="color:#64748b;text-align:center;padding:30px">No data this month</div>`}
       </div>
     `);
-    window._entryDateChange=v=>{entryDate=v;load();};
-    window._submitEntry=async d=>{
-      const total=document.getElementById("ef-total")?.value;const target=document.getElementById("ef-target")?.value||"50";const prodPct=document.getElementById("ef-prodPct")?.value;const downtime=document.getElementById("ef-downtime")?.value;const qualScore=document.getElementById("ef-qualScore")?.value;const reason=document.getElementById("ef-reason")?.value;const notes=document.getElementById("ef-notes")?.value;const onLeave=document.getElementById("ef-leave")?.checked||false;
-      if(!prodPct&&!onLeave){alert("Please enter Prod% before submitting.");return;}
-      const day=await S.get(`rcm:day:${d}`)||{};
-      day[currentUser.empId]={total,target,prodPct,downtime,qualScore,reason,notes,onLeave,empId:currentUser.empId,name:currentUser.name,process:currentUser.process,submittedAt:new Date().toISOString()};
-      await S.set(`rcm:day:${d}`,day);load();
+    window._w=n=>{wStart=addDays(wStart,n*7);load();};
+    window._m=n=>{if(n<0){if(month===1){month=12;year--;}else month--;}else{if(month===12){month=1;year++;}else month++;}load();};
+  }
+  load();
+}
+
+// ── HOURLY TRACKER ────────────────────────────────
+async function renderHourlyTracker(){
+  let selDate=today();
+  async function load(){
+    const saved=await S.get(`rcm:hourly:${currentUser.empId}:${selDate}`)||{slots:{}};
+    const slots=saved.slots||{};
+    const totals=HOURLY_SLOTS.map(s=>parseInt(slots[s])||0);
+    const grandTotal=totals.reduce((a,b)=>a+b,0);
+    const avgPerHour=totals.filter(v=>v>0).length>0?(grandTotal/totals.filter(v=>v>0).length).toFixed(1):0;
+
+    setPage(`
+      <div class="flex" style="margin-bottom:18px">
+        <div class="card" style="padding:10px 14px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:11px;font-weight:700;color:#64748b">DATE</span>
+          <input type="date" value="${selDate}" onchange="window._htDate(this.value)" style="border:none;background:transparent;font-weight:700;color:#0a1628;font-size:14px;cursor:pointer"/>
+        </div>
+        <button class="btn" onclick="load()" style="background:#eef2ff;color:#4f46e5">↺ Refresh</button>
+        <button class="btn" onclick="window._htExport()" style="background:#f0fdf4;color:#10b981">📥 Export CSV</button>
+      </div>
+
+      <!-- Summary strip -->
+      <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+        ${stat("Grand Total",grandTotal,"#4f46e5","All hours","📊")}${stat("Avg / Hour",avgPerHour,"#10b981","Active hours","⏱")}${stat("Hours Filled",totals.filter(v=>v>0).length+"/"+HOURLY_SLOTS.length,"#f59e0b","Slots entered","📅")}${stat("Best Hour",totals.length?Math.max(...totals):"—","#7c3aed","Highest count","🏆")}
+      </div>
+
+      <!-- Hourly Grid -->
+      <div class="card" style="margin-bottom:18px">
+        ${showSectionTitle("Hourly Count Tracker — "+fmtD(selDate),"⏰")}
+        <div style="font-size:12px;color:#64748b;margin-bottom:16px">Shift: <strong>5:30 PM → 2:30 AM</strong> · Enter your total count at the END of each hour</div>
+
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px">
+          ${HOURLY_SLOTS.map((slot,i)=>{const val=slots[slot]||"";const isNight=i>=6;return`<div class="hourly-cell" style="border-color:${isNight?"#4f46e5":"#e2e8f0"};background:${isNight?"#f5f3ff":"white"}">
+            <div style="font-size:10px;font-weight:700;color:${isNight?"#4f46e5":"#64748b"};text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">${slot}</div>
+            <input type="number" id="ht_${i}" value="${val}" min="0" placeholder="0" style="border:1px solid ${isNight?"#c4b5fd":"#d1d5db"};border-radius:7px;padding:8px;width:100%;font-size:16px;font-weight:800;text-align:center;color:${isNight?"#4f46e5":"#0a1628"}" onchange="window._htLive()" onkeyup="window._htLive()"/>
+            <div id="htd_${i}" style="font-size:10px;color:#64748b;margin-top:4px">${i>0&&slots[slot]&&slots[HOURLY_SLOTS[i-1]]?`+${((slots[slot]||0)-(slots[HOURLY_SLOTS[i-1]]||0))} from prev`:"—"}</div>
+          </div>`;}).join("")}
+        </div>
+
+        <!-- Visual bar -->
+        ${grandTotal>0?`<div style="margin-bottom:16px">
+          <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Hourly Distribution</div>
+          <div style="display:flex;align-items:flex-end;gap:4px;height:80px;border-bottom:2px solid #e2e8f0">
+            ${HOURLY_SLOTS.map((s,i)=>{const v=parseInt(slots[s])||0;const maxV=Math.max(...totals,1);const h=maxV>0?(v/maxV)*100:0;const isNight=i>=6;return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%"><div style="width:100%;background:${isNight?"#4f46e5":"#10b981"};height:${h}%;border-radius:3px 3px 0 0;min-height:${v>0?3:0}px" title="${s}: ${v}"></div></div>`;}).join("")}
+          </div>
+          <div style="display:flex;gap:4px;margin-top:4px">${HOURLY_SLOTS.map(s=>`<div style="flex:1;font-size:8px;color:#94a3b8;text-align:center;overflow:hidden">${s.replace(" PM","p").replace(" AM","a")}</div>`).join("")}</div>
+        </div>`:""}
+
+        <button class="btn" onclick="window._htSave()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;padding:12px 32px;font-size:14px">💾 Save Hourly Data</button>
+        <div id="ht-msg" style="font-size:13px;font-weight:600;margin-top:8px;display:none"></div>
+      </div>
+    `);
+
+    window._htDate=v=>{selDate=v;load();};
+    window._htLive=()=>{
+      const totals=HOURLY_SLOTS.map((_,i)=>parseInt(document.getElementById(`ht_${i}`)?.value)||0);
+      const grand=totals.reduce((a,b)=>a+b,0);
+      // Update delta indicators
+      HOURLY_SLOTS.forEach((_,i)=>{
+        const el=document.getElementById(`htd_${i}`);
+        if(!el)return;
+        if(i>0&&totals[i]>0&&totals[i-1]>0){const diff=totals[i]-totals[i-1];el.textContent=(diff>=0?"+":"")+diff+" from prev";el.style.color=diff>=0?"#10b981":"#ef4444";}
+        else el.textContent="—";
+      });
+    };
+    window._htSave=async()=>{
+      const newSlots={};HOURLY_SLOTS.forEach((s,i)=>{const v=document.getElementById(`ht_${i}`)?.value;if(v)newSlots[s]=parseInt(v)||0;});
+      await S.set(`rcm:hourly:${currentUser.empId}:${selDate}`,{slots:newSlots,savedAt:new Date().toISOString()});
+      const msg=document.getElementById("ht-msg");const total=Object.values(newSlots).reduce((a,b)=>a+b,0);
+      if(msg){msg.textContent=`✅ Saved! Total count across all hours: ${total}`;msg.style.color="#10b981";msg.style.display="block";}
+      setTimeout(()=>load(),1200);
+    };
+    window._htExport=async()=>{
+      const saved=await S.get(`rcm:hourly:${currentUser.empId}:${selDate}`)||{slots:{}};
+      const rows=HOURLY_SLOTS.map(s=>[s,saved.slots?.[s]||0]);
+      rows.push(["TOTAL",Object.values(saved.slots||{}).reduce((a,b)=>a+b,0)]);
+      dlCSV(["Hour Slot","Count"],rows,`Hourly_${currentUser.empId}_${selDate}.csv`);
     };
   }
   load();
 }
 
-// ── EMPLOYEE PROGRESS ────────────────────────────────────────────────────────
-async function renderProgress(){
-  let wStart=getMon(today()),year=new Date().getFullYear(),month=new Date().getMonth()+1;
-  async function load(){
-    const wd=wDays(wStart),md=mDays(year,month);
-    const[wr,mr]=await Promise.all([Promise.all(wd.map(d=>S.get(`rcm:day:${d}`))),Promise.all(md.map(d=>S.get(`rcm:day:${d}`)))]);
-    const wData=wd.map((d,i)=>{const s=wr[i]?.[currentUser.empId];return{date:fmtSh(d),prod:s?.prodPct?parseFloat(s.prodPct):null,total:s?.total?parseInt(s.total):null,target:s?.target?parseInt(s.target):50,onLeave:!!s?.onLeave};});
-    const mData=md.map((d,i)=>{const s=mr[i]?.[currentUser.empId];return{date:fmtSh(d),prod:s?.prodPct?parseFloat(s.prodPct):null};});
-    const activeW=wData.filter(d=>!d.onLeave&&d.prod!==null);const avgWProd=avg(activeW.map(d=>d.prod));const totalW=activeW.reduce((s,d)=>s+(d.total||0),0);const targetW=activeW.reduce((s,d)=>s+d.target,0);const deficit=targetW-totalW;
-    setPage(`
-      <div class="card" style="padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <span style="font-weight:700;color:#0a1628;font-size:12px">📅 Week:</span>
-        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wk2(-1)">←</button>
-        <span style="flex:1;text-align:center;font-weight:700;color:#0a1628;font-size:13px">${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}</span>
-        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._wk2(1)">→</button>
-        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="load()">↺</button>
-      </div>
-      <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
-        ${stat("Week Avg Prod",avgWProd?avgWProd+"%":"—",pCol(avgWProd),"","📊")}${stat("Total Claims",totalW,"#4f46e5","","📁")}${stat("Weekly Target",targetW,"#64748b","","🎯")}
-        ${stat("Deficit/Extra",deficit>0?`-${deficit}`:deficit===0?"✅ Met":`+${Math.abs(deficit)}`,deficit>0?"#ef4444":"#10b981",deficit>0?"Below target":"","")}
-      </div>
-      <div class="card" style="margin-bottom:14px">
-        <div class="section-title">📊 My Daily Productivity This Week</div>
-        ${barChart(wData.filter(d=>d.prod!==null).map(d=>({name:d.date,prod:d.prod})))||`<div style="color:#64748b;text-align:center;padding:30px">No data submitted this week</div>`}
-      </div>
-      <div class="card" style="padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <span style="font-weight:700;color:#0a1628;font-size:12px">🗓 Month:</span>
-        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._mo2(-1)">←</button>
-        <span style="flex:1;text-align:center;font-weight:700;color:#0a1628">${MONTHS[month-1]} ${year}</span>
-        <button class="btn" style="background:#f1f5f9;color:#0a1628" onclick="window._mo2(1)">→</button>
-        <button class="btn" style="background:#eef2ff;color:#4f46e5" onclick="load()">↺</button>
-      </div>
-      <div class="card">
-        <div class="section-title">📈 Monthly Trend — ${MONTHS[month-1]} ${year}</div>
-        ${mData.some(d=>d.prod!==null)?barChart(mData.filter(d=>d.prod!==null).map(d=>({name:d.date,prod:d.prod}))):`<div style="color:#64748b;text-align:center;padding:30px">No data this month</div>`}
-      </div>
-    `);
-    window._wk2=n=>{wStart=addDays(wStart,n*7);load();};
-    window._mo2=n=>{if(n<0){if(month===1){month=12;year--;}else month--;}else{if(month===12){month=1;year++;}else month++;}load();};
-  }
-  load();
-}
-
-// ── EMPLOYEE FEEDBACK ────────────────────────────────────────────────────────
+// ── EMPLOYEE FEEDBACK ─────────────────────────────
 async function renderEmpFeedback(){
   const allFb=await S.get("rcm:feedback")||{};
   const feedback=(allFb[currentUser.empId]||[]).slice().reverse();
   const unread=feedback.filter(f=>!f.acknowledged).length;
   setPage(`
-    <div class="section-title">💬 Feedback from Your Team Lead</div>
+    ${showSectionTitle("Feedback from Your Team Lead","💬")}
     ${unread>0?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:13px;font-weight:600;color:#92400e">📬 You have ${unread} unread feedback message${unread>1?"s":""}. Please acknowledge below.</div>`:""}
     ${feedback.length===0?`<div class="card" style="text-align:center;padding:50px;color:#64748b"><div style="font-size:38px;margin-bottom:10px">💬</div><div style="font-size:14px;font-weight:700;color:#0a1628">No feedback yet</div></div>`:
     feedback.map(f=>`<div class="card" style="margin-bottom:14px;border:2px solid ${f.acknowledged?"#6ee7b7":"#fde68a"};background:${f.acknowledged?"#f0fdf4":"#fffbeb"}">
@@ -1109,13 +1135,12 @@ async function renderEmpFeedback(){
         <div><div style="font-weight:800;color:#0a1628;font-size:14px">📅 ${fmtD(f.date)}</div><div style="font-size:11px;color:#64748b;margin-top:2px">${new Date(f.sentAt).toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}</div></div>
         ${pill(f.acknowledged?"✅ Acknowledged":"⚠ Action Required",f.acknowledged?"#10b981":"#f97316")}
       </div>
-      <div style="font-size:14px;color:#1e293b;line-height:1.75;background:white;border-radius:8px;padding:14px 16px;margin-bottom:${f.acknowledged?0:14}px;box-shadow:0 1px 4px rgba(0,0,0,0.05)">${esc(f.text)}</div>
-      ${!f.acknowledged?`<button class="btn" onclick="ackFeedback(${f.id})" style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:9px 22px">✅ I Acknowledge This Feedback</button>`:""}
+      <div style="font-size:14px;color:#1e293b;line-height:1.75;background:white;border-radius:8px;padding:14px 16px;margin-bottom:${f.acknowledged?0:14}px">${esc(f.text)}</div>
+      ${!f.acknowledged?`<button class="btn" onclick="ackFb(${f.id})" style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:9px 22px">✅ I Acknowledge This Feedback</button>`:""}
     </div>`).join("")}
   `);
 }
-
-async function ackFeedback(id){
+async function ackFb(id){
   const all=await S.get("rcm:feedback")||{};
   all[currentUser.empId]=(all[currentUser.empId]||[]).map(f=>f.id===id?{...f,acknowledged:true,ackedAt:new Date().toISOString()}:f);
   await S.set("rcm:feedback",all);renderEmpFeedback();
