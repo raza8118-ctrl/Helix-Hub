@@ -187,7 +187,11 @@ tr:hover td{background:#fafbff}
 </div></div>
 
 <script>
-// ══ CREDENTIALS ══════════════════════════════════════
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  STEP 1 OF 1: PASTE YOUR SUPABASE KEYS BELOW               ║
+// ║  Line 192: Your Project URL (https://xxxx.supabase.co)     ║
+// ║  Line 193: Your anon/public key (eyJhbG...)                ║
+// ╚══════════════════════════════════════════════════════════════╝
 const SUPABASE_URL = "https://blgwwlzidffeuvtkjdwe.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsZ3d3bHppZGZmZXV2dGtqZHdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4ODUzMDksImV4cCI6MjA5MjQ2MTMwOX0.-wJ5j3YucH6mkm68MslNit8i5Wir0dqAEU--vPBl6Cs";
 
@@ -431,7 +435,7 @@ async function renderToday(){
         <button class="btn" onclick="window._exportDay()" style="background:#f0fdf4;color:#10b981;margin-left:auto">📥 Export CSV</button>
       </div>
       <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-        ${kpi("Team",members.length,"#4f46e5","","👥")}${kpi("Submitted",subs.length+"/"+members.length,allDone?"#10b981":"#f97316",allDone?"✅ All done!","")}
+        ${kpi("Team",members.length,"#4f46e5","","👥")}${kpi("Submitted",subs.length+"/"+members.length,allDone?"#10b981":"#f97316",allDone?"✅ All done!":"")}
         ${kpi("Pending",pending.length,pending.length>0?"#ef4444":"#10b981","","")}${kpi("Avg Prod",avgProd?avgProd+"%":"—",pCol(avgProd),"","")}${kpi("Avg Quality",avgQual?avgQual+"%":"—","#7c3aed","","")}
       </div>
       ${chartData.length?`<div class="card" style="margin-bottom:18px">${H2("Team Productivity — "+fmtD(date),"📊")}${barChart(chartData)}</div>`:""}
@@ -1191,7 +1195,7 @@ async function renderProdReport(){
       const rows=tasks.map(t=>[t.name,t.target,(50/t.target).toFixed(3),pr.tasks?.[t.name]||0,((pr.tasks?.[t.name]||0)*(50/t.target)).toFixed(2)]);
       const callR=await S.get(`rcm:calls:${currentUser.empId}:${selDate}`)||{};
       const htR=await S.get(`rcm:hourly:${currentUser.empId}:${selDate}`)||{slots:{}};
-      rows.push(["","","","",""],["TOTAL","","","",pr.total?.toFixed(2)],["Adj. Target","","","",pr.adjTarget?.toFixed(2)],["Prod %","","","",pr.prodPct?.toFixed(1)+"%"],["Deficit","","","",pr.deficit?.toFixed(2)],["Downtime(h)","","","",pr.downtimeHours],["Remark","","","",pr.remark||""],["Quality %","","","",pr.qualScore||""],["","","","",""],["CALL TRACKER","","","",""],["Total Calls","","","",callR.totalCalls||0],["Hours on Calls","","","",callR.hoursOnCalls||0],["Call Type","","","",callR.callType||""],["Call Notes","","","",callR.notes||""],["","","","",""],["HOURLY TRACKER","","","",""],...HOURLY_SLOTS.map(s=>[s,"","","",htR.slots?.[s]||0])]);
+      const extraRows=[["","","","",""],["TOTAL","","","",pr.total?.toFixed(2)],["Adj. Target","","","",pr.adjTarget?.toFixed(2)],["Prod %","","","",pr.prodPct?.toFixed(1)+"%"],["Deficit","","","",pr.deficit?.toFixed(2)],["Downtime(h)","","","",pr.downtimeHours],["Remark","","","",pr.remark||""],["Quality %","","","",pr.qualScore||""],["","","","",""],["CALL TRACKER","","","",""],["Total Calls","","","",callR.totalCalls||0],["Hours on Calls","","","",callR.hoursOnCalls||0],["Call Type","","","",callR.callType||""],["Call Notes","","","",callR.notes||""],["","","","",""],["HOURLY TRACKER","","","",""],...HOURLY_SLOTS.map(s=>[s,"","","",htR.slots?.[s]||0])];extraRows.forEach(r=>rows.push(r));
       dlCSV(["Task","Individual Target","Weight","Count","Contribution"],rows,`FullReport_${currentUser.empId}_${selDate}.csv`);
     };
   }
@@ -1217,7 +1221,7 @@ async function renderProgress(){
         <button class="btn btn-light" onclick="load()">↺</button>
       </div>
       <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
-        ${kpi("Week Avg",avgWProd?avgWProd+"%":"—",pCol(avgWProd),"","📊")}${kpi("Total",totalW.toFixed(1),"#4f46e5","Weighted","📁")}${kpi("Target",targetW.toFixed(1),"#94a3b8","Adj. total","🎯")}${kpi("Deficit/Extra",deficit>0?`-${deficit}`:deficit===0?"✅ Met":`+${Math.abs(deficit)}`,deficit>0?"#ef4444":"#10b981",deficit>0?"Below target","")}${kpi("Calls",totalCalls,"#2563eb","This week","📞")}${kpi("Call Hrs",totalCallHrs.toFixed(1)+"h","#7c3aed","On calls","⏱")}
+        ${kpi("Week Avg",avgWProd?avgWProd+"%":"—",pCol(avgWProd),"","📊")}${kpi("Total",totalW.toFixed(1),"#4f46e5","Weighted","📁")}${kpi("Target",targetW.toFixed(1),"#94a3b8","Adj. total","🎯")}${kpi("Deficit/Extra",deficit>0?"-"+deficit:deficit===0?"✅ Met":"+"+Math.abs(deficit),deficit>0?"#ef4444":"#10b981",deficit>0?"Below target":"")}${kpi("Calls",totalCalls,"#2563eb","This week","📞")}${kpi("Call Hrs",totalCallHrs.toFixed(1)+"h","#7c3aed","On calls","⏱")}
       </div>
       <div class="card" style="margin-bottom:14px">
         ${H2("My Daily Productivity This Week","📊")}
