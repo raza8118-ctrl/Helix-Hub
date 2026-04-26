@@ -431,14 +431,14 @@ async function renderToday(){
         <button class="btn" onclick="window._exportDay()" style="background:#f0fdf4;color:#10b981;margin-left:auto">📥 Export CSV</button>
       </div>
       <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-        ${kpi("Team",members.length,"#4f46e5","","👥")}${kpi("Submitted",`${subs.length}/${members.length}`,allDone?"#10b981":"#f97316",allDone?"✅ All done!","")}
+        ${kpi("Team",members.length,"#4f46e5","","👥")}${kpi("Submitted",subs.length+"/"+members.length,allDone?"#10b981":"#f97316",allDone?"✅ All done!","")}
         ${kpi("Pending",pending.length,pending.length>0?"#ef4444":"#10b981","","")}${kpi("Avg Prod",avgProd?avgProd+"%":"—",pCol(avgProd),"","")}${kpi("Avg Quality",avgQual?avgQual+"%":"—","#7c3aed","","")}
       </div>
       ${chartData.length?`<div class="card" style="margin-bottom:18px">${H2("Team Productivity — "+fmtD(date),"📊")}${barChart(chartData)}</div>`:""}
       <div class="card" style="padding:0;overflow:hidden;margin-bottom:18px">
         <div style="background:linear-gradient(135deg,#0a1628,#1e3a5f);padding:13px 20px;display:flex;align-items:center;justify-content:space-between">
           <span style="color:white;font-weight:800;font-size:14px">📋 Submission Tracker — ${fmtD(date)}</span>
-          ${badge(`${subs.length}/${members.length} Submitted`,allDone?"#10b981":"#f59e0b")}
+          ${badge(subs.length+"/"+members.length+" Submitted",allDone?"#10b981":"#f59e0b")}
         </div>
         <div style="overflow-x:auto"><table>
           <thead><tr><th>Employee</th><th>Process</th><th>Status</th><th>Total</th><th>Target</th><th>Prod %</th><th>Quality</th><th>DT(h)</th><th>Reason</th><th>Time</th></tr></thead>
@@ -600,7 +600,7 @@ async function renderSummary(type){
       </div>
       ${recs.length===0?`<div class="card" style="text-align:center;padding:60px;color:#94a3b8"><div style="font-size:44px;margin-bottom:14px">📭</div><div style="font-size:16px;font-weight:700;color:#0a1628">No data for this ${type==="weekly"?"week":"month"}</div></div>`:`
       <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-        ${kpi("Days",`${recs.length}/${dates.length}`,recs.length===dates.length?"#10b981":"#f97316","","📅")}${kpi("Agents",fStats.length,"#4f46e5","","👥")}${kpi("Avg Prod",tap?tap+"%":"—",pCol(tap),"","📊")}${kpi("Avg Quality",taq?taq+"%":"—","#7c3aed","","⭐")}${kpi("Total Claims",tc,"#2563eb","","📁")}
+        ${kpi("Days",recs.length+"/"+dates.length,recs.length===dates.length?"#10b981":"#f97316","","📅")}${kpi("Agents",fStats.length,"#4f46e5","","👥")}${kpi("Avg Prod",tap?tap+"%":"—",pCol(tap),"","📊")}${kpi("Avg Quality",taq?taq+"%":"—","#7c3aed","","⭐")}${kpi("Total Claims",tc,"#2563eb","","📁")}
       </div>
       ${fStats.length?`<div class="card" style="margin-bottom:18px">${H2("Agent Average Productivity — "+pL,"📊")}${barChart(fStats.map(a=>({name:a.name.split(" ")[0],prod:a.avgProd})))}</div>`:""}
       <div class="card" style="padding:0;overflow:hidden;margin-bottom:18px">
