@@ -6,77 +6,95 @@
 <title>Helix Hub — RCM Portal</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
+/* ── CSS Variables — Light Mode (default) ── */
+:root{
+  --bg:#f1f5f9;--surface:white;--surface2:#f8fafc;--surface3:#f1f5f9;
+  --border:#e2e8f0;--border2:#cbd5e1;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --primary:#4f46e5;--primary2:#7c3aed;--primary-bg:#eef2ff;
+  --amber:#f59e0b;--amber2:#d97706;
+  --green:#10b981;--red:#ef4444;--orange:#f97316;
+  --topbar-bg:rgba(15,23,42,0.96);--topbar-border:rgba(255,255,255,0.08);
+  --card-shadow:0 1px 8px rgba(0,0,0,0.08);--card-shadow2:0 4px 20px rgba(0,0,0,0.1);
+  --radius:12px;--radius2:8px;
+}
+/* ── Dark Mode ── */
+body.dark{
+  --bg:#0f172a;--surface:#1e293b;--surface2:#0f172a;--surface3:#1e293b;
+  --border:#334155;--border2:#475569;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --primary:#6366f1;--primary2:#8b5cf6;--primary-bg:#1e1b4b;
+  --card-shadow:0 1px 8px rgba(0,0,0,0.4);--card-shadow2:0 4px 20px rgba(0,0,0,0.5);
+}
+/* ── Base ── */
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;transition:background 0.4s}
-input,select,textarea,button{font-family:inherit}
+body{font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);transition:background 0.3s,color 0.3s}
+input,select,textarea,button{font-family:inherit;color:var(--text)}
 /* ── Inputs ── */
-.inp{border:1.5px solid #e2e8f0;border-radius:9px;padding:9px 13px;font-size:13px;width:100%;outline:none;color:#1e293b;background:white;transition:border-color 0.2s,box-shadow 0.2s}
-.inp:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,0.12)}
+.inp{border:1.5px solid var(--border);border-radius:var(--radius2);padding:9px 13px;font-size:13px;width:100%;outline:none;color:var(--text);background:var(--surface);transition:border-color 0.2s,box-shadow 0.2s}
+.inp:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,0.12)}
+body.dark .inp{background:var(--surface);border-color:var(--border);color:var(--text)}
 /* ── Cards ── */
-.card{background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.09);padding:22px;border:1px solid rgba(255,255,255,0.8)}
-.card-dark{background:linear-gradient(135deg,#0a1628,#1e3a5f);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,0.1)}
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--card-shadow);padding:22px;border:1px solid var(--border)}
+.card-dark{background:linear-gradient(135deg,#0a1628,#1e3a5f);border-radius:var(--radius);padding:24px;border:1px solid rgba(255,255,255,0.1)}
+body.dark .card{background:var(--surface);border-color:var(--border)}
 /* ── Buttons ── */
-.btn{border:none;border-radius:10px;padding:9px 20px;cursor:pointer;font-weight:700;font-size:13px;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.15)}
-.btn-primary{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;box-shadow:0 2px 8px rgba(79,70,229,0.3)}
-.btn-amber{background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a1628;box-shadow:0 2px 8px rgba(245,158,11,0.3)}
-.btn-green{background:linear-gradient(135deg,#10b981,#059669);color:white}
-.btn-danger{background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
-.btn-ghost{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.15)}
-.btn-light{background:#f1f5f9;color:#475569}
+.btn{border:none;border-radius:var(--radius2);padding:9px 20px;cursor:pointer;font-weight:600;font-size:13px;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{opacity:0.9;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white}
+.btn-amber{background:linear-gradient(135deg,var(--amber),var(--amber2));color:#0a1628}
+.btn-green{background:linear-gradient(135deg,var(--green),#059669);color:white}
+.btn-danger{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.btn-light{background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
 /* ── Badges ── */
-.badge{border-radius:999px;padding:3px 12px;font-size:11px;font-weight:700;white-space:nowrap;display:inline-block}
+.badge{border-radius:999px;padding:2px 10px;font-size:11px;font-weight:600;white-space:nowrap;display:inline-block}
 /* ── Tables ── */
 table{border-collapse:collapse;width:100%}
-th,td{padding:10px 13px;text-align:left;border-bottom:1px solid #f1f5f9;font-size:13px}
-th{font-size:10px;font-weight:700;letter-spacing:0.9px;color:#94a3b8;background:#f8fafc;text-transform:uppercase}
-tr:hover td{background:#fafbff}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
+th{font-size:10px;font-weight:700;letter-spacing:0.9px;color:var(--text3);background:var(--surface2);text-transform:uppercase}
+tr:hover td{background:var(--surface2)}
 /* ── Nav ── */
 .screen{display:none}.screen.active{display:block}
-.tab-btn{background:transparent;color:rgba(255,255,255,0.55);border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s}
-.tab-btn.active{background:rgba(255,255,255,0.15);color:white;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.2)}
-.tab-btn.active-amber{background:#f59e0b;color:#0a1628}
-.sub-tab{background:#f1f5f9;color:#64748b;border:none;border-radius:8px;padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s}
-.sub-tab.active{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;box-shadow:0 2px 8px rgba(79,70,229,0.3)}
+.tab-btn{background:transparent;color:rgba(255,255,255,0.5);border:none;border-radius:var(--radius2);padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s}
+.tab-btn.active{background:rgba(255,255,255,0.12);color:white}
+.sub-tab{background:var(--surface3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius2);padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.sub-tab.active{background:var(--primary);color:white;border-color:var(--primary)}
 /* ── Topbar ── */
-.topbar{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.topbar{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:var(--topbar-bg);border-bottom:1px solid var(--topbar-border)}
 /* ── Modals ── */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal-bg.open{display:flex}
-.modal{background:white;border-radius:20px;padding:28px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.35)}
-/* ── Stat cards ── */
-.kpi{background:white;border-radius:14px;padding:16px 18px;flex:1;min-width:110px;box-shadow:0 2px 12px rgba(0,0,0,0.07);position:relative;overflow:hidden}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.modal{background:var(--surface);border-radius:16px;padding:28px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.35);border:1px solid var(--border)}
+/* ── KPI cards ── */
+.kpi{background:var(--surface);border-radius:var(--radius);padding:16px 18px;flex:1;min-width:110px;box-shadow:var(--card-shadow);border-top:3px solid currentColor}
 /* ── Alerts ── */
-.deficit-alert{background:linear-gradient(135deg,#fff1f2,#fef2f2);border:2px solid #fca5a5;border-radius:14px;padding:18px 22px;margin-bottom:18px}
-.bypass-note{background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#3730a3}
-/* ── Hourly cell ── */
-.h-cell{background:white;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center;transition:all 0.2s}
-.h-cell:hover{border-color:#4f46e5;box-shadow:0 2px 8px rgba(79,70,229,0.15)}
-.h-cell.night{border-color:#c4b5fd;background:#faf5ff}
-/* ── Search ── */
+.deficit-alert{background:linear-gradient(135deg,#fff1f2,#fef2f2);border:1.5px solid #fca5a5;border-radius:var(--radius);padding:16px 20px;margin-bottom:18px}
+body.dark .deficit-alert{background:linear-gradient(135deg,#1f0a0a,#2d0f0f)}
+.bypass-note{background:var(--primary-bg);border:1px solid rgba(99,102,241,0.3);border-radius:var(--radius2);padding:11px 15px;margin-bottom:14px;font-size:13px;color:var(--primary)}
+/* ── Hourly cells ── */
+.h-cell{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius2);padding:10px;text-align:center;transition:all 0.2s}
+.h-cell:hover{border-color:var(--primary)}
+.h-cell.night{border-color:#c4b5fd;background:var(--primary-bg)}
+/* ── Misc ── */
 .search-box{position:relative}
-.search-box input{padding-left:36px}
-.search-box::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;z-index:1;pointer-events:none}
-/* ── Theme wallpaper ── */
-.theme-swatch{width:44px;height:44px;border-radius:10px;cursor:pointer;border:3px solid transparent;transition:all 0.2s}
-.theme-swatch.active{border-color:white;box-shadow:0 0 0 3px #4f46e5}
-/* ── Animations ── */
+.search-box input{padding-left:34px}
+.search-box::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;z-index:1;pointer-events:none}
 .fade{animation:fi 0.25s ease}
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.slide-in{animation:si 0.3s ease}
-@keyframes si{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
-/* ── Scrollbar ── */
 ::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
-/* ── Responsive ── */
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.err{background:#fee2e2;color:#ef4444;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:10px}
-.ok{background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center}
+.err{background:#fee2e2;color:var(--red);border-radius:var(--radius2);padding:8px 12px;font-size:13px;margin-bottom:10px}
+.ok{background:#d1fae5;border:1px solid #6ee7b7;border-radius:var(--radius2);padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center}
 @media(max-width:768px){.g2,.g3{grid-template-columns:1fr}.row{gap:8px}}
+/* ── Theme backgrounds (applied to body) ── */
+body.theme-midnight{--bg:#0f172a;--surface:#1e293b;--surface2:#0f172a;--surface3:#1e293b;--border:#334155;--border2:#475569;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b}
+body.theme-ocean{background:linear-gradient(135deg,#0c4a6e,#0369a1)!important;--surface:#0c4a6e;--surface2:#0a3d5e;--border:#0369a1;--text:#e0f2fe;--text2:#7dd3fc;--text3:#38bdf8}
+body.theme-forest{background:linear-gradient(135deg,#14532d,#166534)!important;--surface:#14532d;--surface2:#0f3d21;--border:#166534;--text:#dcfce7;--text2:#86efac;--text3:#4ade80}
+body.theme-purple{background:linear-gradient(135deg,#1e1b4b,#312e81)!important;--surface:#1e1b4b;--surface2:#16144a;--border:#312e81;--text:#ede9fe;--text2:#c4b5fd;--text3:#a78bfa}
 </style>
 </head>
 <body id="app-body">
@@ -133,6 +151,7 @@ tr:hover td{background:#fafbff}
           <div><div style="font-weight:900;font-size:16px;color:white;line-height:1;letter-spacing:-0.5px">Helix Hub</div><div style="font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:2px">RCM PORTAL</div></div>
         </div>
         <div style="flex:1"></div>
+        <button id="quick-dark-toggle" onclick="(()=>{const b=document.getElementById('app-body');const isDark=b.classList.contains('dark');if(isDark){b.classList.remove('dark');b.style.background='#f1f5f9';}else{b.classList.add('dark');b.style.background='#0f172a';}})()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:white;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:600" title="Toggle Light/Dark Mode">🌙</button>
         <div id="deficit-header-alert" style="display:none;background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(239,68,68,0.1));border:1px solid rgba(239,68,68,0.35);border-radius:9px;padding:6px 14px;cursor:pointer" onclick="selTab('prodreport')">
           <span style="color:#fca5a5;font-size:12px;font-weight:700">⚠️ Deficit Alert — View Now</span>
         </div>
@@ -201,17 +220,19 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const MONTHS  = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const ACCESSES= ["Prod Report","View Own Progress","View Team Progress","Generate Email","Send Feedback","Manage Users","View Reports","Hourly Tracker","Call Tracker"];
 const SHIFT_H = 8;
-const HOURLY_SLOTS = ["5:30 PM","6:30 PM","7:30 PM","8:30 PM","9:30 PM","10:30 PM","11:30 PM","12:30 AM","1:30 AM","2:30 AM"];
+const HOURLY_SLOTS = ["6:30 PM","7:30 PM","8:30 PM","9:30 PM","10:30 PM","11:30 PM","12:30 AM","1:30 AM","2:30 AM"];
 
 const THEMES = [
-  {id:"default",  label:"Midnight",     bg:"linear-gradient(135deg,#0f172a 0%,#1e293b 100%)",       topbar:"rgba(10,22,40,0.95)"},
-  {id:"ocean",    label:"Ocean",        bg:"linear-gradient(135deg,#0c4a6e 0%,#0369a1 50%,#0284c7 100%)",topbar:"rgba(8,47,73,0.95)"},
-  {id:"forest",   label:"Forest",       bg:"linear-gradient(135deg,#14532d 0%,#166534 50%,#15803d 100%)",topbar:"rgba(15,47,29,0.95)"},
-  {id:"purple",   label:"Galaxy",       bg:"linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#4c1d95 100%)",topbar:"rgba(20,18,60,0.95)"},
-  {id:"rose",     label:"Rose",         bg:"linear-gradient(135deg,#4a0019 0%,#881337 50%,#be123c 100%)",topbar:"rgba(50,0,20,0.95)"},
-  {id:"slate",    label:"Professional", bg:"linear-gradient(135deg,#1e293b 0%,#334155 50%,#475569 100%)",topbar:"rgba(20,28,42,0.95)"},
-  {id:"warm",     label:"Warm",         bg:"linear-gradient(135deg,#7c2d12 0%,#9a3412 50%,#c2410c 100%)",topbar:"rgba(60,25,10,0.95)"},
-  {id:"teal",     label:"Teal",         bg:"linear-gradient(135deg,#042f2e 0%,#134e4a 50%,#0f766e 100%)",topbar:"rgba(4,30,28,0.95)"},
+  {id:"light",    label:"Light",      bg:"#f1f5f9",  topbar:"rgba(15,23,42,0.96)", dark:false, bodyClass:"theme-light"},
+  {id:"dark",     label:"Dark",       bg:"#0f172a",  topbar:"rgba(10,22,40,0.97)", dark:true,  bodyClass:"theme-dark"},
+  {id:"default",  label:"Midnight",   bg:"linear-gradient(135deg,#0f172a,#1e293b)", topbar:"rgba(10,22,40,0.96)", dark:true, bodyClass:"theme-midnight"},
+  {id:"ocean",    label:"Ocean",      bg:"linear-gradient(135deg,#0c4a6e,#0369a1)", topbar:"rgba(8,47,73,0.96)",  dark:true, bodyClass:"theme-ocean"},
+  {id:"forest",   label:"Forest",     bg:"linear-gradient(135deg,#14532d,#166534)", topbar:"rgba(15,47,29,0.96)", dark:true, bodyClass:"theme-forest"},
+  {id:"purple",   label:"Galaxy",     bg:"linear-gradient(135deg,#1e1b4b,#312e81)", topbar:"rgba(20,18,60,0.96)", dark:true, bodyClass:"theme-purple"},
+  {id:"rose",     label:"Rose",       bg:"linear-gradient(135deg,#4a0019,#881337)", topbar:"rgba(50,0,20,0.96)",  dark:true, bodyClass:"theme-rose"},
+  {id:"slate",    label:"Slate",      bg:"linear-gradient(135deg,#1e293b,#334155)", topbar:"rgba(20,28,42,0.96)", dark:true, bodyClass:"theme-slate"},
+  {id:"warm",     label:"Warm",       bg:"linear-gradient(135deg,#7c2d12,#9a3412)", topbar:"rgba(60,25,10,0.96)", dark:true, bodyClass:"theme-warm"},
+  {id:"teal",     label:"Teal",       bg:"linear-gradient(135deg,#042f2e,#134e4a)", topbar:"rgba(4,30,28,0.96)",  dark:true, bodyClass:"theme-teal"},
 ];
 
 const DEFAULT_TASKS = {
@@ -250,6 +271,17 @@ const H2=(t,icon="")=>`<div style="font-size:15px;font-weight:800;color:#0a1628;
 async function getTaskConfig(){return(await S.get("rcm:task_config"))||JSON.parse(JSON.stringify(DEFAULT_TASKS));}
 async function getProcesses(){return(await S.get("rcm:processes"))||["PMB MCO","MCD (Medicaid)","MCR (Medicare)"];}
 
+function calcWeightedTarget(user,taskCfg,overallTarget){
+  // For multi-process users, weight target by number of tasks per process
+  const procs=getProcs(user).filter(p=>p!=="All");
+  if(procs.length<=1)return overallTarget;
+  // Each process contributes proportionally based on task count
+  let totalTasks=0;const procTaskCounts={};
+  procs.forEach(p=>{const key=getProcKey(p);const t=(taskCfg[key]||[]).length;procTaskCounts[p]=t;totalTasks+=t;});
+  // Target stays the same - user works across all processes
+  return overallTarget;
+}
+
 function calcProd(tasks,counts,overallTarget,downtimeHours){
   let total=0;for(const t of tasks){const c=parseFloat(counts[t.name])||0;total+=c*(50/t.target);}
   total=+total.toFixed(2);
@@ -267,7 +299,19 @@ async function callAI(prompt){
 
 function applyTheme(theme){
   currentTheme=theme;
-  document.getElementById("app-body").style.background=theme.bg;
+  const body=document.getElementById("app-body");
+  // Remove all theme classes
+  body.className=body.className.split(" ").filter(c=>!c.startsWith("theme-")&&c!=="dark").join(" ");
+  // Apply dark mode
+  if(theme.dark)body.classList.add("dark");
+  // Apply theme class
+  if(theme.bodyClass)body.classList.add(theme.bodyClass);
+  // Apply background
+  if(theme.id==="light"||theme.id==="dark"){
+    body.style.background="";
+  } else {
+    body.style.background=theme.bg;
+  }
   const tb=document.getElementById("topbar-el");if(tb)tb.style.background=theme.topbar;
 }
 
@@ -802,7 +846,7 @@ async function saveEditUser(){
   const supSel=document.getElementById("edit-supaccess");const supervisorAccess=[...supSel.selectedOptions].map(o=>o.value);
   const msg=document.getElementById("edit-msg");if(!name){msg.textContent="⚠ Name cannot be empty.";msg.style.color="#ef4444";msg.style.display="block";return;}
   const users=await S.get("rcm:users")||[];
-  await S.set("rcm:users",users.map(u=>{if(u.empId!==origId)return u;const nu={...u,name,process,role,access,overallTarget,supervisorAccess};if(pass)nu.password=pass;return nu;}));
+  await S.set("rcm:users",users.map(u=>{if(u.empId!==origId)return u;const nu={...u,name,process,role,access,supervisorAccess};if(role==="employee")nu.overallTarget=overallTarget;else{delete nu.overallTarget;}if(pass)nu.password=pass;return nu;}));
   msg.textContent="✅ User updated!";msg.style.color="#10b981";msg.style.display="block";
   setTimeout(()=>{closeModal("edit-modal");renderTeam();},1200);
 }
@@ -952,6 +996,12 @@ async function openProfile(){
     <div id="profile-msg" style="font-size:13px;margin-bottom:10px;display:none"></div>
     <button class="btn btn-primary" onclick="saveProfile()" style="width:100%;padding:12px;justify-content:center">💾 Save Profile</button>
   `;
+  // Quick dark/light toggle
+  document.getElementById("quick-dark-toggle").onclick=async()=>{
+    const isDark=document.getElementById("app-body").classList.contains("dark");
+    const newTheme=isDark?THEMES.find(t=>t.id==="light"):THEMES.find(t=>t.id==="dark");
+    if(newTheme)await window._applyTheme(newTheme.id);
+  };
   window._applyTheme=async(tid)=>{
     const theme=THEMES.find(t=>t.id===tid)||THEMES[0];
     applyTheme(theme);
@@ -1114,12 +1164,7 @@ async function renderProdReport(){
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Call Type</div>
-            <select class="inp" id="ct-type">
-              <option value="AR Calling" ${callRec.callType==="AR Calling"?"selected":""}>AR Calling</option>
-              <option value="Insurance Calling" ${callRec.callType==="Insurance Calling"?"selected":""}>Insurance Calling</option>
-              <option value="Patient Calling" ${callRec.callType==="Patient Calling"?"selected":""}>Patient Calling</option>
-              <option value="Mixed" ${callRec.callType==="Mixed"?"selected":""}>Mixed</option>
-            </select>
+            <select class="inp" id="ct-type"><option value="Insurance Call">Insurance Call</option></select>
           </div>
         </div>
         <div style="margin-bottom:16px">
@@ -1156,7 +1201,31 @@ async function renderProdReport(){
 
     window._htLive=()=>{
       const tots=HOURLY_SLOTS.map((_,i)=>parseInt(document.getElementById(`ht_${i}`)?.value)||0);
-      HOURLY_SLOTS.forEach((_,i)=>{const el=document.getElementById(`htd_${i}`);if(!el)return;if(i>0&&tots[i]>0&&tots[i-1]>0){const d=tots[i]-tots[i-1];el.textContent=(d>=0?"+":"")+d;el.style.color=d>=0?"#10b981":"#ef4444";}else el.textContent="—";});
+      // Delta indicators
+      HOURLY_SLOTS.forEach((_,i)=>{
+        const el=document.getElementById(`htd_${i}`);if(!el)return;
+        if(i>0&&tots[i]>0&&tots[i-1]>0){const d=tots[i]-tots[i-1];el.textContent=(d>=0?"+":"")+d;el.style.color=d>=0?"#10b981":"#ef4444";}
+        else el.textContent="—";
+      });
+      // Aggregate hourly counts per task → instantly update task entry table
+      const taskSums={};
+      HOURLY_SLOTS.forEach((_,i)=>{
+        const task=document.getElementById(`hts_${i}`)?.value;
+        const val=parseInt(document.getElementById(`ht_${i}`)?.value)||0;
+        if(task&&val>0)taskSums[task]=(taskSums[task]||0)+val;
+      });
+      if(Object.keys(taskSums).length>0){
+        tasksCopy.forEach((t,idx)=>{
+          if(taskSums[t.name]!==undefined){
+            const inp=document.getElementById(`prt_${idx}`);
+            if(inp){inp.value=taskSums[t.name];inp.style.background="var(--primary-bg)";inp.style.borderColor="var(--primary)";}
+          }
+        });
+        window._prLive();
+      }
+      // Hourly total
+      const grand=tots.reduce((a,b)=>a+b,0);
+      const el=document.getElementById("ht-grand-total");if(el)el.textContent=grand;
     };
 
     window._prDate=v=>{selDate=v;load();};
