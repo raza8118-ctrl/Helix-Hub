@@ -4,362 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Helix Hub — RCM Portal</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js">
-// ══════════════════════════════════════════════════
-//  CHANGELOG
-// ══════════════════════════════════════════════════
-function renderChangelog(){
-  const items=[
-    {v:"v10.0",date:"May 2026",status:"done",items:["PMB Auth process — no fixed target, 7 auth task types, quality 100% default","Holiday system — mark/unmark any day, excluded from all averages","Date & time clock in topbar, createdAt on every user account","Quality date selector — specify which day's quality you're entering","Quality NA/0 option — mark when no quality done","Admin bypass quality % from Prod Monitor","My Reports tab — separate Productivity & Quality sheets with line charts","Improved SVG bar chart with grid lines, gradient bars, line overlay","Light/Dark mode toggle — 🌙 button in topbar, 9 themes","Professional CSS variable design system","Auth process hourly tracker with 7 request type dropdowns","Admin bypass productivity with remark logging"]},
-    {v:"v9.0",date:"Apr 2026",status:"done",items:["Hourly tracker integrated into Prod Report — instant task entry sync","Call tracker — total calls, hours on call, Insurance Call type","Remark/Deficit reason box with yellow highlight when in deficit","Task breakdown visible in Employee Detail modal","Admin hourly monitor tab — see all employee hourly counts","Process dropdown filter on all admin views","Supervisor access — assign specific processes per supervisor","Multi-process support — assign multiple processes to one employee","Process management — add/delete processes from Team Mgmt","Theme selector with 8 wallpaper options in profile"]},
-    {v:"v8.0",date:"Mar 2026",status:"done",items:["Prod Report merged with My Entry — one unified entry page","Professional dark header card with live KPI strip","Live weighted calculation — prod% updates as you type","Downtime formula — adj. target = target × (8-downtime)/8","Quality entry with date picker","Admin: delete prod reports, feedback, hourly, call data","Dark/Light mode support","Search + filter in Team Management"]},
-    {v:"v7.0",date:"Feb 2026",status:"done",items:["React JSX migration attempt — reverted due to Babel CDN issues","Supabase key-value store as backend","Multi-user login with Employee ID + password","Role-based access: Admin / Supervisor / Employee","Password reset request flow","Admin user creation with access permissions","Forgot password flow with admin approval"]},
-    {v:"v6.0",date:"Jan 2026",status:"done",items:["AI email generation via Anthropic API","Weekly & Monthly summary tabs","Prod Monitor with bypass deficit","Admin feedback send/delete","Team performance bar charts","CSV export for all views"]},
-    {v:"Planned",date:"Upcoming",status:"planned",items:["📦 Work Allocation — Excel upload, filter, allocate to user (v10.1)","📡 Allocation Monitor — track who received what and when (v10.1)","Mobile responsive layout improvements","Notification system for pending allocations","Bulk holiday marking by month","Auto-email trigger when allocation is sent","Weekly target carry-forward for deficit recovery","Agent-wise quality trend report PDF export","WhatsApp/Teams notification integration","Multi-company / SaaS tenant support"]},
-  ];
-  const statusColor={done:"var(--green)",planned:"var(--amber)",partial:"var(--orange)"};
-  const statusLabel={done:"✅ Released",planned:"🔧 Planned",partial:"⚠ Partial"};
-  setPage(`
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px">
-      <div>
-        <div style="font-size:22px;font-weight:900;color:var(--text)">📝 Helix Hub Changelog</div>
-        <div style="font-size:13px;color:var(--text3);margin-top:4px">Full release history and upcoming features — Admin only</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        ${badge("v10.0 Current","var(--green)")} ${badge("3Gen Consulting","var(--primary)")}
-      </div>
-    </div>
-    <div style="position:relative">
-      <div style="position:absolute;left:18px;top:0;bottom:0;width:2px;background:var(--border);z-index:0"></div>
-      ${items.map(r=>`
-        <div style="position:relative;padding-left:52px;margin-bottom:24px">
-          <div style="position:absolute;left:10px;top:16px;width:18px;height:18px;border-radius:50%;background:${statusColor[r.status]||"var(--primary)"};border:3px solid var(--surface);z-index:1;box-shadow:0 2px 8px rgba(0,0,0,0.15)"></div>
-          <div class="card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-              <div style="display:flex;align-items:center;gap:10px">
-                <div style="font-size:18px;font-weight:900;color:var(--text)">${esc(r.v)}</div>
-                <div style="font-size:12px;color:var(--text3);font-weight:600">${esc(r.date)}</div>
-              </div>
-              ${badge(statusLabel[r.status]||r.status,statusColor[r.status]||"var(--primary)")}
-            </div>
-            <div style="display:flex;flex-direction:column;gap:6px">
-              ${r.items.map(it=>`<div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2)"><span style="color:${statusColor[r.status]};font-size:11px;margin-top:2px;flex-shrink:0">${r.status==="planned"?"◦":"●"}</span><span>${esc(it)}</span></div>`).join("")}
-            </div>
-          </div>
-        </div>
-      `).join("")}
-    </div>
-  `);
-}
-
-// ══════════════════════════════════════════════════
-//  WORK ALLOCATION (Admin)
-// ══════════════════════════════════════════════════
-let _allocData=[];let _allocHeaders=[];let _allocFilters={};let _allocFileName="";
-
-async function renderAllocation(){
-  const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
-  const filtered=applyAllocFilters(_allocData);
-  setPage(`
-    <div style="font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px">📦 Work Allocation</div>
-    <div style="font-size:13px;color:var(--text3);margin-bottom:22px">Upload Excel files, filter data, and allocate work to team members</div>
-
-    <!-- Upload Zone -->
-    <div class="card" style="margin-bottom:20px">
-      ${H2("Step 1 — Upload Excel File(s)","📁")}
-      <div id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--primary)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="event.preventDefault();this.style.borderColor='var(--border)';handleAllocFiles(event.dataTransfer.files)"
-        style="border:2px dashed var(--border);border-radius:var(--r);padding:40px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface2)">
-        <div style="font-size:40px;margin-bottom:12px">📊</div>
-        <div style="font-weight:700;color:var(--text);font-size:15px;margin-bottom:6px">Click to upload or drag & drop Excel file</div>
-        <div style="font-size:12px;color:var(--text3)">.xlsx, .xls files supported · Multiple files allowed</div>
-        ${_allocFileName?`<div style="margin-top:12px">${badge("📄 "+_allocFileName,"var(--green)")}</div>`:""}
-      </div>
-      <input type="file" id="file-input" accept=".xlsx,.xls,.csv" multiple style="display:none" onchange="handleAllocFiles(this.files)"/>
-      ${_allocData.length>0?`<div style="margin-top:10px;display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:600;color:var(--green)">✅ ${_allocData.length} rows loaded from ${esc(_allocFileName)}</span><button class="btn btn-danger" onclick="clearAllocData()" style="padding:5px 12px;font-size:12px">✕ Clear</button></div>`:""}
-    </div>
-
-    ${_allocData.length>0?`
-    <!-- Filters -->
-    <div class="card" style="margin-bottom:20px">
-      ${H2("Step 2 — Filter Data","🔍")}
-      <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Select values to filter rows. Leave blank to include all values for that column.</div>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px">
-        ${_allocHeaders.map(h=>{const vals=[...new Set(_allocData.map(r=>String(r[h]||"")))].filter(v=>v).sort();return`<div style="min-width:180px;max-width:240px"><div class="lbl">${esc(h)}</div>
-          <select class="inp" onchange="window._setAllocFilter('${esc(h)}',this.value)" style="font-size:12px">
-            <option value="">All (${vals.length} values)</option>
-            ${vals.map(v=>`<option value="${esc(v)}" ${_allocFilters[h]===v?"selected":""}>${esc(v.length>30?v.slice(0,30)+"…":v)}</option>`).join("")}
-          </select></div>`;}).join("")}
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <div style="background:var(--primary-bg);border-radius:var(--r2);padding:10px 16px;font-size:14px;font-weight:700;color:var(--primary)">${filtered.length} / ${_allocData.length} rows match filters</div>
-        <button class="btn btn-light" onclick="clearAllocFilters()">✕ Clear Filters</button>
-      </div>
-    </div>
-
-    <!-- Preview Table -->
-    ${filtered.length>0?`
-    <div class="card" style="margin-bottom:20px;padding:0;overflow:hidden">
-      <div style="background:var(--topbar);padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
-        <span style="color:white;font-weight:800;font-size:14px">📋 Data Preview (first 20 rows of ${filtered.length})</span>
-        <span style="color:rgba(255,255,255,0.5);font-size:12px">${esc(_allocFileName)}</span>
-      </div>
-      <div style="overflow-x:auto;max-height:380px;overflow-y:auto"><table>
-        <thead><tr>${_allocHeaders.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>
-        <tbody>${filtered.slice(0,20).map((row,i)=>`<tr style="background:${i%2===0?"var(--surface)":"var(--surface2)"}">${_allocHeaders.map(h=>`<td style="white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis">${esc(String(row[h]||""))}</td>`).join("")}</tr>`).join("")}</tbody>
-      </table></div>
-    </div>
-
-    <!-- Allocate -->
-    <div class="card" style="background:linear-gradient(135deg,var(--primary-bg),white);border:2px solid rgba(79,70,229,0.2)">
-      ${H2("Step 3 — Allocate to User","👤")}
-      <div class="row" style="flex-wrap:wrap;gap:14px">
-        <div style="flex:1;min-width:220px">
-          <div class="lbl">Select Employee</div>
-          <select class="inp" id="alloc-user-sel" style="font-size:14px;font-weight:600">
-            <option value="">-- Select team member --</option>
-            ${users.map(u=>`<option value="${esc(u.empId)}">${esc(u.name)} (${esc(u.empId)}) · ${esc(procDisplay(u))}</option>`).join("")}
-          </select>
-        </div>
-        <div style="flex:1;min-width:220px">
-          <div class="lbl">Allocation Note (optional)</div>
-          <input class="inp" id="alloc-note" placeholder="e.g. Priority AR accounts — due today" style="font-size:13px"/>
-        </div>
-        <div style="display:flex;align-items:flex-end;padding-bottom:2px">
-          <button class="btn btn-primary" onclick="allocateData()" style="padding:12px 28px;font-size:15px;justify-content:center">
-            📤 Allocate ${filtered.length} Records
-          </button>
-        </div>
-      </div>
-      <div id="alloc-msg" style="font-size:13px;font-weight:600;margin-top:12px;display:none"></div>
-    </div>`:"<div class='card' style='text-align:center;padding:40px;color:var(--text3)'>No rows match your filters. Adjust the filters above.</div>"}
-    `:`<div class="card" style="text-align:center;padding:60px;color:var(--text3)"><div style="font-size:44px;margin-bottom:14px">📊</div><div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">No File Uploaded Yet</div><div style="font-size:13px">Upload an Excel file above to get started</div></div>`}
-  `);
-  window._setAllocFilter=(col,val)=>{if(val)_allocFilters[col]=val;else delete _allocFilters[col];renderAllocation();};
-}
-
-function applyAllocFilters(data){
-  if(!Object.keys(_allocFilters).length)return data;
-  return data.filter(row=>Object.entries(_allocFilters).every(([col,val])=>String(row[col]||"")===(val)));
-}
-
-function clearAllocFilters(){_allocFilters={};renderAllocation();}
-function clearAllocData(){_allocData=[];_allocHeaders=[];_allocFilters={};_allocFileName="";renderAllocation();}
-
-async function handleAllocFiles(files){
-  if(!files?.length)return;
-  const allRows=[];let allHeaders=[];let firstName="";
-  for(const file of Array.from(files)){
-    if(!firstName)firstName=file.name;
-    const buf=await file.arrayBuffer();
-    const wb=XLSX.read(buf,{type:"array"});
-    const ws=wb.Sheets[wb.SheetNames[0]];
-    const json=XLSX.utils.sheet_to_json(ws,{defval:""});
-    if(json.length>0){
-      const h=Object.keys(json[0]);
-      h.forEach(hh=>{if(!allHeaders.includes(hh))allHeaders.push(hh);});
-      json.forEach(row=>{row._sourceFile=file.name;allRows.push(row);});
-    }
-  }
-  _allocData=allRows;
-  _allocHeaders=allHeaders.filter(h=>h!=="__EMPTY"&&!h.startsWith("__"));
-  if(!_allocHeaders.includes("_sourceFile"))_allocHeaders.push("_sourceFile");
-  _allocFilters={};
-  _allocFileName=files.length>1?files.length+" files":firstName;
-  renderAllocation();
-}
-
-async function allocateData(){
-  const empId=document.getElementById("alloc-user-sel")?.value;
-  const note=document.getElementById("alloc-note")?.value||"";
-  const msg=document.getElementById("alloc-msg");
-  if(!empId){if(msg){msg.textContent="⚠ Please select an employee.";msg.style.color="var(--red)";msg.style.display="block";}return;}
-  const filtered=applyAllocFilters(_allocData);
-  if(!filtered.length){if(msg){msg.textContent="⚠ No records to allocate.";msg.style.color="var(--red)";msg.style.display="block";}return;}
-  const users=await S.get("rcm:users")||[];
-  const u=users.find(x=>x.empId===empId);
-  const allocId="alloc_"+Date.now();
-  const allocRecord={
-    id:allocId,empId,empName:u?.name||empId,
-    allocatedBy:currentUser.empId,allocatedByName:currentUser.name,
-    allocatedAt:new Date().toISOString(),
-    fileName:_allocFileName,note,
-    headers:_allocHeaders.filter(h=>h!=="__EMPTY"),
-    recordCount:filtered.length,
-    status:"pending",downloadedAt:null
-  };
-  // Save metadata
-  const allMeta=await S.get("rcm:allocations")||[];
-  allMeta.push(allocRecord);
-  await S.set("rcm:allocations",allMeta);
-  // Save actual data
-  await S.set(`rcm:alloc:${allocId}`,{...allocRecord,records:filtered});
-  if(msg){msg.textContent=`✅ ${filtered.length} records allocated to ${u?.name||empId} successfully!`;msg.style.color="var(--green)";msg.style.display="block";}
-  setTimeout(()=>renderAllocation(),2000);
-}
-
-// ══════════════════════════════════════════════════
-//  ALLOCATION MONITOR (Admin)
-// ══════════════════════════════════════════════════
-async function renderAllocMonitor(){
-  const allMeta=await S.get("rcm:allocations")||[];
-  const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
-  let filterUser="ALL";
-  async function load(){
-    let data=allMeta;
-    if(filterUser!=="ALL")data=data.filter(a=>a.empId===filterUser);
-    data=data.slice().reverse();
-    const pending=allMeta.filter(a=>a.status==="pending").length;
-    const downloaded=allMeta.filter(a=>a.status==="downloaded").length;
-    setPage(`
-      <div style="font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px">📡 Allocation Monitor</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:20px">Track who received allocations, when they downloaded, and manage downtime accordingly</div>
-      <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-        ${kpi("Total Allocations",allMeta.length,"var(--primary)","")}
-        ${kpi("Pending",pending,pending>0?"var(--red)":"var(--green)","Not yet downloaded")}
-        ${kpi("Downloaded",downloaded,"var(--green)","Received by employee")}
-        ${kpi("Employees",users.length,"var(--primary2)","Active")}
-      </div>
-      <div class="row" style="margin-bottom:16px">
-        <select class="inp" style="max-width:240px" onchange="window._amFilter(this.value)">
-          <option value="ALL">All Employees</option>
-          ${users.map(u=>`<option value="${esc(u.empId)}" ${filterUser===u.empId?"selected":""}>${esc(u.name)} (${esc(u.empId)})</option>`).join("")}
-        </select>
-        <button class="btn btn-light" onclick="load()">↺ Refresh</button>
-        ${pending>0?`<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:var(--r2);padding:8px 14px;font-size:13px;font-weight:600;color:var(--red)">⚠ ${pending} allocation${pending>1?"s":""} not yet downloaded</div>`:""}
-      </div>
-      ${data.length===0?`<div class="card" style="text-align:center;padding:60px;color:var(--text3)"><div style="font-size:44px;margin-bottom:14px">📡</div><div style="font-size:16px;font-weight:700;color:var(--text)">No allocations yet</div></div>`:`
-      <div class="card" style="padding:0;overflow:hidden">
-        <div style="background:var(--topbar);padding:12px 18px"><span style="color:white;font-weight:800;font-size:14px">📋 Allocation Log</span></div>
-        <div style="overflow-x:auto"><table>
-          <thead><tr><th>Employee</th><th>Process</th><th>Records</th><th>File</th><th>Note</th><th>Allocated By</th><th>Allocated At</th><th>Status</th><th>Downloaded At</th><th>Time to Open</th><th>Actions</th></tr></thead>
-          <tbody>${data.map((a,i)=>{
-            const isPending=a.status==="pending";
-            const allocTime=new Date(a.allocatedAt);
-            const dlTime=a.downloadedAt?new Date(a.downloadedAt):null;
-            const minsToOpen=dlTime?Math.round((dlTime-allocTime)/60000):null;
-            const u=users.find(x=>x.empId===a.empId);
-            return`<tr style="background:${i%2===0?"var(--surface)":"var(--surface2)"}">
-              <td><div style="font-weight:700;color:var(--text)">${esc(a.empName||a.empId)}</div><div style="font-size:10px;color:var(--text3);font-family:monospace">${esc(a.empId)}</div></td>
-              <td style="color:var(--text2);font-size:12px">${u?esc(procDisplay(u)):"—"}</td>
-              <td style="font-weight:700;color:var(--primary);font-size:15px">${a.recordCount}</td>
-              <td style="color:var(--text2);font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.fileName||"—")}</td>
-              <td style="color:var(--text3);font-size:12px;max-width:140px">${a.note?esc(a.note.slice(0,40)):"—"}</td>
-              <td style="color:var(--text2);font-size:12px">${esc(a.allocatedByName||a.allocatedBy)}</td>
-              <td style="font-size:12px;white-space:nowrap;color:var(--text2)">${allocTime.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})} ${allocTime.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}</td>
-              <td>${isPending?badge("⏳ Pending","#f97316"):badge("✅ Downloaded","#10b981")}</td>
-              <td style="font-size:12px;color:var(--text2);white-space:nowrap">${dlTime?dlTime.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})+" "+dlTime.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):"—"}</td>
-              <td style="font-weight:700;color:${minsToOpen!==null?(minsToOpen<=30?"var(--green)":minsToOpen<=60?"var(--orange)":"var(--red)"):"var(--text3)"}">${minsToOpen!==null?minsToOpen+" min":"—"}</td>
-              <td><div style="display:flex;gap:5px;flex-wrap:wrap">
-                <button class="btn btn-light" onclick="adminViewAlloc('${esc(a.id)}')" style="padding:4px 9px;font-size:11px">👁 View</button>
-                ${isPending?`<button class="btn btn-danger" onclick="adminDeleteAlloc('${esc(a.id)}')" style="padding:4px 9px;font-size:11px">🗑</button>`:""}
-              </div></td>
-            </tr>`;}).join("")}
-          </tbody>
-        </table></div>
-      </div>`}
-    `);
-    window._amFilter=v=>{filterUser=v;load();};
-    window.adminViewAlloc=async id=>{
-      const rec=await S.get("rcm:alloc:"+id);if(!rec||!rec.records?.length){alert("No data found for this allocation.");return;}
-      adminDownloadAlloc(rec);
-    };
-    window.adminDeleteAlloc=async id=>{
-      if(!confirm("Delete this allocation?"))return;
-      const meta=await S.get("rcm:allocations")||[];
-      await S.set("rcm:allocations",meta.filter(a=>a.id!==id));
-      await S.set("rcm:alloc:"+id,null);
-      load();
-    };
-  }
-  load();
-}
-
-function adminDownloadAlloc(rec){
-  const headers=rec.headers||Object.keys(rec.records[0]||{});
-  const rows=rec.records.map(r=>headers.map(h=>r[h]||""));
-  dlCSV(headers,rows,`Allocation_${rec.empId}_${rec.id}.csv`);
-}
-
-// ══════════════════════════════════════════════════
-//  MY ALLOCATION (Employee) — download with formatted Excel
-// ══════════════════════════════════════════════════
-async function renderMyAllocation(){
-  const allMeta=(await S.get("rcm:allocations")||[]).filter(a=>a.empId===currentUser.empId).reverse();
-  setPage(`
-    ${H2("My Work Allocation","📦")}
-    <div style="font-size:13px;color:var(--text3);margin-bottom:18px">Work allocated to you by your team lead. Download to view full details in Excel.</div>
-    ${allMeta.length===0?`<div class="card" style="text-align:center;padding:60px;color:var(--text3)"><div style="font-size:44px;margin-bottom:14px">📦</div><div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">No Work Allocated Yet</div><div style="font-size:13px">Your team lead will send work here. Check back soon.</div></div>`:`
-    <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-      ${kpi("Total Batches",allMeta.length,"var(--primary)","")}
-      ${kpi("Pending",allMeta.filter(a=>a.status==="pending").length,allMeta.filter(a=>a.status==="pending").length>0?"var(--orange)":"var(--green)","Download pending")}
-      ${kpi("Completed",allMeta.filter(a=>a.status==="downloaded").length,"var(--green)","Downloaded")}
-    </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      ${allMeta.map(a=>{
-        const isPending=a.status==="pending";
-        const allocTime=new Date(a.allocatedAt);
-        return`<div class="card" style="border:2px solid ${isPending?"rgba(249,115,22,0.3)":"rgba(16,185,129,0.3)"};background:${isPending?"#fffbeb":"var(--surface)"}">
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-            <div style="flex:1">
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-                <div style="font-size:28px;font-weight:900;color:var(--primary)">${a.recordCount}</div>
-                <div><div style="font-weight:800;color:var(--text);font-size:14px">Records Allocated</div><div style="font-size:12px;color:var(--text3);margin-top:2px">From: ${esc(a.fileName||"—")}</div></div>
-              </div>
-              ${a.note?`<div style="background:var(--primary-bg);border-radius:var(--r2);padding:8px 12px;font-size:13px;color:var(--primary);font-weight:600;margin-bottom:8px">📌 ${esc(a.note)}</div>`:""}
-              <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text3)">
-                <span>👤 By: ${esc(a.allocatedByName||a.allocatedBy)}</span>
-                <span>📅 ${allocTime.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})} at ${allocTime.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}</span>
-                ${a.downloadedAt?`<span style="color:var(--green)">✅ Downloaded: ${new Date(a.downloadedAt).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}</span>`:""}
-              </div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-              ${badge(isPending?"⏳ Not Downloaded Yet":"✅ Downloaded",isPending?"#f97316":"#10b981")}
-              <button class="btn btn-primary" onclick="downloadMyAlloc('${esc(a.id)}')" style="padding:10px 20px;font-size:13px;justify-content:center">
-                📥 Download Excel
-              </button>
-            </div>
-          </div>
-        </div>`;}).join("")}
-    </div>`}
-  `);
-}
-
-async function downloadMyAlloc(allocId){
-  const rec=await S.get("rcm:alloc:"+allocId);
-  if(!rec||!rec.records?.length){alert("No data found. Contact your admin.");return;}
-  const headers=rec.headers||Object.keys(rec.records[0]||{});
-  // Build professional Excel with SheetJS
-  const wb=XLSX.utils.book_new();
-  const wsData=[];
-  // Title row
-  wsData.push([`Work Allocation — ${rec.empName||rec.empId}`]);
-  wsData.push([`Allocated by: ${rec.allocatedByName||rec.allocatedBy} | Date: ${new Date(rec.allocatedAt).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})} | Total Records: ${rec.recordCount}`]);
-  if(rec.note)wsData.push([`Note: ${rec.note}`]);
-  wsData.push([]); // blank row
-  wsData.push(headers); // column headers
-  rec.records.forEach(row=>wsData.push(headers.map(h=>row[h]||"")));
-  const ws=XLSX.utils.aoa_to_sheet(wsData);
-  // Column widths
-  const colW=headers.map(h=>({wch:Math.max(h.length+2,14)}));
-  ws["!cols"]=colW;
-  // Merge title row across all columns
-  ws["!merges"]=[{s:{r:0,c:0},e:{r:0,c:headers.length-1}},{s:{r:1,c:0},e:{r:1,c:headers.length-1}}];
-  XLSX.utils.book_append_sheet(wb,ws,"Work Allocation");
-  const fname=`Allocation_${rec.empId}_${new Date().toISOString().split("T")[0]}.xlsx`;
-  XLSX.writeFile(wb,fname);
-  // Mark as downloaded
-  const allMeta=await S.get("rcm:allocations")||[];
-  const idx=allMeta.findIndex(a=>a.id===allocId);
-  if(idx>=0){allMeta[idx].status="downloaded";allMeta[idx].downloadedAt=new Date().toISOString();}
-  await S.set("rcm:allocations",allMeta);
-  // Update the alloc record too
-  const updatedRec={...rec,status:"downloaded",downloadedAt:new Date().toISOString()};
-  await S.set("rcm:alloc:"+allocId,updatedRec);
-  // Reload
-  setTimeout(()=>renderMyAllocation(),800);
-}
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 /* ══ CSS Variables ══════════════════════════════════ */
@@ -1815,6 +1460,360 @@ async function renderEmpFeedback(){
   `);
 }
 async function ackFb(id){const all=await S.get("rcm:feedback")||{};all[currentUser.empId]=(all[currentUser.empId]||[]).map(f=>f.id===id?{...f,acknowledged:true,ackedAt:new Date().toISOString()}:f);await S.set("rcm:feedback",all);renderEmpFeedback();}
+
+// ══════════════════════════════════════════════════
+//  CHANGELOG
+// ══════════════════════════════════════════════════
+function renderChangelog(){
+  const items=[
+    {v:"v10.0",date:"May 2026",status:"done",items:["PMB Auth process — no fixed target, 7 auth task types, quality 100% default","Holiday system — mark/unmark any day, excluded from all averages","Date & time clock in topbar, createdAt on every user account","Quality date selector — specify which day's quality you're entering","Quality NA/0 option — mark when no quality done","Admin bypass quality % from Prod Monitor","My Reports tab — separate Productivity & Quality sheets with line charts","Improved SVG bar chart with grid lines, gradient bars, line overlay","Light/Dark mode toggle — 🌙 button in topbar, 9 themes","Professional CSS variable design system","Auth process hourly tracker with 7 request type dropdowns","Admin bypass productivity with remark logging"]},
+    {v:"v9.0",date:"Apr 2026",status:"done",items:["Hourly tracker integrated into Prod Report — instant task entry sync","Call tracker — total calls, hours on call, Insurance Call type","Remark/Deficit reason box with yellow highlight when in deficit","Task breakdown visible in Employee Detail modal","Admin hourly monitor tab — see all employee hourly counts","Process dropdown filter on all admin views","Supervisor access — assign specific processes per supervisor","Multi-process support — assign multiple processes to one employee","Process management — add/delete processes from Team Mgmt","Theme selector with 8 wallpaper options in profile"]},
+    {v:"v8.0",date:"Mar 2026",status:"done",items:["Prod Report merged with My Entry — one unified entry page","Professional dark header card with live KPI strip","Live weighted calculation — prod% updates as you type","Downtime formula — adj. target = target × (8-downtime)/8","Quality entry with date picker","Admin: delete prod reports, feedback, hourly, call data","Dark/Light mode support","Search + filter in Team Management"]},
+    {v:"v7.0",date:"Feb 2026",status:"done",items:["React JSX migration attempt — reverted due to Babel CDN issues","Supabase key-value store as backend","Multi-user login with Employee ID + password","Role-based access: Admin / Supervisor / Employee","Password reset request flow","Admin user creation with access permissions","Forgot password flow with admin approval"]},
+    {v:"v6.0",date:"Jan 2026",status:"done",items:["AI email generation via Anthropic API","Weekly & Monthly summary tabs","Prod Monitor with bypass deficit","Admin feedback send/delete","Team performance bar charts","CSV export for all views"]},
+    {v:"Planned",date:"Upcoming",status:"planned",items:["📦 Work Allocation — Excel upload, filter, allocate to user (v10.1)","📡 Allocation Monitor — track who received what and when (v10.1)","Mobile responsive layout improvements","Notification system for pending allocations","Bulk holiday marking by month","Auto-email trigger when allocation is sent","Weekly target carry-forward for deficit recovery","Agent-wise quality trend report PDF export","WhatsApp/Teams notification integration","Multi-company / SaaS tenant support"]},
+  ];
+  const statusColor={done:"var(--green)",planned:"var(--amber)",partial:"var(--orange)"};
+  const statusLabel={done:"✅ Released",planned:"🔧 Planned",partial:"⚠ Partial"};
+  setPage(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:22px;font-weight:900;color:var(--text)">📝 Helix Hub Changelog</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:4px">Full release history and upcoming features — Admin only</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        ${badge("v10.0 Current","var(--green)")} ${badge("3Gen Consulting","var(--primary)")}
+      </div>
+    </div>
+    <div style="position:relative">
+      <div style="position:absolute;left:18px;top:0;bottom:0;width:2px;background:var(--border);z-index:0"></div>
+      ${items.map(r=>`
+        <div style="position:relative;padding-left:52px;margin-bottom:24px">
+          <div style="position:absolute;left:10px;top:16px;width:18px;height:18px;border-radius:50%;background:${statusColor[r.status]||"var(--primary)"};border:3px solid var(--surface);z-index:1;box-shadow:0 2px 8px rgba(0,0,0,0.15)"></div>
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="font-size:18px;font-weight:900;color:var(--text)">${esc(r.v)}</div>
+                <div style="font-size:12px;color:var(--text3);font-weight:600">${esc(r.date)}</div>
+              </div>
+              ${badge(statusLabel[r.status]||r.status,statusColor[r.status]||"var(--primary)")}
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              ${r.items.map(it=>`<div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2)"><span style="color:${statusColor[r.status]};font-size:11px;margin-top:2px;flex-shrink:0">${r.status==="planned"?"◦":"●"}</span><span>${esc(it)}</span></div>`).join("")}
+            </div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `);
+}
+
+// ══════════════════════════════════════════════════
+//  WORK ALLOCATION (Admin)
+// ══════════════════════════════════════════════════
+let _allocData=[];let _allocHeaders=[];let _allocFilters={};let _allocFileName="";
+
+async function renderAllocation(){
+  const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
+  const filtered=applyAllocFilters(_allocData);
+  setPage(`
+    <div style="font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px">📦 Work Allocation</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:22px">Upload Excel files, filter data, and allocate work to team members</div>
+
+    <!-- Upload Zone -->
+    <div class="card" style="margin-bottom:20px">
+      ${H2("Step 1 — Upload Excel File(s)","📁")}
+      <div id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--primary)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="event.preventDefault();this.style.borderColor='var(--border)';handleAllocFiles(event.dataTransfer.files)"
+        style="border:2px dashed var(--border);border-radius:var(--r);padding:40px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface2)">
+        <div style="font-size:40px;margin-bottom:12px">📊</div>
+        <div style="font-weight:700;color:var(--text);font-size:15px;margin-bottom:6px">Click to upload or drag & drop Excel file</div>
+        <div style="font-size:12px;color:var(--text3)">.xlsx, .xls files supported · Multiple files allowed</div>
+        ${_allocFileName?`<div style="margin-top:12px">${badge("📄 "+_allocFileName,"var(--green)")}</div>`:""}
+      </div>
+      <input type="file" id="file-input" accept=".xlsx,.xls,.csv" multiple style="display:none" onchange="handleAllocFiles(this.files)"/>
+      ${_allocData.length>0?`<div style="margin-top:10px;display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:600;color:var(--green)">✅ ${_allocData.length} rows loaded from ${esc(_allocFileName)}</span><button class="btn btn-danger" onclick="clearAllocData()" style="padding:5px 12px;font-size:12px">✕ Clear</button></div>`:""}
+    </div>
+
+    ${_allocData.length>0?`
+    <!-- Filters -->
+    <div class="card" style="margin-bottom:20px">
+      ${H2("Step 2 — Filter Data","🔍")}
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Select values to filter rows. Leave blank to include all values for that column.</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+        ${_allocHeaders.map(h=>{const vals=[...new Set(_allocData.map(r=>String(r[h]||"")))].filter(v=>v).sort();return`<div style="min-width:180px;max-width:240px"><div class="lbl">${esc(h)}</div>
+          <select class="inp" onchange="window._setAllocFilter('${esc(h)}',this.value)" style="font-size:12px">
+            <option value="">All (${vals.length} values)</option>
+            ${vals.map(v=>`<option value="${esc(v)}" ${_allocFilters[h]===v?"selected":""}>${esc(v.length>30?v.slice(0,30)+"…":v)}</option>`).join("")}
+          </select></div>`;}).join("")}
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="background:var(--primary-bg);border-radius:var(--r2);padding:10px 16px;font-size:14px;font-weight:700;color:var(--primary)">${filtered.length} / ${_allocData.length} rows match filters</div>
+        <button class="btn btn-light" onclick="clearAllocFilters()">✕ Clear Filters</button>
+      </div>
+    </div>
+
+    <!-- Preview Table -->
+    ${filtered.length>0?`
+    <div class="card" style="margin-bottom:20px;padding:0;overflow:hidden">
+      <div style="background:var(--topbar);padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
+        <span style="color:white;font-weight:800;font-size:14px">📋 Data Preview (first 20 rows of ${filtered.length})</span>
+        <span style="color:rgba(255,255,255,0.5);font-size:12px">${esc(_allocFileName)}</span>
+      </div>
+      <div style="overflow-x:auto;max-height:380px;overflow-y:auto"><table>
+        <thead><tr>${_allocHeaders.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>
+        <tbody>${filtered.slice(0,20).map((row,i)=>`<tr style="background:${i%2===0?"var(--surface)":"var(--surface2)"}">${_allocHeaders.map(h=>`<td style="white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis">${esc(String(row[h]||""))}</td>`).join("")}</tr>`).join("")}</tbody>
+      </table></div>
+    </div>
+
+    <!-- Allocate -->
+    <div class="card" style="background:linear-gradient(135deg,var(--primary-bg),white);border:2px solid rgba(79,70,229,0.2)">
+      ${H2("Step 3 — Allocate to User","👤")}
+      <div class="row" style="flex-wrap:wrap;gap:14px">
+        <div style="flex:1;min-width:220px">
+          <div class="lbl">Select Employee</div>
+          <select class="inp" id="alloc-user-sel" style="font-size:14px;font-weight:600">
+            <option value="">-- Select team member --</option>
+            ${users.map(u=>`<option value="${esc(u.empId)}">${esc(u.name)} (${esc(u.empId)}) · ${esc(procDisplay(u))}</option>`).join("")}
+          </select>
+        </div>
+        <div style="flex:1;min-width:220px">
+          <div class="lbl">Allocation Note (optional)</div>
+          <input class="inp" id="alloc-note" placeholder="e.g. Priority AR accounts — due today" style="font-size:13px"/>
+        </div>
+        <div style="display:flex;align-items:flex-end;padding-bottom:2px">
+          <button class="btn btn-primary" onclick="allocateData()" style="padding:12px 28px;font-size:15px;justify-content:center">
+            📤 Allocate ${filtered.length} Records
+          </button>
+        </div>
+      </div>
+      <div id="alloc-msg" style="font-size:13px;font-weight:600;margin-top:12px;display:none"></div>
+    </div>`:"<div class='card' style='text-align:center;padding:40px;color:var(--text3)'>No rows match your filters. Adjust the filters above.</div>"}
+    `:`<div class="card" style="text-align:center;padding:60px;color:var(--text3)"><div style="font-size:44px;margin-bottom:14px">📊</div><div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">No File Uploaded Yet</div><div style="font-size:13px">Upload an Excel file above to get started</div></div>`}
+  `);
+  window._setAllocFilter=(col,val)=>{if(val)_allocFilters[col]=val;else delete _allocFilters[col];renderAllocation();};
+}
+
+function applyAllocFilters(data){
+  if(!Object.keys(_allocFilters).length)return data;
+  return data.filter(row=>Object.entries(_allocFilters).every(([col,val])=>String(row[col]||"")===(val)));
+}
+
+function clearAllocFilters(){_allocFilters={};renderAllocation();}
+function clearAllocData(){_allocData=[];_allocHeaders=[];_allocFilters={};_allocFileName="";renderAllocation();}
+
+async function handleAllocFiles(files){
+  if(!files?.length)return;
+  const allRows=[];let allHeaders=[];let firstName="";
+  for(const file of Array.from(files)){
+    if(!firstName)firstName=file.name;
+    const buf=await file.arrayBuffer();
+    const wb=XLSX.read(buf,{type:"array"});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const json=XLSX.utils.sheet_to_json(ws,{defval:""});
+    if(json.length>0){
+      const h=Object.keys(json[0]);
+      h.forEach(hh=>{if(!allHeaders.includes(hh))allHeaders.push(hh);});
+      json.forEach(row=>{row._sourceFile=file.name;allRows.push(row);});
+    }
+  }
+  _allocData=allRows;
+  _allocHeaders=allHeaders.filter(h=>h!=="__EMPTY"&&!h.startsWith("__"));
+  if(!_allocHeaders.includes("_sourceFile"))_allocHeaders.push("_sourceFile");
+  _allocFilters={};
+  _allocFileName=files.length>1?files.length+" files":firstName;
+  renderAllocation();
+}
+
+async function allocateData(){
+  const empId=document.getElementById("alloc-user-sel")?.value;
+  const note=document.getElementById("alloc-note")?.value||"";
+  const msg=document.getElementById("alloc-msg");
+  if(!empId){if(msg){msg.textContent="⚠ Please select an employee.";msg.style.color="var(--red)";msg.style.display="block";}return;}
+  const filtered=applyAllocFilters(_allocData);
+  if(!filtered.length){if(msg){msg.textContent="⚠ No records to allocate.";msg.style.color="var(--red)";msg.style.display="block";}return;}
+  const users=await S.get("rcm:users")||[];
+  const u=users.find(x=>x.empId===empId);
+  const allocId="alloc_"+Date.now();
+  const allocRecord={
+    id:allocId,empId,empName:u?.name||empId,
+    allocatedBy:currentUser.empId,allocatedByName:currentUser.name,
+    allocatedAt:new Date().toISOString(),
+    fileName:_allocFileName,note,
+    headers:_allocHeaders.filter(h=>h!=="__EMPTY"),
+    recordCount:filtered.length,
+    status:"pending",downloadedAt:null
+  };
+  // Save metadata
+  const allMeta=await S.get("rcm:allocations")||[];
+  allMeta.push(allocRecord);
+  await S.set("rcm:allocations",allMeta);
+  // Save actual data
+  await S.set(`rcm:alloc:${allocId}`,{...allocRecord,records:filtered});
+  if(msg){msg.textContent=`✅ ${filtered.length} records allocated to ${u?.name||empId} successfully!`;msg.style.color="var(--green)";msg.style.display="block";}
+  setTimeout(()=>renderAllocation(),2000);
+}
+
+// ══════════════════════════════════════════════════
+//  ALLOCATION MONITOR (Admin)
+// ══════════════════════════════════════════════════
+async function renderAllocMonitor(){
+  const allMeta=await S.get("rcm:allocations")||[];
+  const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
+  let filterUser="ALL";
+  async function load(){
+    let data=allMeta;
+    if(filterUser!=="ALL")data=data.filter(a=>a.empId===filterUser);
+    data=data.slice().reverse();
+    const pending=allMeta.filter(a=>a.status==="pending").length;
+    const downloaded=allMeta.filter(a=>a.status==="downloaded").length;
+    setPage(`
+      <div style="font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px">📡 Allocation Monitor</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:20px">Track who received allocations, when they downloaded, and manage downtime accordingly</div>
+      <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+        ${kpi("Total Allocations",allMeta.length,"var(--primary)","")}
+        ${kpi("Pending",pending,pending>0?"var(--red)":"var(--green)","Not yet downloaded")}
+        ${kpi("Downloaded",downloaded,"var(--green)","Received by employee")}
+        ${kpi("Employees",users.length,"var(--primary2)","Active")}
+      </div>
+      <div class="row" style="margin-bottom:16px">
+        <select class="inp" style="max-width:240px" onchange="window._amFilter(this.value)">
+          <option value="ALL">All Employees</option>
+          ${users.map(u=>`<option value="${esc(u.empId)}" ${filterUser===u.empId?"selected":""}>${esc(u.name)} (${esc(u.empId)})</option>`).join("")}
+        </select>
+        <button class="btn btn-light" onclick="load()">↺ Refresh</button>
+        ${pending>0?`<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:var(--r2);padding:8px 14px;font-size:13px;font-weight:600;color:var(--red)">⚠ ${pending} allocation${pending>1?"s":""} not yet downloaded</div>`:""}
+      </div>
+      ${data.length===0?`<div class="card" style="text-align:center;padding:60px;color:var(--text3)"><div style="font-size:44px;margin-bottom:14px">📡</div><div style="font-size:16px;font-weight:700;color:var(--text)">No allocations yet</div></div>`:`
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="background:var(--topbar);padding:12px 18px"><span style="color:white;font-weight:800;font-size:14px">📋 Allocation Log</span></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Employee</th><th>Process</th><th>Records</th><th>File</th><th>Note</th><th>Allocated By</th><th>Allocated At</th><th>Status</th><th>Downloaded At</th><th>Time to Open</th><th>Actions</th></tr></thead>
+          <tbody>${data.map((a,i)=>{
+            const isPending=a.status==="pending";
+            const allocTime=new Date(a.allocatedAt);
+            const dlTime=a.downloadedAt?new Date(a.downloadedAt):null;
+            const minsToOpen=dlTime?Math.round((dlTime-allocTime)/60000):null;
+            const u=users.find(x=>x.empId===a.empId);
+            return`<tr style="background:${i%2===0?"var(--surface)":"var(--surface2)"}">
+              <td><div style="font-weight:700;color:var(--text)">${esc(a.empName||a.empId)}</div><div style="font-size:10px;color:var(--text3);font-family:monospace">${esc(a.empId)}</div></td>
+              <td style="color:var(--text2);font-size:12px">${u?esc(procDisplay(u)):"—"}</td>
+              <td style="font-weight:700;color:var(--primary);font-size:15px">${a.recordCount}</td>
+              <td style="color:var(--text2);font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.fileName||"—")}</td>
+              <td style="color:var(--text3);font-size:12px;max-width:140px">${a.note?esc(a.note.slice(0,40)):"—"}</td>
+              <td style="color:var(--text2);font-size:12px">${esc(a.allocatedByName||a.allocatedBy)}</td>
+              <td style="font-size:12px;white-space:nowrap;color:var(--text2)">${allocTime.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})} ${allocTime.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}</td>
+              <td>${isPending?badge("⏳ Pending","#f97316"):badge("✅ Downloaded","#10b981")}</td>
+              <td style="font-size:12px;color:var(--text2);white-space:nowrap">${dlTime?dlTime.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})+" "+dlTime.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):"—"}</td>
+              <td style="font-weight:700;color:${minsToOpen!==null?(minsToOpen<=30?"var(--green)":minsToOpen<=60?"var(--orange)":"var(--red)"):"var(--text3)"}">${minsToOpen!==null?minsToOpen+" min":"—"}</td>
+              <td><div style="display:flex;gap:5px;flex-wrap:wrap">
+                <button class="btn btn-light" onclick="adminViewAlloc('${esc(a.id)}')" style="padding:4px 9px;font-size:11px">👁 View</button>
+                ${isPending?`<button class="btn btn-danger" onclick="adminDeleteAlloc('${esc(a.id)}')" style="padding:4px 9px;font-size:11px">🗑</button>`:""}
+              </div></td>
+            </tr>`;}).join("")}
+          </tbody>
+        </table></div>
+      </div>`}
+    `);
+    window._amFilter=v=>{filterUser=v;load();};
+    window.adminViewAlloc=async id=>{
+      const rec=await S.get("rcm:alloc:"+id);if(!rec||!rec.records?.length){alert("No data found for this allocation.");return;}
+      adminDownloadAlloc(rec);
+    };
+    window.adminDeleteAlloc=async id=>{
+      if(!confirm("Delete this allocation?"))return;
+      const meta=await S.get("rcm:allocations")||[];
+      await S.set("rcm:allocations",meta.filter(a=>a.id!==id));
+      await S.set("rcm:alloc:"+id,null);
+      load();
+    };
+  }
+  load();
+}
+
+function adminDownloadAlloc(rec){
+  const headers=rec.headers||Object.keys(rec.records[0]||{});
+  const rows=rec.records.map(r=>headers.map(h=>r[h]||""));
+  dlCSV(headers,rows,`Allocation_${rec.empId}_${rec.id}.csv`);
+}
+
+// ══════════════════════════════════════════════════
+//  MY ALLOCATION (Employee) — download with formatted Excel
+// ══════════════════════════════════════════════════
+async function renderMyAllocation(){
+  const allMeta=(await S.get("rcm:allocations")||[]).filter(a=>a.empId===currentUser.empId).reverse();
+  setPage(`
+    ${H2("My Work Allocation","📦")}
+    <div style="font-size:13px;color:var(--text3);margin-bottom:18px">Work allocated to you by your team lead. Download to view full details in Excel.</div>
+    ${allMeta.length===0?`<div class="card" style="text-align:center;padding:60px;color:var(--text3)"><div style="font-size:44px;margin-bottom:14px">📦</div><div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">No Work Allocated Yet</div><div style="font-size:13px">Your team lead will send work here. Check back soon.</div></div>`:`
+    <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+      ${kpi("Total Batches",allMeta.length,"var(--primary)","")}
+      ${kpi("Pending",allMeta.filter(a=>a.status==="pending").length,allMeta.filter(a=>a.status==="pending").length>0?"var(--orange)":"var(--green)","Download pending")}
+      ${kpi("Completed",allMeta.filter(a=>a.status==="downloaded").length,"var(--green)","Downloaded")}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      ${allMeta.map(a=>{
+        const isPending=a.status==="pending";
+        const allocTime=new Date(a.allocatedAt);
+        return`<div class="card" style="border:2px solid ${isPending?"rgba(249,115,22,0.3)":"rgba(16,185,129,0.3)"};background:${isPending?"#fffbeb":"var(--surface)"}">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div style="font-size:28px;font-weight:900;color:var(--primary)">${a.recordCount}</div>
+                <div><div style="font-weight:800;color:var(--text);font-size:14px">Records Allocated</div><div style="font-size:12px;color:var(--text3);margin-top:2px">From: ${esc(a.fileName||"—")}</div></div>
+              </div>
+              ${a.note?`<div style="background:var(--primary-bg);border-radius:var(--r2);padding:8px 12px;font-size:13px;color:var(--primary);font-weight:600;margin-bottom:8px">📌 ${esc(a.note)}</div>`:""}
+              <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text3)">
+                <span>👤 By: ${esc(a.allocatedByName||a.allocatedBy)}</span>
+                <span>📅 ${allocTime.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})} at ${allocTime.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}</span>
+                ${a.downloadedAt?`<span style="color:var(--green)">✅ Downloaded: ${new Date(a.downloadedAt).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}</span>`:""}
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+              ${badge(isPending?"⏳ Not Downloaded Yet":"✅ Downloaded",isPending?"#f97316":"#10b981")}
+              <button class="btn btn-primary" onclick="downloadMyAlloc('${esc(a.id)}')" style="padding:10px 20px;font-size:13px;justify-content:center">
+                📥 Download Excel
+              </button>
+            </div>
+          </div>
+        </div>`;}).join("")}
+    </div>`}
+  `);
+}
+
+async function downloadMyAlloc(allocId){
+  const rec=await S.get("rcm:alloc:"+allocId);
+  if(!rec||!rec.records?.length){alert("No data found. Contact your admin.");return;}
+  const headers=rec.headers||Object.keys(rec.records[0]||{});
+  // Build professional Excel with SheetJS
+  const wb=XLSX.utils.book_new();
+  const wsData=[];
+  // Title row
+  wsData.push([`Work Allocation — ${rec.empName||rec.empId}`]);
+  wsData.push([`Allocated by: ${rec.allocatedByName||rec.allocatedBy} | Date: ${new Date(rec.allocatedAt).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})} | Total Records: ${rec.recordCount}`]);
+  if(rec.note)wsData.push([`Note: ${rec.note}`]);
+  wsData.push([]); // blank row
+  wsData.push(headers); // column headers
+  rec.records.forEach(row=>wsData.push(headers.map(h=>row[h]||"")));
+  const ws=XLSX.utils.aoa_to_sheet(wsData);
+  // Column widths
+  const colW=headers.map(h=>({wch:Math.max(h.length+2,14)}));
+  ws["!cols"]=colW;
+  // Merge title row across all columns
+  ws["!merges"]=[{s:{r:0,c:0},e:{r:0,c:headers.length-1}},{s:{r:1,c:0},e:{r:1,c:headers.length-1}}];
+  XLSX.utils.book_append_sheet(wb,ws,"Work Allocation");
+  const fname=`Allocation_${rec.empId}_${new Date().toISOString().split("T")[0]}.xlsx`;
+  XLSX.writeFile(wb,fname);
+  // Mark as downloaded
+  const allMeta=await S.get("rcm:allocations")||[];
+  const idx=allMeta.findIndex(a=>a.id===allocId);
+  if(idx>=0){allMeta[idx].status="downloaded";allMeta[idx].downloadedAt=new Date().toISOString();}
+  await S.set("rcm:allocations",allMeta);
+  // Update the alloc record too
+  const updatedRec={...rec,status:"downloaded",downloadedAt:new Date().toISOString()};
+  await S.set("rcm:alloc:"+allocId,updatedRec);
+  // Reload
+  setTimeout(()=>renderMyAllocation(),800);
+}
+
+
 </script>
-</body>
-</html>
