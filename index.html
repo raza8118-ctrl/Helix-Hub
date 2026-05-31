@@ -4,8 +4,11 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Helix Hub — RCM Portal</title>
+<!-- Resource hints for faster CDN loading -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
+<link rel="preconnect" href="https://rcm.supabase.co"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 /* ══ CSS Variables ══════════════════════════════════ */
 :root{
@@ -95,6 +98,28 @@ body.dark .holiday-banner{background:linear-gradient(135deg,#1e1b4b,#1a1840)}
 </style>
 </head>
 <body id="app-body">
+<!-- Fast loading splash (shows instantly before JS loads) -->
+<div id="splash-screen" style="position:fixed;inset:0;background:linear-gradient(160deg,#0a1628,#1e3a5f);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.4s">
+  <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:20px;margin-bottom:20px;box-shadow:0 12px 40px rgba(79,70,229,0.5)">
+    <svg width="44" height="44" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="10" fill="white" opacity="0.95"/><path d="M18 23 Q23 15 28 23 Q23 31 18 23Z" fill="#4f46e5"/></svg>
+  </div>
+  <div style="font-size:36px;font-weight:900;color:white;letter-spacing:-1.5px;margin-bottom:8px">Helix Hub</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.4);letter-spacing:3px;text-transform:uppercase;margin-bottom:32px">RCM PORTAL</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div style="width:8px;height:8px;border-radius:50%;background:#4f46e5;animation:pulse 1s ease-in-out 0s infinite both"></div>
+    <div style="width:8px;height:8px;border-radius:50%;background:#7c3aed;animation:pulse 1s ease-in-out 0.2s infinite both"></div>
+    <div style="width:8px;height:8px;border-radius:50%;background:#a855f7;animation:pulse 1s ease-in-out 0.4s infinite both"></div>
+  </div>
+  <div style="color:rgba(255,255,255,0.3);font-size:12px;margin-top:20px">Loading your workspace…</div>
+</div>
+<style>@keyframes pulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.1)}}</style>
+<script>
+  // Hide splash as soon as DOM + Supabase is ready
+  window.addEventListener("load",()=>{
+    const s=document.getElementById("splash-screen");
+    if(s){s.style.opacity="0";setTimeout(()=>s.style.display="none",400);}
+  });
+</script>
 
 <!-- ═══ LOGIN ═══════════════════════════════════════ -->
 <div id="screen-login" class="screen active">
@@ -1516,146 +1541,131 @@ let _allocData=[];let _allocHeaders=[];let _allocFilters={};let _allocFileName="
 async function renderAllocation(){
   const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
   const filtered=applyAllocFilters(_allocData);
+
   setPage(`
     <div style="font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px">📦 Work Allocation</div>
-    <div style="font-size:13px;color:var(--text3);margin-bottom:22px">Upload Excel files, filter data, and allocate work to team members</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:22px">Upload Excel → Filter by any column → Select user → Allocate</div>
 
-    <!-- Upload Zone -->
+    <!-- STEP 1: Upload -->
     <div class="card" style="margin-bottom:20px">
-      ${H2("Step 1 — Upload Excel File(s)","📁")}
-      <div id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--primary)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="event.preventDefault();this.style.borderColor='var(--border)';handleAllocFiles(event.dataTransfer.files)"
-        style="border:2px dashed var(--border);border-radius:var(--r);padding:40px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface2)">
-        <div style="font-size:40px;margin-bottom:12px">📊</div>
-        <div style="font-weight:700;color:var(--text);font-size:15px;margin-bottom:6px">Click to upload or drag & drop Excel file</div>
-        <div style="font-size:12px;color:var(--text3)">.xlsx, .xls files supported · Multiple files allowed</div>
-        ${_allocFileName?`<div style="margin-top:12px">${badge("📄 "+_allocFileName,"var(--green)")}</div>`:""}
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">1</div>
+        ${H2("Upload Excel File","📁")}
+      </div>
+      <div id="drop-zone"
+        onclick="document.getElementById('file-input').click()"
+        ondragover="event.preventDefault();this.style.borderColor='var(--primary)';this.style.background='var(--primary-bg)'"
+        ondragleave="this.style.borderColor='var(--border)';this.style.background='var(--surface2)'"
+        ondrop="event.preventDefault();this.style.borderColor='var(--border)';this.style.background='var(--surface2)';handleAllocFiles(event.dataTransfer.files)"
+        style="border:2px dashed var(--border);border-radius:var(--r);padding:36px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface2)">
+        <div style="font-size:36px;margin-bottom:10px">📊</div>
+        <div style="font-weight:700;color:var(--text);font-size:15px;margin-bottom:4px">Click to upload or drag & drop</div>
+        <div style="font-size:12px;color:var(--text3)">.xlsx · .xls · .csv &nbsp;|&nbsp; Multiple files supported</div>
       </div>
       <input type="file" id="file-input" accept=".xlsx,.xls,.csv" multiple style="display:none" onchange="handleAllocFiles(this.files)"/>
-      ${_allocData.length>0?`<div style="margin-top:10px;display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:600;color:var(--green)">✅ ${_allocData.length} rows loaded from ${esc(_allocFileName)}</span><button class="btn btn-danger" onclick="clearAllocData()" style="padding:5px 12px;font-size:12px">✕ Clear</button></div>`:""}
+
+      ${_allocData.length>0?`
+      <div style="margin-top:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:8px;background:var(--primary-bg);border-radius:var(--r2);padding:8px 14px">
+          <span style="font-size:18px">✅</span>
+          <div><div style="font-weight:700;color:var(--primary);font-size:13px">${esc(_allocFileName)}</div>
+          <div style="font-size:11px;color:var(--text3)">${_allocData.length} rows · ${_allocHeaders.filter(h=>h!=="__EMPTY"&&h!=="_sourceFile").length} columns</div></div>
+        </div>
+        <button class="btn btn-danger" onclick="clearAllocData()" style="padding:6px 14px;font-size:12px">✕ Clear & Upload New</button>
+      </div>`:""}
     </div>
 
     ${_allocData.length>0?`
-    <!-- Filters -->
-    <div class="card" style="margin-bottom:20px">
-      ${H2("Step 2 — Filter Data","🔍")}
-      <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Select values to filter rows. Leave blank to include all values for that column.</div>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px">
-        ${_allocHeaders.map(h=>{const vals=[...new Set(_allocData.map(r=>String(r[h]||"")))].filter(v=>v).sort();return`<div style="min-width:180px;max-width:240px"><div class="lbl">${esc(h)}</div>
-          <select class="inp" onchange="window._setAllocFilter('${esc(h)}',this.value)" style="font-size:12px">
-            <option value="">All (${vals.length} values)</option>
-            ${vals.map(v=>`<option value="${esc(v)}" ${_allocFilters[h]===v?"selected":""}>${esc(v.length>30?v.slice(0,30)+"…":v)}</option>`).join("")}
-          </select></div>`;}).join("")}
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <div style="background:var(--primary-bg);border-radius:var(--r2);padding:10px 16px;font-size:14px;font-weight:700;color:var(--primary)">${filtered.length} / ${_allocData.length} rows match filters</div>
-        <button class="btn btn-light" onclick="clearAllocFilters()">✕ Clear Filters</button>
-      </div>
-    </div>
-
-    <!-- Preview Table -->
-    ${filtered.length>0?`
+    <!-- STEP 2: Preview with inline filters -->
     <div class="card" style="margin-bottom:20px;padding:0;overflow:hidden">
-      <div style="background:var(--topbar);padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
-        <span style="color:white;font-weight:800;font-size:14px">📋 Data Preview (first 20 rows of ${filtered.length})</span>
-        <span style="color:rgba(255,255,255,0.5);font-size:12px">${esc(_allocFileName)}</span>
+      <div style="background:var(--topbar);padding:13px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:28px;height:28px;border-radius:50%;background:white;color:var(--topbar);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">2</div>
+          <span style="color:white;font-weight:800;font-size:14px">Filter Data</span>
+          <span style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);border-radius:var(--r3);padding:3px 12px;font-size:12px;font-weight:700">${filtered.length} / ${_allocData.length} rows</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          ${Object.keys(_allocFilters).length>0?`<button class="btn" onclick="clearAllocFilters()" style="background:rgba(239,68,68,0.2);color:#fca5a5;padding:5px 12px;font-size:11px;border-radius:6px">✕ Clear All Filters (${Object.keys(_allocFilters).length})</button>`:""}
+          <span style="color:rgba(255,255,255,0.5);font-size:12px">Use dropdowns on headers to filter</span>
+        </div>
       </div>
-      <div style="overflow-x:auto;max-height:380px;overflow-y:auto"><table>
-        <thead><tr>${_allocHeaders.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>
-        <tbody>${filtered.slice(0,20).map((row,i)=>`<tr style="background:${i%2===0?"var(--surface)":"var(--surface2)"}">${_allocHeaders.map(h=>`<td style="white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis">${esc(String(row[h]||""))}</td>`).join("")}</tr>`).join("")}</tbody>
-      </table></div>
+
+      <!-- Table with filter dropdowns in header -->
+      <div style="overflow-x:auto;max-height:480px;overflow-y:auto">
+        <table>
+          <thead>
+            <!-- Filter row -->
+            <tr style="background:#1e293b;position:sticky;top:0;z-index:10">
+              <th style="background:#1e293b;padding:4px 8px;color:rgba(255,255,255,0.4);font-size:10px;font-weight:600;width:40px">#</th>
+              ${_allocHeaders.filter(h=>h!=="__EMPTY"&&h!=="_sourceFile").map(h=>{
+                const vals=[...new Set(_allocData.map(r=>String(r[h]||"")))].filter(v=>v).sort();
+                const isFiltered=!!_allocFilters[h];
+                return`<th style="background:#1e293b;padding:4px 6px;min-width:140px">
+                  <div style="font-size:10px;font-weight:700;color:${isFiltered?"#f59e0b":"rgba(255,255,255,0.6)"};letter-spacing:0.5px;text-transform:uppercase;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px" title="${esc(h)}">${esc(h)}${isFiltered?` ▼`:""}</div>
+                  <select onchange="window._setAllocFilter('${esc(h.replace(/'/g,"\\\\\'"))}',this.value)"
+                    style="border:1px solid ${isFiltered?"#f59e0b":"rgba(255,255,255,0.15)"};border-radius:5px;padding:3px 5px;background:${isFiltered?"rgba(245,158,11,0.15)":"rgba(255,255,255,0.08)"};color:${isFiltered?"#f59e0b":"rgba(255,255,255,0.7)"};font-size:11px;width:100%;cursor:pointer;outline:none">
+                    <option value="" style="background:#1e293b;color:white">All (${vals.length})</option>
+                    ${vals.slice(0,200).map(v=>`<option value="${esc(v)}" ${_allocFilters[h]===v?"selected":""} style="background:#1e293b;color:white">${esc(v.length>30?v.slice(0,30)+"…":v)}</option>`).join("")}
+                  </select>
+                </th>`;}).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            ${filtered.length===0?`<tr><td colspan="${_allocHeaders.filter(h=>h!=="__EMPTY"&&h!=="_sourceFile").length+1}" style="text-align:center;padding:40px;color:var(--text3)">No rows match the selected filters</td></tr>`:""}
+            ${filtered.slice(0,100).map((row,i)=>`<tr style="background:${i%2===0?"var(--surface)":"var(--surface2)"}">
+              <td style="color:var(--text3);font-size:11px;text-align:center;padding:8px 6px">${i+1}</td>
+              ${_allocHeaders.filter(h=>h!=="__EMPTY"&&h!=="_sourceFile").map(h=>`<td style="white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;font-size:13px" title="${esc(String(row[h]||""))}">${esc(String(row[h]||""))}</td>`).join("")}
+            </tr>`).join("")}
+            ${filtered.length>100?`<tr><td colspan="${_allocHeaders.filter(h=>h!=="__EMPTY"&&h!=="_sourceFile").length+1}" style="text-align:center;padding:14px;color:var(--text3);font-size:12px;background:var(--surface2)">… and ${filtered.length-100} more rows (all ${filtered.length} will be allocated)</td></tr>`:""}
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Allocate -->
-    <div class="card" style="background:linear-gradient(135deg,var(--primary-bg),white);border:2px solid rgba(79,70,229,0.2)">
-      ${H2("Step 3 — Allocate to User","👤")}
-      <div class="row" style="flex-wrap:wrap;gap:14px">
-        <div style="flex:1;min-width:220px">
-          <div class="lbl">Select Employee</div>
+    <!-- STEP 3: Select user and allocate -->
+    <div class="card" style="background:linear-gradient(135deg,var(--surface),var(--primary-bg));border:2px solid rgba(79,70,229,0.2)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">3</div>
+        ${H2("Select User & Allocate","👤")}
+      </div>
+      <div style="background:var(--surface);border-radius:var(--r);padding:14px 18px;margin-bottom:16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+        <div style="font-size:13px;color:var(--text2)">📋 <strong style="color:var(--text)">${filtered.length} records</strong> ready to allocate</div>
+        <div style="font-size:13px;color:var(--text2)">🔍 <strong style="color:var(--text)">${Object.keys(_allocFilters).length} filter${Object.keys(_allocFilters).length!==1?"s":""}</strong> applied</div>
+        <div style="font-size:13px;color:var(--text2)">📄 <strong style="color:var(--text)">${esc(_allocFileName)}</strong></div>
+      </div>
+      <div class="g2" style="margin-bottom:16px">
+        <div>
+          <div class="lbl">Select Employee *</div>
           <select class="inp" id="alloc-user-sel" style="font-size:14px;font-weight:600">
-            <option value="">-- Select team member --</option>
-            ${users.map(u=>`<option value="${esc(u.empId)}">${esc(u.name)} (${esc(u.empId)}) · ${esc(procDisplay(u))}</option>`).join("")}
+            <option value="">-- Choose team member --</option>
+            ${users.map(u=>`<option value="${esc(u.empId)}">${esc(u.name)} &nbsp;·&nbsp; ${esc(u.empId)} &nbsp;·&nbsp; ${esc(procDisplay(u))}</option>`).join("")}
           </select>
         </div>
-        <div style="flex:1;min-width:220px">
-          <div class="lbl">Allocation Note (optional)</div>
-          <input class="inp" id="alloc-note" placeholder="e.g. Priority AR accounts — due today" style="font-size:13px"/>
-        </div>
-        <div style="display:flex;align-items:flex-end;padding-bottom:2px">
-          <button class="btn btn-primary" onclick="allocateData()" style="padding:12px 28px;font-size:15px;justify-content:center">
-            📤 Allocate ${filtered.length} Records
-          </button>
+        <div>
+          <div class="lbl">Note for Employee (optional)</div>
+          <input class="inp" id="alloc-note" placeholder="e.g. Priority AR — work by EOD, focus on 90+ days" style="font-size:13px"/>
         </div>
       </div>
-      <div id="alloc-msg" style="font-size:13px;font-weight:600;margin-top:12px;display:none"></div>
-    </div>`:"<div class='card' style='text-align:center;padding:40px;color:var(--text3)'>No rows match your filters. Adjust the filters above.</div>"}
-    `:`<div class="card" style="text-align:center;padding:60px;color:var(--text3)"><div style="font-size:44px;margin-bottom:14px">📊</div><div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">No File Uploaded Yet</div><div style="font-size:13px">Upload an Excel file above to get started</div></div>`}
+      <button class="btn btn-primary" onclick="allocateData()" style="padding:14px 40px;font-size:16px;justify-content:center;border-radius:var(--r);width:100%">
+        📤 Allocate ${filtered.length} Records to Selected User
+      </button>
+      <div id="alloc-msg" style="font-size:13px;font-weight:600;margin-top:12px;display:none;text-align:center;padding:10px;border-radius:var(--r2)"></div>
+    </div>
+    `:`<div class="card" style="text-align:center;padding:60px;color:var(--text3)">
+      <div style="font-size:44px;margin-bottom:14px">📊</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">Upload an Excel file to get started</div>
+      <div style="font-size:13px">Supported formats: .xlsx · .xls · .csv</div>
+    </div>`}
   `);
-  window._setAllocFilter=(col,val)=>{if(val)_allocFilters[col]=val;else delete _allocFilters[col];renderAllocation();};
-}
 
-function applyAllocFilters(data){
-  if(!Object.keys(_allocFilters).length)return data;
-  return data.filter(row=>Object.entries(_allocFilters).every(([col,val])=>String(row[col]||"")===(val)));
-}
-
-function clearAllocFilters(){_allocFilters={};renderAllocation();}
-function clearAllocData(){_allocData=[];_allocHeaders=[];_allocFilters={};_allocFileName="";renderAllocation();}
-
-async function handleAllocFiles(files){
-  if(!files?.length)return;
-  const allRows=[];let allHeaders=[];let firstName="";
-  for(const file of Array.from(files)){
-    if(!firstName)firstName=file.name;
-    const buf=await file.arrayBuffer();
-    const wb=XLSX.read(buf,{type:"array"});
-    const ws=wb.Sheets[wb.SheetNames[0]];
-    const json=XLSX.utils.sheet_to_json(ws,{defval:""});
-    if(json.length>0){
-      const h=Object.keys(json[0]);
-      h.forEach(hh=>{if(!allHeaders.includes(hh))allHeaders.push(hh);});
-      json.forEach(row=>{row._sourceFile=file.name;allRows.push(row);});
-    }
-  }
-  _allocData=allRows;
-  _allocHeaders=allHeaders.filter(h=>h!=="__EMPTY"&&!h.startsWith("__"));
-  if(!_allocHeaders.includes("_sourceFile"))_allocHeaders.push("_sourceFile");
-  _allocFilters={};
-  _allocFileName=files.length>1?files.length+" files":firstName;
-  renderAllocation();
-}
-
-async function allocateData(){
-  const empId=document.getElementById("alloc-user-sel")?.value;
-  const note=document.getElementById("alloc-note")?.value||"";
-  const msg=document.getElementById("alloc-msg");
-  if(!empId){if(msg){msg.textContent="⚠ Please select an employee.";msg.style.color="var(--red)";msg.style.display="block";}return;}
-  const filtered=applyAllocFilters(_allocData);
-  if(!filtered.length){if(msg){msg.textContent="⚠ No records to allocate.";msg.style.color="var(--red)";msg.style.display="block";}return;}
-  const users=await S.get("rcm:users")||[];
-  const u=users.find(x=>x.empId===empId);
-  const allocId="alloc_"+Date.now();
-  const allocRecord={
-    id:allocId,empId,empName:u?.name||empId,
-    allocatedBy:currentUser.empId,allocatedByName:currentUser.name,
-    allocatedAt:new Date().toISOString(),
-    fileName:_allocFileName,note,
-    headers:_allocHeaders.filter(h=>h!=="__EMPTY"),
-    recordCount:filtered.length,
-    status:"pending",downloadedAt:null
+  window._setAllocFilter=(col,val)=>{
+    if(val)_allocFilters[col]=val;
+    else delete _allocFilters[col];
+    renderAllocation();
   };
-  // Save metadata
-  const allMeta=await S.get("rcm:allocations")||[];
-  allMeta.push(allocRecord);
-  await S.set("rcm:allocations",allMeta);
-  // Save actual data
-  await S.set(`rcm:alloc:${allocId}`,{...allocRecord,records:filtered});
-  if(msg){msg.textContent=`✅ ${filtered.length} records allocated to ${u?.name||empId} successfully!`;msg.style.color="var(--green)";msg.style.display="block";}
-  setTimeout(()=>renderAllocation(),2000);
 }
 
-// ══════════════════════════════════════════════════
-//  ALLOCATION MONITOR (Admin)
-// ══════════════════════════════════════════════════
+
 async function renderAllocMonitor(){
   const allMeta=await S.get("rcm:allocations")||[];
   const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
@@ -1802,7 +1812,7 @@ async function downloadMyAlloc(allocId){
   ws["!merges"]=[{s:{r:0,c:0},e:{r:0,c:headers.length-1}},{s:{r:1,c:0},e:{r:1,c:headers.length-1}}];
   XLSX.utils.book_append_sheet(wb,ws,"Work Allocation");
   const fname=`Allocation_${rec.empId}_${new Date().toISOString().split("T")[0]}.xlsx`;
-  XLSX.writeFile(wb,fname);
+  await loadXLSX();XLSX.writeFile(wb,fname);
   // Mark as downloaded
   const allMeta=await S.get("rcm:allocations")||[];
   const idx=allMeta.findIndex(a=>a.id===allocId);
