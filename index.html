@@ -483,7 +483,7 @@ async function checkDeficitAlert(){
   const bp=await S.get(`rcm:bypass:${currentUser.empId}:${today()}`);
   if(pr&&!bp&&parseFloat(pr.prodPct)<100&&!userIsAuth(currentUser))document.getElementById("deficit-header-alert").style.display="block";
 }
-function doLogout(){currentUser=null;document.getElementById("screen-app").classList.remove("active");document.getElementById("screen-login").classList.add("active");document.getElementById("login-id").value="";document.getElementById("login-pass").value="";document.getElementById("deficit-header-alert").style.display="none";showLogin();}
+function doLogout(){currentUser=null;localStorage.removeItem("rcm_session");document.getElementById("screen-app").classList.remove("active");document.getElementById("screen-login").classList.add("active");document.getElementById("login-id").value="";document.getElementById("login-pass").value="";document.getElementById("deficit-header-alert").style.display="none";showLogin();}
 function setTabs(tabs,onSel){document.getElementById("tab-bar").innerHTML=tabs.map(t=>`<button class="tab-btn" data-id="${t.id}" onclick="selTab('${t.id}')">${esc(t.label)}</button>`).join("");window._onSelTab=onSel;}
 function selTab(id){document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.id===id));window._onSelTab(id);}
 
@@ -2054,6 +2054,21 @@ async function downloadMyAlloc(allocId){
   // Reload
   setTimeout(()=>renderMyAllocation(),800);
 }
-
+// ══ AUTO-LOGIN FROM SESSION ══════════════════════════
+(async function autoLogin(){
+  const saved = localStorage.getItem("rcm_session");
+  if(!saved) return;
+  try{
+    const savedUser = JSON.parse(saved);
+    // Re-fetch fresh user data (in case admin changed permissions)
+    const users = await S.get("rcm:users")||[];
+    const u = users.find(x=>x.empId===savedUser.empId && x.active!==false);
+    if(!u) { localStorage.removeItem("rcm_session"); return; }
+    currentUser = u;
+    const prefs = await S.get(`rcm:prefs:${u.empId}`)||{};
+    applyTheme(THEMES.find(t=>t.id===prefs.themeId)||THEMES[0]);
+    startApp();
+  }catch(e){ localStorage.removeItem("rcm_session"); }
+})();
 
 </script>
