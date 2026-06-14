@@ -113,13 +113,6 @@ body.dark .holiday-banner{background:linear-gradient(135deg,#1e1b4b,#1a1840)}
   <div style="color:rgba(255,255,255,0.3);font-size:12px;margin-top:20px">Loading your workspace…</div>
 </div>
 <style>@keyframes pulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.1)}}</style>
-<script>
-  // Hide splash as soon as DOM + Supabase is ready
-  window.addEventListener("load",()=>{
-    const s=document.getElementById("splash-screen");
-    if(s){s.style.opacity="0";setTimeout(()=>s.style.display="none",400);}
-  });
-</script>
 
 <!-- ═══ LOGIN ═══════════════════════════════════════ -->
 <div id="screen-login" class="screen active">
@@ -2056,19 +2049,29 @@ async function downloadMyAlloc(allocId){
 }
 // ══ AUTO-LOGIN FROM SESSION ══════════════════════════
 (async function autoLogin(){
+  const hideSplash = () => {
+    const s=document.getElementById("splash-screen");
+    if(s){s.style.opacity="0";setTimeout(()=>s.style.display="none",300);}
+  };
+
   const saved = localStorage.getItem("rcm_session");
-  if(!saved) return;
+  if(!saved){ hideSplash(); return; }
+
   try{
     const savedUser = JSON.parse(saved);
-    // Re-fetch fresh user data (in case admin changed permissions)
     const users = await S.get("rcm:users")||[];
     const u = users.find(x=>x.empId===savedUser.empId && x.active!==false);
-    if(!u) { localStorage.removeItem("rcm_session"); return; }
+    if(!u){ localStorage.removeItem("rcm_session"); hideSplash(); return; }
+
     currentUser = u;
     const prefs = await S.get(`rcm:prefs:${u.empId}`)||{};
     applyTheme(THEMES.find(t=>t.id===prefs.themeId)||THEMES[0]);
-    startApp();
-  }catch(e){ localStorage.removeItem("rcm_session"); }
+    await startApp();
+    hideSplash();
+  }catch(e){
+    localStorage.removeItem("rcm_session");
+    hideSplash();
+  }
 })();
 
 </script>
