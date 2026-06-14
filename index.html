@@ -114,6 +114,7 @@ body.dark .holiday-banner{background:linear-gradient(135deg,#1e1b4b,#1a1840)}
 </div>
 <style>@keyframes pulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.1)}}</style>
 
+
 <!-- ═══ LOGIN ═══════════════════════════════════════ -->
 <div id="screen-login" class="screen active">
   <div style="min-height:100vh;background:linear-gradient(160deg,#0a1628 0%,#1e3a5f 55%,#0f2d4a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px">
@@ -261,6 +262,74 @@ const S={
   get:async k=>{try{const{data}=await sb.from("rcm_store").select("val").eq("k",k).single();return data?JSON.parse(data.val):null;}catch{return null;}},
   set:async(k,v)=>{try{await sb.from("rcm_store").upsert({k,val:JSON.stringify(v),updated_at:new Date().toISOString()},{onConflict:"k"});return true;}catch{return false;}}
 };
+
+// ══ USERS TABLE — one row per person ════════════════════════════════
+function rowToUser(row){
+  return {
+    empId: row.emp_id,
+    name: row.name,
+    password: row.password,
+    process: row.process,
+    role: row.role,
+    access: row.access||[],
+    active: row.active,
+    overallTarget: row.overall_target===null?undefined:row.overall_target,
+    supervisorAccess: row.supervisor_access||[],
+    picture: row.picture||undefined,
+    createdAt: row.created_at
+  };
+}
+function userToRow(u){
+  const row={};
+  if(u.name!==undefined)row.name=u.name;
+  if(u.password!==undefined)row.password=u.password;
+  if(u.process!==undefined)row.process=u.process;
+  if(u.role!==undefined)row.role=u.role;
+  if(u.access!==undefined)row.access=u.access;
+  if(u.active!==undefined)row.active=u.active;
+  if("overallTarget" in u)row.overall_target=u.overallTarget===undefined?null:u.overallTarget;
+  if(u.supervisorAccess!==undefined)row.supervisor_access=u.supervisorAccess;
+  if(u.picture!==undefined)row.picture=u.picture;
+  if(u.createdAt!==undefined)row.created_at=u.createdAt;
+  return row;
+}
+async function getUsers(){
+  try{
+    const{data,error}=await sb.from("users").select("*").order("created_at",{ascending:true});
+    if(error)throw error;
+    return (data||[]).map(rowToUser);
+  }catch(e){console.error("getUsers error",e.message);return [];}
+}
+async function getUser(empId){
+  try{
+    const{data,error}=await sb.from("users").select("*").ilike("emp_id",empId).maybeSingle();
+    if(error)throw error;
+    return data?rowToUser(data):null;
+  }catch(e){console.error("getUser error",e.message);return null;}
+}
+async function createUserRow(user){
+  try{
+    const row={emp_id:user.empId,...userToRow(user)};
+    const{error}=await sb.from("users").insert(row);
+    if(error)throw error;
+    return true;
+  }catch(e){console.error("createUserRow error",e.message);return false;}
+}
+async function updateUserRow(empId,updates){
+  try{
+    const row=userToRow(updates);
+    const{error}=await sb.from("users").update(row).ilike("emp_id",empId);
+    if(error)throw error;
+    return true;
+  }catch(e){console.error("updateUserRow error",e.message);return false;}
+}
+async function deleteUserRow(empId){
+  try{
+    const{error}=await sb.from("users").delete().ilike("emp_id",empId);
+    if(error)throw error;
+    return true;
+  }catch(e){console.error("deleteUserRow error",e.message);return false;}
+}
 
 // ══ HELPERS ══════════════════════════════════════════════════════════
 let currentUser=null,currentTheme=THEMES[0];
@@ -439,10 +508,8 @@ async function doLogin(){
   const pass=document.getElementById("login-pass").value.trim();
   const errEl=document.getElementById("login-err");errEl.style.display="none";
   if(!empId||!pass){errEl.textContent="Enter your ID and password.";errEl.style.display="block";return;}
-  let users=await S.get("rcm:users");
-  if(!users?.length){users=[{empId:"ADMIN",name:"Team Lead Admin",password:"Admin@123",process:"All",role:"admin",access:ACCESSES,active:true,overallTarget:50,supervisorAccess:["All"]}];await S.set("rcm:users",users);}
-  const u=users.find(x=>x.empId.toLowerCase()===empId.toLowerCase()&&x.password===pass&&x.active!==false);
-  if(!u){errEl.textContent="Invalid Employee ID or password.";errEl.style.display="block";return;}
+  const u=await getUser(empId);
+  if(!u||u.password!==pass||u.active===false){errEl.textContent="Invalid Employee ID or password.";errEl.style.display="block";return;}
   currentUser=u;
   localStorage.setItem("rcm_session", JSON.stringify(u));
   const prefs=await S.get(`rcm:prefs:${u.empId}`)||{};
@@ -511,7 +578,7 @@ async function renderToday(){
   async function load(){
     const holidays=await getHolidays();
     const isHol=holidays.includes(date);
-    const allUsers=await S.get("rcm:users")||[];
+    const allUsers=await getUsers();
     const processes=await getProcesses();
     const supProcs=currentUser.role==="supervisor"?(currentUser.supervisorAccess||[]).filter(p=>p!=="All"):null;
     let members=allUsers.filter(u=>u.role==="employee"&&u.active!==false);
@@ -594,7 +661,7 @@ async function renderToday(){
 async function renderAdminProdMonitor(){
   let selDate=today(),filterProc="ALL";
   async function load(){
-    const allUsers=await S.get("rcm:users")||[];
+    const allUsers=await getUsers();
     const processes=await getProcesses();
     let members=allUsers.filter(u=>u.role==="employee"&&u.active!==false);
     if(filterProc!=="ALL")members=members.filter(u=>procIncludes(u,filterProc));
@@ -673,7 +740,7 @@ async function renderAdminProdMonitor(){
 async function renderAdminHourlyMonitor(){
   let selDate=today(),filterProc="ALL",searchQ="";
   async function load(){
-    const allUsers=await S.get("rcm:users")||[];
+    const allUsers=await getUsers();
     const processes=await getProcesses();
     let members=allUsers.filter(u=>u.role==="employee"&&u.active!==false);
     if(filterProc!=="ALL")members=members.filter(u=>procIncludes(u,filterProc));
@@ -717,7 +784,7 @@ async function renderAdminHourlyMonitor(){
 async function renderSummary(type){
   let year=new Date().getFullYear(),month=new Date().getMonth()+1,wStart=getMon(today()),selUser="ALL",filterProc="ALL";
   async function load(){
-    const allUsers=await S.get("rcm:users")||[];
+    const allUsers=await getUsers();
     const processes=await getProcesses();
     const holidays=await getHolidays();
     let users=allUsers.filter(u=>u.role==="employee"&&u.active!==false);
@@ -803,7 +870,7 @@ async function renderSummary(type){
 
 // ── Admin Feedback ─────────────────────────────────────────────────
 async function renderAdminFeedback(){
-  const allUsers=await S.get("rcm:users")||[];
+  const allUsers=await getUsers();
   let selU="",fbDate=today(),filterProc="ALL";
   async function load(){
     const allFb=await S.get("rcm:feedback")||{};
@@ -845,7 +912,7 @@ async function renderAdminFeedback(){
 async function renderTeam(){
   let filterProc="ALL",searchQ="";
   async function load(){
-    const users=await S.get("rcm:users")||[];
+    const users=await getUsers();
     const pwReqs=(await S.get("rcm:pwreset")||[]).filter(r=>r.status==="pending");
     let processes=await getProcesses();
     let filtered=users.filter(u=>u.role==="employee"||u.role==="supervisor");
@@ -920,16 +987,16 @@ async function renderTeam(){
     window._tmFP=v=>{filterProc=v;load();};window._tmSearch=v=>{searchQ=v;load();};
     window._addProc=async()=>{const v=document.getElementById("new-proc-input")?.value?.trim();if(!v)return;const procs=await getProcesses();if(!procs.includes(v)){procs.push(v);await S.set("rcm:processes",procs);}load();};
     window._delProc=async p=>{if(!confirm(`Remove process "${p}"?`))return;const procs=await getProcesses();await S.set("rcm:processes",procs.filter(x=>x!==p));load();};
-    window._createUser=async()=>{const empId=document.getElementById("nu-empid")?.value?.trim()?.toUpperCase();const name=document.getElementById("nu-name")?.value?.trim();const pass=document.getElementById("nu-pass")?.value?.trim();const procEl=document.getElementById("nu-proc");const process=[...procEl.selectedOptions].map(o=>o.value);const role=document.getElementById("nu-role")?.value;const access=[...document.querySelectorAll(".acc-cb:checked")].map(c=>c.value);const overallTarget=parseInt(document.getElementById("nu-target")?.value)||50;const supAccEl=document.getElementById("nu-supaccess");const supervisorAccess=supAccEl?[...supAccEl.selectedOptions].map(o=>o.value):["All"];const msg=document.getElementById("nu-msg");if(!empId||!name||!pass){if(msg){msg.textContent="⚠ All fields required.";msg.style.color="var(--red)";msg.style.display="block";}return;}const users=await S.get("rcm:users")||[];if(users.find(u=>u.empId.toLowerCase()===empId.toLowerCase())){if(msg){msg.textContent="⚠ Employee ID already exists.";msg.style.color="var(--red)";msg.style.display="block";}return;}const newUser={empId,name,password:pass,process,role,access,active:true,supervisorAccess,createdAt:new Date().toISOString()};if(role==="employee")newUser.overallTarget=overallTarget;await S.set("rcm:users",[...users,newUser]);if(msg){msg.textContent="✅ User created!";msg.style.color="var(--green)";msg.style.display="block";}setTimeout(()=>load(),1200);};
-    window._toggleU=async id=>{const users=await S.get("rcm:users")||[];await S.set("rcm:users",users.map(u=>u.empId===id?{...u,active:!u.active}:u));load();};
-    window._approvePR=async(i,empId,requestedAt)=>{const el=document.getElementById("pr_"+i);if(!el?.value?.trim()){alert("Enter a new password.");return;}const users=await S.get("rcm:users")||[];await S.set("rcm:users",users.map(u=>u.empId===empId?{...u,password:el.value.trim()}:u));const all=await S.get("rcm:pwreset")||[];await S.set("rcm:pwreset",all.map(r=>r.empId===empId&&r.requestedAt===requestedAt?{...r,status:"resolved"}:r));alert("✅ Approved!");load();};
+    window._createUser=async()=>{const empId=document.getElementById("nu-empid")?.value?.trim();const name=document.getElementById("nu-name")?.value?.trim();const pass=document.getElementById("nu-pass")?.value?.trim();const procEl=document.getElementById("nu-proc");const process=[...procEl.selectedOptions].map(o=>o.value);const role=document.getElementById("nu-role")?.value;const access=[...document.querySelectorAll(".acc-cb:checked")].map(c=>c.value);const overallTarget=parseInt(document.getElementById("nu-target")?.value)||50;const supAccEl=document.getElementById("nu-supaccess");const supervisorAccess=supAccEl?[...supAccEl.selectedOptions].map(o=>o.value):["All"];const msg=document.getElementById("nu-msg");if(!empId||!name||!pass){if(msg){msg.textContent="⚠ All fields required.";msg.style.color="var(--red)";msg.style.display="block";}return;}const existing=await getUser(empId);if(existing){if(msg){msg.textContent="⚠ Employee ID already exists.";msg.style.color="var(--red)";msg.style.display="block";}return;}const newUser={empId,name,password:pass,process,role,access,active:true,supervisorAccess,createdAt:new Date().toISOString()};if(role==="employee")newUser.overallTarget=overallTarget;const ok=await createUserRow(newUser);if(msg){msg.textContent=ok?"✅ User created!":"❌ Failed to create user.";msg.style.color=ok?"var(--green)":"var(--red)";msg.style.display="block";}setTimeout(()=>load(),1200);};
+    window._toggleU=async id=>{const u=await getUser(id);if(!u)return;await updateUserRow(id,{active:!(u.active!==false)});load();};
+    window._approvePR=async(i,empId,requestedAt)=>{const el=document.getElementById("pr_"+i);if(!el?.value?.trim()){alert("Enter a new password.");return;}await updateUserRow(empId,{password:el.value.trim()});const all=await S.get("rcm:pwreset")||[];await S.set("rcm:pwreset",all.map(r=>r.empId===empId&&r.requestedAt===requestedAt?{...r,status:"resolved"}:r));alert("✅ Approved!");load();};
   }
   load();
 }
 
 // ── Edit User ──────────────────────────────────────────────────────
 async function openEditUser(empId){
-  const users=await S.get("rcm:users")||[];const u=users.find(x=>x.empId===empId);if(!u)return;
+  const u=await getUser(empId);if(!u)return;
   const processes=await getProcesses();
   document.getElementById("edit-orig-id").value=empId;
   document.getElementById("edit-name").value=u.name||"";
@@ -950,8 +1017,10 @@ async function saveEditUser(){
   const role=document.getElementById("edit-role").value;const access=[...document.querySelectorAll(".edit-acc-cb:checked")].map(c=>c.value);const overallTarget=parseInt(document.getElementById("edit-target").value)||50;
   const supSel=document.getElementById("edit-supaccess");const supervisorAccess=[...supSel.selectedOptions].map(o=>o.value);
   const msg=document.getElementById("edit-msg");if(!name){msg.textContent="⚠ Name cannot be empty.";msg.style.color="var(--red)";msg.style.display="block";return;}
-  const users=await S.get("rcm:users")||[];
-  await S.set("rcm:users",users.map(u=>{if(u.empId!==origId)return u;const nu={...u,name,process,role,access,supervisorAccess};if(role==="employee")nu.overallTarget=overallTarget;else delete nu.overallTarget;if(pass)nu.password=pass;return nu;}));
+  const updates={name,process,role,access,supervisorAccess};
+  if(role==="employee")updates.overallTarget=overallTarget;else updates.overallTarget=undefined;
+  if(pass)updates.password=pass;
+  await updateUserRow(origId,updates);
   msg.textContent="✅ User updated!";msg.style.color="var(--green)";msg.style.display="block";
   setTimeout(()=>{closeModal("edit-modal");renderTeam();},1200);
 }
@@ -989,7 +1058,7 @@ async function renderSettings(){
 
 // ── Employee Detail Modal ──────────────────────────────────────────
 async function showEmpDetail(empId){
-  const users=await S.get("rcm:users")||[];const u=users.find(x=>x.empId===empId);if(!u)return;
+  const u=await getUser(empId);if(!u)return;
   const taskCfg=await getTaskConfig();
   const dates=[];let c=today();for(let i=0;i<30;i++){dates.unshift(c);c=addDays(c,-1);}
   const recs=await Promise.all(dates.map(d=>S.get(`rcm:prod:${empId}:${d}`)));
@@ -1059,7 +1128,7 @@ async function adminClearCalls(empId){if(!confirm("Clear today's calls?"))return
 
 // ── Profile Modal ──────────────────────────────────────────────────
 async function openProfile(){
-  const users=await S.get("rcm:users")||[];
+  const users=await getUsers();
   const teamSize=users.filter(u=>u.role==="employee"&&u.active!==false).length;
   const rc=currentUser.role==="admin"?"#ef4444":currentUser.role==="supervisor"?"#2563eb":"#4f46e5";
   document.getElementById("profile-content").innerHTML=`
@@ -1095,7 +1164,7 @@ async function openProfile(){
 async function saveProfile(){
   const name=document.getElementById("profile-name").value.trim();const pic=document.getElementById("profile-pic-url").value.trim();const newpass=document.getElementById("profile-newpass").value.trim();const msg=document.getElementById("profile-msg");
   if(!name){msg.textContent="⚠ Name cannot be empty.";msg.style.color="var(--red)";msg.style.display="block";return;}
-  const users=await S.get("rcm:users")||[];await S.set("rcm:users",users.map(u=>{if(u.empId!==currentUser.empId)return u;const nu={...u,name};if(pic)nu.picture=pic;if(newpass)nu.password=newpass;return nu;}));
+  const updates={name};if(pic)updates.picture=pic;if(newpass)updates.password=newpass;await updateUserRow(currentUser.empId,updates);
   currentUser={...currentUser,name,picture:pic||currentUser.picture};
   const av=document.getElementById("user-avatar");const rc=currentUser.role==="admin"?"#ef4444":currentUser.role==="supervisor"?"#2563eb":"#4f46e5";
   if(pic){av.innerHTML=`<img src="${esc(pic)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;}else{av.style.background=`linear-gradient(135deg,${rc},${rc}88)`;av.textContent=currentUser.name.charAt(0).toUpperCase();}
@@ -1767,7 +1836,7 @@ function buildAllocTable(){
 // ── Main page render ──────────────────────────────────
 async function renderAllocation(){
   try{
-    const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
+    const users=(await getUsers()).filter(u=>u.role==="employee"&&u.active!==false);
     setPage(
       // Header
       "<div style='font-size:22px;font-weight:900;color:var(--text);margin-bottom:4px'>📦 Work Allocation</div>"+
@@ -1856,8 +1925,7 @@ async function allocateData(){
   }
   const btn=document.getElementById("alloc-btn");
   if(btn){btn.innerHTML="⏳ Allocating…";btn.disabled=true;}
-  const users=await S.get("rcm:users")||[];
-  const u=users.find(x=>x.empId===empId);
+  const u=await getUser(empId);
   const allocId="alloc_"+Date.now();
   const allocRecord={
     id:allocId,empId,empName:u?.name||empId,
@@ -1891,7 +1959,7 @@ function adminDownloadAlloc(rec){
 
 async function renderAllocMonitor(){
   const allMeta=await S.get("rcm:allocations")||[];
-  const users=(await S.get("rcm:users")||[]).filter(u=>u.role==="employee"&&u.active!==false);
+  const users=(await getUsers()).filter(u=>u.role==="employee"&&u.active!==false);
   let filterUser="ALL";
   async function load(){
     let data=allMeta;
@@ -2047,6 +2115,9 @@ async function downloadMyAlloc(allocId){
   // Reload
   setTimeout(()=>renderMyAllocation(),800);
 }
+
+
+
 // ══ AUTO-LOGIN FROM SESSION ══════════════════════════
 (async function autoLogin(){
   const hideSplash = () => {
@@ -2059,9 +2130,8 @@ async function downloadMyAlloc(allocId){
 
   try{
     const savedUser = JSON.parse(saved);
-    const users = await S.get("rcm:users")||[];
-    const u = users.find(x=>x.empId===savedUser.empId && x.active!==false);
-    if(!u){ localStorage.removeItem("rcm_session"); hideSplash(); return; }
+    const u = await getUser(savedUser.empId);
+    if(!u||u.active===false){ localStorage.removeItem("rcm_session"); hideSplash(); return; }
 
     currentUser = u;
     const prefs = await S.get(`rcm:prefs:${u.empId}`)||{};
@@ -2073,5 +2143,4 @@ async function downloadMyAlloc(allocId){
     hideSplash();
   }
 })();
-
 </script>
