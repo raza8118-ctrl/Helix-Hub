@@ -451,6 +451,7 @@ async function doLogin(){
   const u=users.find(x=>x.empId.toLowerCase()===empId.toLowerCase()&&x.password===pass&&x.active!==false);
   if(!u){errEl.textContent="Invalid Employee ID or password.";errEl.style.display="block";return;}
   currentUser=u;
+  localStorage.setItem("rcm_session", JSON.stringify(u));
   const prefs=await S.get(`rcm:prefs:${u.empId}`)||{};
   applyTheme(THEMES.find(t=>t.id===prefs.themeId)||THEMES[0]);
   startApp();
