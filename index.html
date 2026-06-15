@@ -593,6 +593,8 @@ async function renderToday(){
     const avgProd=avg(activeA.map(a=>parseFloat(a.prodPct)));
     const avgQual=avg(qualA.map(a=>parseFloat(a.qualScore)));
     const chartData=members.filter(u=>dayData[u.empId]?.prodPct).map(u=>({name:dayData[u.empId].name.split(" ")[0],prod:parseFloat(dayData[u.empId].prodPct)||0}));
+    const adminToolsBtns=currentUser.role==="admin"?`<button class="btn btn-light" onclick="window._exportDay()">📥 Export</button>
+        <button class="btn btn-primary" onclick="window._genEmail()">✨ Generate Email</button>`:"";
     setPage(`
       ${isHol?`<div class="holiday-banner"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:24px">🏖️</span><div><div style="font-weight:800;color:#7c3aed;font-size:15px">Holiday — ${fmtD(date)}</div><div style="font-size:12px;color:var(--text2);margin-top:2px">This day is marked as holiday. Productivity not counted.</div></div><button class="btn btn-danger" onclick="adminToggleHoliday('${date}')" style="margin-left:auto;font-size:12px;padding:6px 12px">Remove Holiday</button></div></div>`:
       `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><button class="btn btn-holiday" onclick="adminToggleHoliday('${date}')" style="font-size:12px;padding:6px 14px">🏖️ Mark as Holiday</button><span style="font-size:12px;color:var(--text3)">Marking holiday excludes this date from all calculations</span></div>`}
@@ -606,8 +608,7 @@ async function renderToday(){
           ${processes.map(p=>`<option value="${p}" ${filterProc===p?"selected":""}>${p}</option>`).join("")}
         </select>
         <input class="inp" id="today-ctx" placeholder="Team-wide context…" value="${esc(ctx)}" style="max-width:280px"/>
-        <button class="btn btn-light" onclick="window._exportDay()">📥 Export</button>
-        <button class="btn btn-primary" onclick="window._genEmail()">✨ Generate Email</button>
+        ${adminToolsBtns}
       </div>
       <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
         ${kpi("Team",members.length,"var(--primary)","","👥")}
@@ -702,11 +703,11 @@ async function renderAdminProdMonitor(){
               <td style="font-weight:700;color:${pr?.qualScore&&pr.qualScore!=="NA"?pCol(pr.qualScore):"#94a3b8"}">${pr?.qualScore||"—"}</td>
               <td style="color:var(--text3)">${pr?.downtimeHours?pr.downtimeHours+"h":"—"}</td>
               <td style="color:var(--text3);font-size:11px;max-width:100px">${pr?.remark?esc(pr.remark.slice(0,30)):"—"}</td>
-              <td><div style="display:flex;gap:5px;flex-wrap:wrap">
+              <td>${currentUser.role==="admin"?`<div style="display:flex;gap:5px;flex-wrap:wrap">
                 ${!isBP&&pr?`<button class="btn btn-primary" onclick="bypassProd('${esc(u.empId)}','${selDate}')" style="padding:4px 10px;font-size:11px;border-radius:6px">🛡 Bypass Prod</button>`:""}
                 ${isBP?`<button class="btn btn-danger" onclick="removeBypass('${esc(u.empId)}','${selDate}')" style="padding:4px 10px;font-size:11px;border-radius:6px">✕ Remove</button>`:""}
                 ${pr?`<button class="btn btn-light" onclick="bypassQuality('${esc(u.empId)}','${selDate}','${pr?.qualScore||""}')" style="padding:4px 10px;font-size:11px;border-radius:6px">⭐ Edit Quality</button>`:""}
-              </div></td>
+              </div>`:`<span style="color:var(--text3);font-size:11px">—</span>`}</td>
             </tr>`;}).join("")}
           </tbody>
         </table></div>
@@ -812,13 +813,15 @@ async function renderSummary(type){
     const pL=type==="weekly"?`${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}`:`${MONTHS[month-1]} ${year}`;
     const agOpts=agStats.map(a=>`<option value="${esc(a.empId||a.name)}"${selUser===a.empId?"selected":""}>${esc(a.name)}</option>`).join("");
     const holidayCount=dates.filter(d=>holidays.includes(d)).length;
+    const exportBtn=currentUser.role==="admin"?`<button class="btn btn-light" onclick="window._expS()">📥 Export</button>`:"";
+    const genEmailBtn=currentUser.role==="admin"?`<button class="btn btn-primary" onclick="window._genSE()" style="width:100%;padding:14px;font-size:15px;border-radius:var(--r);justify-content:center;margin-bottom:16px">✨ Generate ${type==="weekly"?"Weekly":"Monthly"} Summary Email</button>`:"";
     setPage(`
       <div class="card row" style="margin-bottom:18px">
         ${type==="weekly"?`<button class="btn btn-light" onclick="window._wP()">←</button><span style="font-weight:700;color:var(--text);font-size:13px;min-width:230px;text-align:center">${fmtD(wStart)} – ${fmtD(addDays(wStart,4))}</span><button class="btn btn-light" onclick="window._wN()">→</button>`:`<button class="btn btn-light" onclick="window._mP()">←</button><span style="font-weight:700;color:var(--text);font-size:14px;min-width:130px;text-align:center">${MONTHS[month-1]} ${year}</span><button class="btn btn-light" onclick="window._mN()">→</button>`}
         <select style="border:1.5px solid var(--border);border-radius:var(--r2);padding:7px 12px;font-size:12px;font-weight:600;color:var(--text);background:var(--surface);cursor:pointer" onchange="window._fP(this.value)"><option value="ALL">All Processes</option>${processes.map(p=>`<option value="${p}" ${filterProc===p?"selected":""}>${p}</option>`).join("")}</select>
         <select class="inp" style="width:auto;min-width:160px" onchange="window._sA(this.value)"><option value="ALL">All Agents</option>${agOpts}</select>
         <button class="btn btn-light" onclick="load()">↺</button>
-        <button class="btn btn-light" onclick="window._expS()">📥 Export</button>
+        ${exportBtn}
       </div>
       ${holidayCount>0?`<div class="holiday-banner" style="margin-bottom:16px">🏖️ ${holidayCount} holiday${holidayCount>1?"s":""} excluded from this ${type==="weekly"?"week":"month"}'s calculations</div>`:""}
       ${recs.length===0?`<div class="card" style="text-align:center;padding:60px;color:var(--text3)"><div style="font-size:44px;margin-bottom:14px">📭</div><div style="font-size:16px;font-weight:700;color:var(--text)">No data for this ${type==="weekly"?"week":"month"}</div></div>`:`
@@ -848,7 +851,7 @@ async function renderSummary(type){
           <td style="font-weight:700;color:${a.avgQual>0?pCol(a.avgQual):"#94a3b8"}">${a.avgQual>0?a.avgQual+"%":"—"}</td>
         </tr>`).join("")}</tbody></table></div>
       </div>
-      <button class="btn btn-primary" onclick="window._genSE()" style="width:100%;padding:14px;font-size:15px;border-radius:var(--r);justify-content:center;margin-bottom:16px">✨ Generate ${type==="weekly"?"Weekly":"Monthly"} Summary Email</button>
+      ${genEmailBtn}
       <div id="sum-email-out"></div>`}
     `);
     window._sumD={agStats:fStats,pL,type,tap,taq};window._sumDates=workDates;
@@ -1240,7 +1243,7 @@ async function renderProdReport(){
           </div>
         </div>
         <div style="display:flex;gap:14px;flex-wrap:wrap">
-          ${[{l:"TOTAL",v:isAuth?total.toString():total.toFixed(2),c:pCol(prodPct)},{l:isAuth?"BASELINE":"ADJ. TARGET",v:isAuth?"50":adjTarget.toFixed(1),c:"rgba(255,255,255,0.9)"},{l:"PROD %",v:prodPct.toFixed(1)+"%",c:pCol(prodPct)},{l:isAuth?"STATUS":"DEFICIT",v:isAuth?"Auto 100%":deficit>0?"-"+deficit.toFixed(1):"✅ Met",c:isAuth?"#6ee7b7":deficit>0?"#fca5a5":"#6ee7b7"}].map(({l,v,c})=>`
+          ${[{l:"TOTAL",v:isAuth?total.toString():total.toFixed(2),c:pCol(prodPct)},{l:isAuth?"BASELINE":"ADJ. TARGET",v:isAuth?"50":adjTarget.toFixed(1),c:"rgba(255,255,255,0.9)"},{l:"PROD %",v:prodPct.toFixed(1)+"%",c:pCol(prodPct)},{l:isAuth?"STATUS":"DEFICIT",v:isAuth?(total>0?"Auto 100%":"⏳ No Data"):deficit>0?"-"+deficit.toFixed(1):"✅ Met",c:isAuth?(total>0?"#6ee7b7":"rgba(255,255,255,0.4)"):deficit>0?"#fca5a5":"#6ee7b7"}].map(({l,v,c})=>`
             <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r);padding:14px 18px;flex:1;min-width:100px;text-align:center">
               <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px">${l}</div>
               <div id="hdr_${l.replace(/[^A-Z]/g,"")}" style="font-size:22px;font-weight:900;color:${c}">${v}</div>
@@ -1263,7 +1266,7 @@ async function renderProdReport(){
             <div id="htd_${i}" style="font-size:10px;color:var(--text3);margin-top:4px">—</div>
           </div>`;}).join("")}
         </div>
-        ${hourlyTotal>0?`<div style="background:var(--primary-bg);border-radius:var(--r2);padding:10px 16px;display:flex;align-items:center;gap:16px;margin-bottom:12px"><span style="font-size:24px;font-weight:900;color:var(--primary)" id="ht-grand-total">${hourlyTotal}</span><span style="font-size:12px;color:var(--text2)">Total hourly count · ${HOURLY_SLOTS.filter(s=>slots[s]).length} hours filled</span></div>`:`<div style="background:var(--surface3);border-radius:var(--r2);padding:8px 14px;margin-bottom:12px;font-size:12px;color:var(--text3)">Enter hourly counts above — task entry table updates automatically</div>`}
+        <div style="background:var(--primary-bg);border-radius:var(--r2);padding:10px 16px;display:flex;align-items:center;gap:16px;margin-bottom:12px"><span style="font-size:24px;font-weight:900;color:var(--primary)" id="ht-grand-total">${hourlyTotal}</span><span style="font-size:12px;color:var(--text2)">Total hourly count · <span id="ht-hours-filled">${HOURLY_SLOTS.filter(s=>slots[s]).length}</span> hours filled · task table below updates live as you type</span></div>
         <button class="btn btn-primary" onclick="window._saveHourly()" style="padding:9px 22px;font-size:13px;justify-content:center">💾 Save Hourly Data</button>
         <div id="ht-msg" style="font-size:13px;font-weight:600;margin-top:8px;display:none"></div>
       </div>
@@ -1344,25 +1347,60 @@ async function renderProdReport(){
 
     const tasksCopy=tasks;const tgt=overallTarget;const isAuthCopy=isAuth;
     window._prLive=()=>{
-      if(isAuthCopy)return;
-      const dt=parseFloat(document.getElementById("pr-downtime")?.value)||0;
       const cnt={};tasksCopy.forEach((t,i)=>{cnt[t.name]=parseFloat(document.getElementById(`prt_${i}`)?.value)||0;});
-      const res=calcProd(tasksCopy,cnt,tgt,dt,false);
       tasksCopy.forEach((t,i)=>{const el=document.getElementById(`pc_${i}`);if(el)el.textContent=(cnt[t.name]*(50/t.target)).toFixed(2);});
+
+      if(isAuthCopy){
+        const total=Object.values(cnt).reduce((s,v)=>s+v,0);
+        const prodPct=total>0?Math.min((total/50)*100,999):0;
+        const totEl=document.getElementById("pr-total-row");if(totEl){totEl.textContent=total.toFixed(2);totEl.style.color=pCol(prodPct);}
+        const hdrT=document.getElementById("hdr_TOTAL");if(hdrT){hdrT.textContent=total.toString();hdrT.style.color=pCol(prodPct);}
+        const hdrP=document.getElementById("hdr_PROD");if(hdrP){hdrP.textContent=prodPct.toFixed(1)+"%";hdrP.style.color=pCol(prodPct);}
+        const hdrS=document.getElementById("hdr_STATUS");
+        if(hdrS){
+          if(total>0){hdrS.textContent="Auto 100%";hdrS.style.color="#6ee7b7";}
+          else{hdrS.textContent="⏳ No Data";hdrS.style.color="rgba(255,255,255,0.4)";}
+        }
+        return;
+      }
+
+      const dt=parseFloat(document.getElementById("pr-downtime")?.value)||0;
+      const res=calcProd(tasksCopy,cnt,tgt,dt,false);
       const totEl=document.getElementById("pr-total-row");if(totEl){totEl.textContent=res.total.toFixed(2);totEl.style.color=pCol(res.prodPct);}
       const pctEl=document.getElementById("pr-live-pct");if(pctEl){pctEl.textContent=res.prodPct.toFixed(1)+"%";pctEl.style.color=pCol(res.prodPct);}
       const adjEl=document.getElementById("adj-calc");if(adjEl)adjEl.textContent=res.adjTarget.toFixed(1);
+
+      const hdrT=document.getElementById("hdr_TOTAL");if(hdrT){hdrT.textContent=res.total.toFixed(2);hdrT.style.color=pCol(res.prodPct);}
+      const hdrA=document.getElementById("hdr_ADJTARGET");if(hdrA)hdrA.textContent=res.adjTarget.toFixed(1);
+      const hdrP=document.getElementById("hdr_PROD");if(hdrP){hdrP.textContent=res.prodPct.toFixed(1)+"%";hdrP.style.color=pCol(res.prodPct);}
+      const hdrD=document.getElementById("hdr_DEFICIT");
+      if(hdrD){
+        if(res.deficit>0){hdrD.textContent="-"+res.deficit.toFixed(1);hdrD.style.color="#fca5a5";}
+        else{hdrD.textContent="✅ Met";hdrD.style.color="#6ee7b7";}
+      }
     };
     window._htLive=()=>{
       const tots=HOURLY_SLOTS.map((_,i)=>parseInt(document.getElementById(`ht_${i}`)?.value)||0);
       HOURLY_SLOTS.forEach((_,i)=>{const el=document.getElementById(`htd_${i}`);if(!el)return;if(i>0&&tots[i]>0&&tots[i-1]>0){const d=tots[i]-tots[i-1];el.textContent=(d>=0?"+":"")+d;el.style.color=d>=0?"var(--green)":"var(--red)";}else el.textContent="—";});
+
+      // Recompute sums for EVERY task (default 0) so removed/changed entries reset correctly
       const taskSums={};
-      HOURLY_SLOTS.forEach((_,i)=>{const task=document.getElementById(`hts_${i}`)?.value;const val=parseInt(document.getElementById(`ht_${i}`)?.value)||0;if(task&&val>0)taskSums[task]=(taskSums[task]||0)+val;});
-      if(Object.keys(taskSums).length>0){
-        tasksCopy.forEach((t,idx)=>{if(taskSums[t.name]!==undefined){const inp=document.getElementById(`prt_${idx}`);if(inp){inp.value=taskSums[t.name];inp.style.background="var(--primary-bg)";inp.style.borderColor="var(--primary)";}};});
-        window._prLive();
-      }
-      const grand=tots.reduce((a,b)=>a+b,0);const el=document.getElementById("ht-grand-total");if(el)el.textContent=grand;
+      tasksCopy.forEach(t=>taskSums[t.name]=0);
+      HOURLY_SLOTS.forEach((_,i)=>{const task=document.getElementById(`hts_${i}`)?.value;const val=parseInt(document.getElementById(`ht_${i}`)?.value)||0;if(task&&taskSums[task]!==undefined)taskSums[task]+=val;});
+
+      tasksCopy.forEach((t,idx)=>{
+        const inp=document.getElementById(`prt_${idx}`);
+        if(!inp)return;
+        const sum=taskSums[t.name]||0;
+        inp.value=sum;
+        if(sum>0){inp.style.background="var(--primary-bg)";inp.style.borderColor="var(--primary)";}
+        else{inp.style.background="var(--surface)";inp.style.borderColor="var(--border)";}
+      });
+      window._prLive();
+
+      const grand=tots.reduce((a,b)=>a+b,0);
+      const gEl=document.getElementById("ht-grand-total");if(gEl)gEl.textContent=grand;
+      const fEl=document.getElementById("ht-hours-filled");if(fEl)fEl.textContent=tots.filter(v=>v>0).length;
     };
     window._prDate=v=>{selDate=v;load();};
     window._markHoliday=async()=>{await toggleHoliday(selDate);load();};
